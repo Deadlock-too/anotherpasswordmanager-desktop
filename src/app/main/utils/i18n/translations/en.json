@@ -1,0 +1,79 @@
+{
+  "CurrentLanguage": "English (UK)",
+  "AppMenu": {
+    "File": {
+      "File": "File",
+      "New": "New",
+      "Open": "Open",
+      "Open File": "Open File",
+      "Open from URL": "Open from URL",
+      "Open Recent": "Open recent",
+      "Clear Recent": "Clear recent",
+      "Close": "Close",
+      "Save": "Save",
+      "Save As": "Save as",
+      "File Settings": "File settings",
+      "File Key Password": "Change the master key password",
+      "Import": "Import",
+      "Export": "Export",
+      "Lock": "Lock",
+      "Exit": "Exit"
+    },
+    "Entry": {
+      "Entry": "Entry",
+      "Copy Username": "Copy username",
+      "Copy Password": "Copy password",
+      "URL": "URL",
+      "Open URL": "Open URL",
+      "Copy URL": "Copy URL",
+      "Other Data": "Other data",
+      "Copy Title": "Copy title",
+      "Copy Notes": "Copy notes",
+      "Copy Time-based OTP": "Copy time-based OTP",
+      "Show Time-based OTP": "Show time-based OTP",
+      "Attachments": "Attachments",
+      "Perform Auto-Type": "Perform auto-type",
+      "Add Entry": "Add entry",
+      "Edit Entry": "Edit entry",
+      "Duplicate Entry": "Duplicate entry",
+      "Delete Entry": "Delete entry",
+      "Select All": "Select all"
+    },
+    "Find": {
+      "Find": "Find",
+      "Expired": "Expired",
+      "Expiring in": "Expiring in",
+      "1 day": "1 day",
+      "2 days": "2 days",
+      "3 days": "3 days",
+      "1 week": "1 week",
+      "2 weeks": "2 weeks",
+      "1 month": "1 month",
+      "2 months": "2 months",
+      "Future": "Future"
+    },
+    "View" : {
+      "View" : "View",
+      "Change Language": "Change language",
+      "Show Toolbar": "Show toolbar",
+      "Show Entry View": "Show entry notes",
+      "Always on top": "Always on top",
+      "Configure Columns": "Configure columns",
+      "Sort by": "Sort by",
+      "No sort": "No sorting",
+      "Ascending": "Ascending",
+      "Descending": "Descending"
+    },
+    "Tools": {
+      "Tools": "Tools",
+      "Generate Password": "Generate password",
+      "Options": "Options"
+    },
+    "Help": {
+      "Help": "Help contents",
+      "Help contents": "Help contents",
+      "Check for Updates": "Check for updates",
+      "About": "About"
+    }
+  }
+}

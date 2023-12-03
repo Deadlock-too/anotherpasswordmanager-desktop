@@ -1,0 +1,79 @@
+{
+  "CurrentLanguage": "Italiano (IT)",
+  "AppMenu": {
+    "File": {
+      "File": "File",
+      "New": "Nuovo",
+      "Open": "Apri",
+      "Open File": "Apri File",
+      "Open from URL": "Apri da URL",
+      "Open Recent": "Apri recenti",
+      "Clear Recent": "Pulisci recenti",
+      "Close": "Chiudi",
+      "Save": "Salva",
+      "Save As": "Salva come",
+      "File Settings": "Impostazioni File",
+      "File Key Password": "Cambia la password principale",
+      "Import": "Importa",
+      "Export": "Esporta",
+      "Lock": "Blocca",
+      "Exit": "Esci"
+    },
+    "Entry": {
+      "Entry": "Voce",
+      "Copy Username": "Copia nome utente",
+      "Copy Password": "Copia password",
+      "URL": "URL",
+      "Open URL": "Apri URL",
+      "Copy URL": "Copia URL",
+      "Other Data": "Altri dati",
+      "Copy Title": "Copia titolo",
+      "Copy Notes": "Copia note",
+      "Copy Time-based OTP": "Copia OTP basata sul tempo",
+      "Show Time-based OTP": "Mostra OTP basata sul tempo",
+      "Attachments": "Allegati",
+      "Perform Auto-Type": "Esegui autoinserimento",
+      "Add Entry": "Aggiungi voce",
+      "Edit Entry": "Modifica voce",
+      "Duplicate Entry": "Duplica voce",
+      "Delete Entry": "Elimina voce",
+      "Select All": "Seleziona tutto"
+    },
+    "Find": {
+      "Find": "Trova",
+      "Expired": "Scadute",
+      "Expiring in": "In scadenza",
+      "1 day": "1 giorno",
+      "2 days": "2 giorni",
+      "3 days": "3 giorni",
+      "1 week": "1 settimana",
+      "2 weeks": "2 settimane",
+      "1 month": "1 mese",
+      "2 months": "2 mesi",
+      "Future": "Futuro"
+    },
+    "View" : {
+      "View": "Visualizza",
+      "Change Language": "Cambia lingua",
+      "Show Toolbar": "Mostra barra degli strumenti",
+      "Show Entry View": "Mostra note della voce",
+      "Always on top": "Sempre in primo piano",
+      "Configure Columns": "Configura colonne",
+      "Sort by": "Ordina per",
+      "No Sort": "Nessun ordinamento",
+      "Ascending": "Crescente",
+      "Descending": "Decrescente"
+    },
+    "Tools": {
+      "Tools": "Strumenti",
+      "Generate Password": "Genera password",
+      "Options": "Opzioni"
+    },
+    "Help": {
+      "Help": "Guida",
+      "Help Contents": "Guida di Aiuto",
+      "Check for Updates": "Controlla aggiornamenti",
+      "About": "Informazioni"
+    }
+  }
+}
