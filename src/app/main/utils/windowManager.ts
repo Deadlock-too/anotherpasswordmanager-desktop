@@ -1,6 +1,7 @@
 import { BrowserWindow, ipcMain, nativeTheme } from 'electron';
-import path from 'path';
-import * as url from "url";
+
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 async function manageDarkMode() {
     ipcMain.handle('dark-mode:toggle', () => {
@@ -25,19 +26,13 @@ async function createMainWindow() {
 
     let mainWindow : BrowserWindow | null = new BrowserWindow({
         webPreferences: {
-            preload: path.join(__dirname, '../preload.js')
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
         },
         height: 600,
         width: 800,
     })
 
-    const startUrl = url.format({
-          pathname: path.join(__dirname, '../../../index.html'),
-          protocol: 'file:',
-          slashes: true,
-        })
-
-    await mainWindow.loadURL(startUrl)
+    await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
     mainWindow.on('closed', onClose)
 
     await manageDarkMode()

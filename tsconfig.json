@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "es2022",
+    "target": "ES6",
     "allowJs": false,
     "module": "commonjs",
-    "skipLibCheck": false,
-    "lib": [
-      "es2022",
-      "dom"
-    ],
+    "skipLibCheck": false, //try true if not working
+//    "lib": [
+//      "es2022",
+//      "dom"
+//    ],
     "jsx": "react-jsx",
     "strict": true,
     "sourceMap": true,
