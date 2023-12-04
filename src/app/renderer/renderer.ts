@@ -1,1 +1,1 @@
-import './app'
+import './index'
