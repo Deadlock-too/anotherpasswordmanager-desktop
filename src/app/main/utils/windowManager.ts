@@ -35,6 +35,8 @@ async function createMainWindow() {
     await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
     mainWindow.on('closed', onClose)
 
+    //mainWindow.webContents.openDevTools()
+
     await manageDarkMode()
 }
 
