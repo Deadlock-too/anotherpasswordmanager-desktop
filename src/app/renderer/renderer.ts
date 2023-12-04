@@ -22,3 +22,7 @@ document.getElementById('reset-to-system')?.addEventListener('click', async () =
         themeSource.innerHTML = 'System'
     }
 })
+
+const info = document.getElementById('info')
+// @ts-ignore
+info.innerText = `We are using Node.js (v${window.versions.node()}), Chromium (v${window.versions.chrome()}), and Electron (v${window.versions.electron()}).`

@@ -2,7 +2,9 @@
   "compilerOptions": {
     "incremental": true,
     "target": "es2022",
+    "allowJs": false,
     "module": "commonjs",
+    "skipLibCheck": false,
     "lib": [
       "es2022",
       "dom"
@@ -23,7 +25,7 @@
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/**/**/*"
   ],
   "exclude": [
     "node_modules",

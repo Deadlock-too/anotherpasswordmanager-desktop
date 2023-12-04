@@ -1,5 +1,6 @@
 import { BrowserWindow, ipcMain, nativeTheme } from 'electron';
 import path from 'path';
+import * as url from "url";
 
 async function manageDarkMode() {
     ipcMain.handle('dark-mode:toggle', () => {
@@ -29,7 +30,14 @@ async function createMainWindow() {
         height: 600,
         width: 800,
     })
-    await mainWindow.loadURL(path.join(__dirname, '../../../../src/app/renderer/index.html'))
+
+    const startUrl = url.format({
+          pathname: path.join(__dirname, '../../../index.html'),
+          protocol: 'file:',
+          slashes: true,
+        })
+
+    await mainWindow.loadURL(startUrl)
     mainWindow.on('closed', onClose)
 
     await manageDarkMode()
