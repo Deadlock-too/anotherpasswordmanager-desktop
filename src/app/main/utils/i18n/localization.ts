@@ -1,14 +1,14 @@
-import i18next, { TOptions } from 'i18next'
+import i18next, { TOptions, changeLanguage as changeLang, init, t } from 'i18next'
 import translations from './translations'
 
 const DEFAULT_LANGUAGE = 'en'
 
 export async function changeLanguage(lang: string) {
-    await i18next.changeLanguage(lang)
+    await changeLang(lang)
 }
 
 export async function initialize(lang: string) {
-    await i18next.init({
+    await init({
         lng: lang,
         fallbackLng: DEFAULT_LANGUAGE,
         debug: false,
@@ -33,5 +33,5 @@ export function onLanguageChanged(callback: (lang: string) => void): () => void 
 }
 
 export function l(key: string, options?: TOptions): string {
-    return i18next.t(key, options)
+    return t(key, options)
 }
