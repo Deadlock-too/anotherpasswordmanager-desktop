@@ -28,4 +28,10 @@ export const rules: Required<ModuleOptions>['rules'] = [
       },
     },
   },
+  {
+    test: /\.svg$/,
+    issuer: /\.tsx?$/,
+    exclude: /(node_modules|\.webpack)/,
+    use: ['@svgr/webpack', 'url-loader'],
+  },
 ];
