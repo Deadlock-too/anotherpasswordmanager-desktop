@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { ReactElement, useEffect, useState } from 'react'
-import { ReactComponent as LockIcon } from '../../assets/icons/svg/lock.svg'
+import { LockIcon } from '../../assets/icons'
 
 const DarkModeToggleButton = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
