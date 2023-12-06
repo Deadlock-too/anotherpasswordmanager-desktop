@@ -2,12 +2,12 @@ import { initialize as initializeLocalization, onLanguageChanged } from '../util
 import setAppMenu from '../utils/appMenu'
 
 export async function init() {
-    // Localization
-    await initializeLocalization('it')
-    onLanguageChanged((lang: string) => {
-        console.log('Language changed to: ' + lang)
-    })
+  // Localization
+  await initializeLocalization('it')
+  onLanguageChanged((lang: string) => {
+    console.log('Language changed to: ' + lang)
+  })
 
-    // App Menu
-    setAppMenu()
+  // App Menu
+  setAppMenu()
 }

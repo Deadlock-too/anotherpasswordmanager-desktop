@@ -1,5 +1,5 @@
-# Another-PasswordManager (APM)
-Another-PasswordManager is an opensource password manager written in Typescript using the Electron framework and React.
+# Another-PasswordManager
+Another-PasswordManager is an opensource password manager written using Typescript, React, Tailwind, Electron and Webpack.
 
 ## Features
 - AES-256 encryption (???)

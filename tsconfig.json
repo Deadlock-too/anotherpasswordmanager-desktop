@@ -4,11 +4,7 @@
     "target": "ES6",
     "allowJs": false,
     "module": "commonjs",
-    "skipLibCheck": false, //try true if not working
-//    "lib": [
-//      "es2022",
-//      "dom"
-//    ],
+    "skipLibCheck": false,
     "jsx": "react-jsx",
     "strict": true,
     "sourceMap": true,
@@ -23,7 +19,10 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./src/@types"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types"
+    ],
   },
   "include": [
     "src/**/**/**/**/**/*"

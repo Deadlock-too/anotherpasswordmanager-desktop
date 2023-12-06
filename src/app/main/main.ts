@@ -51,8 +51,7 @@ export default class Main {
     if (process.defaultApp) {
       if (process.argv.length >= 2) {
         Main.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [path.resolve(process.argv[1])])
-      }
-      else {
+      } else {
         Main.application.setAsDefaultProtocolClient('anotherpasswordmanager')
       }
     }
@@ -63,19 +62,19 @@ export default class Main {
     Main.application = app
     Main.manageLock()
     Main.application.whenReady()
-        .then(async () => await init())
-        .then(async () => {
-          // TODO MANAGE WITH SETTING
-          const startInBackground = false;
-          if (startInBackground) {
-            return;
-          }
-          await openMainWindow()
-        })
-        .catch((e) => {
-          console.error(e)
-          Main.application.quit()
-        })
+      .then(async () => await init())
+      .then(async () => {
+        // TODO MANAGE WITH SETTING
+        const startInBackground = false
+        if (startInBackground) {
+          return
+        }
+        await openMainWindow()
+      })
+      .catch((e) => {
+        console.error(e)
+        Main.application.quit()
+      })
     Main.application.on('ready', Main.onReady)
 
     // TODO Move logic to when ready
