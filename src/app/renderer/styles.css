@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #333;
@@ -15,6 +16,7 @@
     color: black;
   }
 }
+*/
 
 .unselectable {
   -webkit-user-select: none;

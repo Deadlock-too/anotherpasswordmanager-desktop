@@ -2,6 +2,7 @@ import { BrowserWindow } from 'electron'
 import { openMainWindow } from './utils/windowManager'
 import * as path from 'path'
 import { init } from './services/init'
+import './ipc'
 
 export default class Main {
   static mainWindow: Electron.BrowserWindow

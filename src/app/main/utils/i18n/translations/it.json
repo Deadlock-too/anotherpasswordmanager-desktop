@@ -75,5 +75,10 @@
       "Check for Updates": "Controlla aggiornamenti",
       "About": "Informazioni"
     }
+  },
+  "Intro": {
+    "Open Existing": "Apri file",
+    "Add New": "Aggiungi nuovo",
+    "Or": "oppure"
   }
 }

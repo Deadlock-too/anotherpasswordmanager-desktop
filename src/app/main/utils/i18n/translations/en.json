@@ -75,5 +75,10 @@
       "Check for Updates": "Check for updates",
       "About": "About"
     }
+  },
+  "Intro": {
+    "Open Existing": "Open file",
+    "Add New": "Add new",
+    "Or": "or"
   }
 }
