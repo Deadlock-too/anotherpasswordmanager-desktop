@@ -1,12 +1,11 @@
 import { createRoot } from 'react-dom/client'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement } from 'react'
 import { FolderOpenIcon, LockIcon, PlusIcon } from '../../assets/icons'
-import * as electron from 'electron'
 
 const DarkModeToggleButton = () => {
 
   const toggleDarkMode = () => {
-    window['darkMode'].toggle()
+    window.theming.darkMode.toggle()
   }
 
   // return (
@@ -101,7 +100,7 @@ const Index = () => {
       <div className="flex flex-col md:flex-row w-2/3 h-2/3">
         <div className="grid flex-grow card place-items-center">
           <div className="flex flex-col items-center justify-items-center gap-3 py-5">
-            <button className="btn" onClick={() => window['openDialog'].open()}>
+            <button className="btn" onClick={() => window.dialog.openFile.open()}>
               <FolderOpenIcon/>
               {/*{ l('Intro.Open Existing') }*/ }
               Apri esistente
@@ -113,11 +112,7 @@ const Index = () => {
           oppure
         </div>
         <div className="grid flex-grow card place-items-center">
-          <button className="btn" onClick={
-            () => {
-              console.log('click')
-            }
-          }>
+          <button className="btn">
             <PlusIcon/>
             {/*{ l('Intro.Add New') }*/ }
             Aggiungi nuovo

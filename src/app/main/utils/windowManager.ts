@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, nativeTheme } from 'electron'
+import { BrowserWindow, dialog, ipcMain, nativeTheme } from 'electron'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -15,6 +15,23 @@ async function manageDarkMode() {
 
   ipcMain.handle('dark-mode:system', () => {
     nativeTheme.themeSource = 'system'
+  })
+}
+
+async function manageOpenFile() {
+  ipcMain.handle('open-file:open', () => {
+    let path : string | undefined = undefined
+    dialog.showOpenDialog({
+      properties: ['openFile']
+    }).then(
+      (result) => {
+        console.log(`Result: ${ JSON.stringify(result) }`)
+        if (!result.canceled && result.filePaths.length > 0)
+          path = result.filePaths[0]
+      }).catch((err) => {
+      console.log(`Error: ${ err }`)
+    })
+    return path
   })
 }
 
@@ -38,6 +55,7 @@ async function createMainWindow() {
   //mainWindow.webContents.openDevTools()
 
   await manageDarkMode()
+  await manageOpenFile()
 }
 
 export async function openMainWindow(targetRoute: string | null = null): Promise<BrowserWindow> {
