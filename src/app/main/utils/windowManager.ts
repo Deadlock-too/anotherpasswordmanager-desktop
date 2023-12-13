@@ -1,39 +1,8 @@
-import { BrowserWindow, dialog, ipcMain, nativeTheme } from 'electron'
+import { BrowserWindow, dialog } from 'electron'
+import { l } from './i18n/localization'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
-
-async function manageDarkMode() {
-  ipcMain.handle('dark-mode:toggle', () => {
-    if (nativeTheme.shouldUseDarkColors) {
-      nativeTheme.themeSource = 'light'
-    } else {
-      nativeTheme.themeSource = 'dark'
-    }
-    return nativeTheme.shouldUseDarkColors
-  })
-
-  ipcMain.handle('dark-mode:system', () => {
-    nativeTheme.themeSource = 'system'
-  })
-}
-
-async function manageOpenFile() {
-  ipcMain.handle('open-file:open', () => {
-    let path : string | undefined = undefined
-    dialog.showOpenDialog({
-      properties: ['openFile']
-    }).then(
-      (result) => {
-        console.log(`Result: ${ JSON.stringify(result) }`)
-        if (!result.canceled && result.filePaths.length > 0)
-          path = result.filePaths[0]
-      }).catch((err) => {
-      console.log(`Error: ${ err }`)
-    })
-    return path
-  })
-}
 
 async function createMainWindow() {
   function onClose() {
@@ -46,16 +15,29 @@ async function createMainWindow() {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
     },
     height: 600,
-    width: 800
+    width: 800,
+    titleBarStyle: 'hidden',
+    /* TODO MAKE DYNAMIC */
+    titleBarOverlay: {
+      color: '#1d232a',
+      symbolColor: '#ffffff',
+      height: 30
+    }
   })
+
 
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   mainWindow.on('closed', onClose)
 
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
+}
 
-  await manageDarkMode()
-  await manageOpenFile()
+export async function changeTitleBarOverlayTheme(color: string, symbolColor: string) {
+  let window = BrowserWindow.getFocusedWindow()
+  window?.setTitleBarOverlay({
+    color: color,
+    symbolColor: symbolColor
+  })
 }
 
 export async function openMainWindow(targetRoute: string | null = null): Promise<BrowserWindow> {
@@ -77,4 +59,37 @@ export async function onWindowAllClosed(app: Electron.App) {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+}
+
+export async function openFileDialog() {
+  let path: string | undefined = undefined
+  await dialog.showOpenDialog({
+    properties: ['openFile']
+  }).then(
+    (result) => {
+      if (!result.canceled && result.filePaths.length > 0)
+        path = result.filePaths[0]
+    }).catch((err) => {
+    console.error(`Error: ${ err }`)
+  })
+  console.log(`Opening path: ${ path }`)
+  return path
+}
+
+export async function saveFileDialog() {
+  let path: string | undefined = undefined
+  await dialog.showSaveDialog({
+    'title': l('saveFile'),
+    'defaultPath': 'passwords.apm',
+    properties: ['showOverwriteConfirmation']
+  }).then(
+    (result) => {
+      if (!result.canceled && result.filePath)
+        path = result.filePath
+    }).catch((err) => {
+      console.error(`Error: ${ err }`)
+    }
+  )
+  console.log(`Saving path: ${ path }`)
+  return path
 }

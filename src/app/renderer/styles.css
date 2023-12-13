@@ -25,3 +25,15 @@
   -ms-user-select: none;
   user-select: none;
 }
+
+.titlebar {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+  height: 30px;
+}
+
+.titlebar-icon {
+  -webkit-app-region: no-drag;
+  height: 16px;
+  width: 16px;
+}

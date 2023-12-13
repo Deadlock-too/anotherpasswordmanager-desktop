@@ -10,8 +10,9 @@ declare global {
       }
     },
     dialog: {
-      openFile: {
-        open: () => Promise<string>
+      fileManagement: {
+        open: () => Promise<string | undefined>,
+        save: () => Promise<string | undefined>
       }
     }
   }

@@ -14,11 +14,12 @@ contextBridge.exposeInMainWorld('theming', {
 })
 
 contextBridge.exposeInMainWorld('dialog', {
-  openFile: {
-    open: async (): Promise<string> => {
-      const result = await ipcRenderer.invoke('open-file:open')
-      console.log(`Result: ${ JSON.stringify(result) }`)
-      return result
+  fileManagement: {
+    open: (): Promise<string | undefined> => {
+      return ipcRenderer.invoke('file-management:open')
+    },
+    save: (): Promise<string | undefined> => {
+      return ipcRenderer.invoke('file-management:save')
     }
   }
 })
