@@ -6,6 +6,10 @@ contextBridge.exposeInMainWorld('versions', {
   electron: () => process.versions.electron
 })
 
+contextBridge.exposeInMainWorld('system', {
+  platform: () => process.platform,
+})
+
 contextBridge.exposeInMainWorld('theming', {
   darkMode: {
     toggle: () => ipcRenderer.invoke('dark-mode:toggle'),

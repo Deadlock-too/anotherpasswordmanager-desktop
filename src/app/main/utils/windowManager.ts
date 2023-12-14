@@ -21,7 +21,7 @@ async function createMainWindow() {
     titleBarOverlay: {
       color: '#1d232a',
       symbolColor: '#ffffff',
-      height: 30
+      height: 30 /* TODO MANAGE DARWIN PLATFORM DYNAMIC TITLE BAR HEIGHT (Low priority as not testable without device with Darwin platform) */
     }
   })
 
@@ -33,7 +33,7 @@ async function createMainWindow() {
 }
 
 export async function changeTitleBarOverlayTheme(color: string, symbolColor: string) {
-  let window = BrowserWindow.getFocusedWindow()
+  const window = BrowserWindow.getFocusedWindow()
   window?.setTitleBarOverlay({
     color: color,
     symbolColor: symbolColor

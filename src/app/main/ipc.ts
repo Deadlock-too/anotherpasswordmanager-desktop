@@ -1,6 +1,7 @@
 import { ipcMain, nativeTheme } from 'electron'
 import { changeTitleBarOverlayTheme, openFileDialog, saveFileDialog } from './utils/windowManager'
-// import { daisyui } from '../../../tailwind.config.js'
+import { daisyui } from '../../../tailwind.config'
+import { Theme } from 'daisyui'
 
 /**
  * Ipc events
@@ -39,28 +40,22 @@ ipcMain.handle('dark-mode:toggle', async () : Promise<boolean> => {
   } else {
     nativeTheme.themeSource = 'dark'
   }
+  const lightThemeName = 'light'
+  const darkThemeName = 'dark'
+  const lightTheme = daisyui.themes.find((theme) => lightThemeName in theme) as Theme
+  const darkTheme = daisyui.themes.find((theme) => darkThemeName in theme) as Theme
+  await changeTitleBarOverlayTheme(
+    nativeTheme.shouldUseDarkColors ? darkTheme[darkThemeName]['base-100'] : lightTheme[lightThemeName]['base-100'],
+    nativeTheme.shouldUseDarkColors ? '#ffffff' : '#000000'
+  )
 
-  //TODO MANAGE SWITCH BAR OVERLAY THEME
+  //TODO MANAGE THEME PERSISTENCE
   /*
-  * Copy all default values to current tailwind.config.js and use .find() to get the desired theme.
   * Save the current theme on a json file that will be used to reinstate the theme on the next launch.
   * Use the file to save other settings too.
   *
   * Fix the localization problem on the render side, then make a minimal interface to manage and create the passwords thinking only after to improve it.
   */
-
-  // let lightTheme = daisyui.themes['light']
-  // let darkTheme = daisyui.themes['dark']
-  //
-  // console.log(daisyui.themes.light)
-  // console.log(daisyui.themes.dark)
-
-  // await changeTitleBarOverlayTheme(
-  //   // nativeTheme.shouldUseDarkColors ? '#000000' : '#1d232a',
-  //   // nativeTheme.shouldUseDarkColors ? '#ffffff' : '#000000'
-  // nativeTheme.shouldUseDarkColors ? darkTheme['base-100'] : lightTheme['base-100'],
-  //   nativeTheme.shouldUseDarkColors ? '#ffffff' : '#000000'
-  // )
 
   return nativeTheme.shouldUseDarkColors
 })
