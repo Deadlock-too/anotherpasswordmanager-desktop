@@ -26,15 +26,15 @@ import { Theme } from 'daisyui'
 /**
  * Ipc event handlers
  */
-ipcMain.handle('file-management:open', async () : Promise<string | undefined> => {
+ipcMain.handle('fileManagement:open', async (): Promise<string | undefined> => {
   return await openFileDialog()
 })
 
-ipcMain.handle('file-management:save', async () : Promise<string | undefined> => {
+ipcMain.handle('fileManagement:save', async (): Promise<string | undefined> => {
   return await saveFileDialog()
 })
 
-ipcMain.handle('dark-mode:toggle', async () : Promise<boolean> => {
+ipcMain.handle('darkMode:toggle', async (): Promise<boolean> => {
   if (nativeTheme.shouldUseDarkColors) {
     nativeTheme.themeSource = 'light'
   } else {
@@ -52,6 +52,7 @@ ipcMain.handle('dark-mode:toggle', async () : Promise<boolean> => {
   //TODO MANAGE THEME PERSISTENCE
   /*
   * Save the current theme on a json file that will be used to reinstate the theme on the next launch.
+  * To correctly set the theme you need to set the custom html tag. Check DaisyUI docs for further clarification
   * Use the file to save other settings too.
   *
   * Fix the localization problem on the render side, then make a minimal interface to manage and create the passwords thinking only after to improve it.
@@ -60,6 +61,6 @@ ipcMain.handle('dark-mode:toggle', async () : Promise<boolean> => {
   return nativeTheme.shouldUseDarkColors
 })
 
-ipcMain.handle('dark-mode:system', () => {
+ipcMain.handle('darkMode:system', () => {
   nativeTheme.themeSource = 'system'
 })

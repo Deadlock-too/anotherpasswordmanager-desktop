@@ -1,7 +1,7 @@
 import { MoonIcon, SunIcon } from '../../../../../assets/icons'
 import { Component } from 'react'
 
-export default class DarkModeToggleButton extends Component {
+export default class DarkModeToggle extends Component {
   render() {
     const toggleDarkMode = () => {
       window.theming.darkMode.toggle()

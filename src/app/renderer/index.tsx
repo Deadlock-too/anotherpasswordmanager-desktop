@@ -1,11 +1,14 @@
 import { createRoot } from 'react-dom/client'
-import { ReactElement } from 'react'
-import { LockIcon } from '../../assets/icons'
+// import { ReactElement } from 'react'
+// import { LockIcon } from '../../assets/icons'
 import Intro from './components/intro'
 import TitleBar from './components/titlebar'
+import { I18nextProvider } from 'react-i18next'
+import i18n from '../../i18n'
+import { useEffect, useState } from 'react'
 
 
-
+/*
 const Element = (props: { children: ReactElement, id: number, name: string, description: string }) => {
   return (<div
     key={ props.id.valueOf() }
@@ -35,16 +38,56 @@ const List = (props: { elements: { id: number, name: string, description: string
     }) }
   </div>
 }
+*/
 
-const Index = () => {
-  return (<>
+// let initialI18nStore = ipcRenderer.sendSync('get-initial-translations')
+//
+// ipcRenderer.on('language-changed', (event, arg) => {
+//   if (!i18n.hasResourceBundle(arg.language, arg.namespace)) {
+//     i18n.addResourceBundle(arg.language, arg.namespace, arg.resource)
+//   }
+//   i18n.changeLanguage(arg.language)
+// })
+
+// let initialI18nStore = window.localization.getInitialI18nStore()
+
+// const Index = () => {
+//   return (<>
+//       <TitleBar/>
+//       <Intro/>
+//     </>
+//   )
+// }
+//
+// const root = createRoot(document.body)
+// root.render(
+//   // <I18nextProvider i18n={i18n} initialI18nStore={initialI18nStore} initialLanugage='en'>
+//     <Index/>
+//   // </I18nextProvider>
+// )
+
+// const initialI18nStore = window.localization.getInitialI18nStore()
+
+const App = () => {
+  const [initialI18nStore, setInitialI18nStore] = useState(null)
+
+  useEffect(() => {
+    window.localization.getInitialI18nStore().then(setInitialI18nStore)
+  }, [])
+
+  if (!initialI18nStore) return null
+
+  return (
+    <I18nextProvider i18n={i18n}>
       <TitleBar/>
-      <Intro/>
-    </>
+      <div>
+        <Intro/>
+      </div>
+    </I18nextProvider>
   )
 }
 
 const root = createRoot(document.body)
 root.render(
-  <Index/>
+  <App/>
 )

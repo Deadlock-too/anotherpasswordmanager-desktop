@@ -1,5 +1,5 @@
 import { BrowserWindow, dialog } from 'electron'
-import { l } from './i18n/localization'
+import i18n from '../../../i18n'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -17,14 +17,13 @@ async function createMainWindow() {
     height: 600,
     width: 800,
     titleBarStyle: 'hidden',
-    /* TODO MAKE DYNAMIC */
+    /* TODO MAKE DYNAMIC BASED ON CURRENT SAVED THEME */
     titleBarOverlay: {
       color: '#1d232a',
       symbolColor: '#ffffff',
       height: 30 /* TODO MANAGE DARWIN PLATFORM DYNAMIC TITLE BAR HEIGHT (Low priority as not testable without device with Darwin platform) */
     }
   })
-
 
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   mainWindow.on('closed', onClose)
@@ -79,7 +78,7 @@ export async function openFileDialog() {
 export async function saveFileDialog() {
   let path: string | undefined = undefined
   await dialog.showSaveDialog({
-    'title': l('saveFile'),
+    'title': i18n.t('saveFile'),
     'defaultPath': 'passwords.apm',
     properties: ['showOverwriteConfirmation']
   }).then(

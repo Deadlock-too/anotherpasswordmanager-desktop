@@ -22,6 +22,10 @@ declare global {
         open: () => Promise<string | undefined>,
         save: () => Promise<string | undefined>
       }
+    },
+    localization: {
+      getInitialI18nStore: () => Promise<any>,
+      changeLanguage: (lang: string) => Promise<void>,
     }
   }
 }

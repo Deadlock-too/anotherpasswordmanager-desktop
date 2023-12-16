@@ -1,5 +1,5 @@
 import { Menu, MenuItem } from 'electron'
-import { l } from './i18n/localization'
+import i18n from '../../../i18n'
 
 export default function setAppMenu() {
   const menu = new Menu()
@@ -8,7 +8,7 @@ export default function setAppMenu() {
 }
 
 function localizeAppMenu(menuKey: string, localizationKey: string) {
-  return l(`AppMenu.${menuKey}.${localizationKey}`)
+  return i18n.t(`AppMenu.${menuKey}.${localizationKey}`)
 }
 
 function setMenuEntries(menu: Menu) {
