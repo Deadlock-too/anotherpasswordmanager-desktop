@@ -18,26 +18,57 @@
 }
 */
 
-.main-content {
-  height: calc(100vh - 30px);
-}
+@layer utilities {
 
-.unselectable {
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+  .main-content {
+    height: calc(100vh - 30px);
+  }
 
-.titlebar {
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
-  height: 30px;
-}
+  .unselectable {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-.titlebar-icon {
-  -webkit-app-region: no-drag;
-  height: 16px;
-  width: 16px;
+  .titlebar {
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+    height: 30px;
+  }
+
+  .titlebar-icon {
+    -webkit-app-region: no-drag;
+    height: 16px;
+    width: 16px;
+  }
+
+  .scrollbar-wrapper {
+    overflow: auto;
+  }
+
+  .scrollbar {
+    overflow: auto;
+    height: 100%;
+    /*overflow-y: auto;*/
+  }
+
+  .scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    @apply bg-base-200;
+    border-radius: 4px;
+    @apply hover:bg-base-300;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-base-100/80;
+    @apply hover:bg-base-100;
+    border-radius: 4px;
+  }
+
 }

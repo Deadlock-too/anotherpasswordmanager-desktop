@@ -1,0 +1,33 @@
+import { useContext, useEffect, useState } from 'react'
+import { I18nextProvider } from 'react-i18next'
+import i18n from '../../i18n'
+import TitleBar from './components/titlebar'
+import Main from './scenes/main'
+import Intro from './scenes/intro'
+import { FileContentContext } from './contexts'
+
+const App = () => {
+  const [initialI18nStore, setInitialI18nStore] = useState(null)
+  const { isInitialized, toggleIsInitialized } = useContext(FileContentContext)
+
+  useEffect(() => {
+    window.localization.getInitialI18nStore().then(setInitialI18nStore)
+  }, [])
+
+  if (!initialI18nStore)
+    return null
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      <TitleBar/>
+      <div className="overflow-hidden">
+        {
+          (!isInitialized) ?
+            <Intro onNewButtonClick={toggleIsInitialized}/> :
+            <Main/>
+        }
+      </div>
+    </I18nextProvider>
+  )
+}
+export default App

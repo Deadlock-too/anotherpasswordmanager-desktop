@@ -5,6 +5,7 @@ import { ReactComponent as SunIcon } from './svg/sun.svg'
 import { ReactComponent as MoonIcon } from './svg/moon.svg'
 import { ReactComponent as EyeIcon } from './svg/eye.svg'
 import { ReactComponent as EyeSlashIcon } from './svg/eye-slash.svg'
+import { ReactComponent as CloseIcon } from './svg/x-mark.svg'
 
 export {
   LockIcon,
@@ -14,4 +15,5 @@ export {
   MoonIcon,
   EyeIcon,
   EyeSlashIcon,
+  CloseIcon
 }

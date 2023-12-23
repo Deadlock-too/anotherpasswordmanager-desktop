@@ -16,8 +16,11 @@ async function createMainWindow() {
     },
     height: 600,
     width: 800,
+    minHeight: 300,
+    minWidth: 550,
     titleBarStyle: 'hidden',
     /* TODO MAKE DYNAMIC BASED ON CURRENT SAVED THEME */
+    /* TODO MANAGE OPENED DIALOG COLOR */
     titleBarOverlay: {
       color: '#1d232a',
       symbolColor: '#ffffff',

@@ -1,12 +1,6 @@
 import { createRoot } from 'react-dom/client'
-// import { ReactElement } from 'react'
-// import { LockIcon } from '../../assets/icons'
-import Intro from './components/intro'
-import TitleBar from './components/titlebar'
-import { I18nextProvider } from 'react-i18next'
-import i18n from '../../i18n'
-import { useEffect, useState } from 'react'
-import Main from './components/main'
+import App from './app'
+import { FileContentContextProvider, SelectionContextProvider } from './contexts'
 
 
 /*
@@ -41,31 +35,15 @@ const List = (props: { elements: { id: number, name: string, description: string
 }
 */
 
-const App = () => {
-  const [initialI18nStore, setInitialI18nStore] = useState(null)
+const rootDiv = document.getElementById('root')
+if (!rootDiv)
+  throw new Error('Root div not found')
 
-  useEffect(() => {
-    window.localization.getInitialI18nStore().then(setInitialI18nStore)
-  }, [])
-
-  if (!initialI18nStore)
-    return null
-
-  return (
-    <I18nextProvider i18n={i18n}>
-      <TitleBar/>
-      <div>
-        {
-          true ?
-            <Main/> :
-            <Intro/>
-        }
-      </div>
-    </I18nextProvider>
-  )
-}
-
-const root = createRoot(document.body)
+const root = createRoot(rootDiv)
 root.render(
-  <App/>
+  <FileContentContextProvider>
+    <SelectionContextProvider>
+      <App/>
+    </SelectionContextProvider>
+  </FileContentContextProvider>
 )

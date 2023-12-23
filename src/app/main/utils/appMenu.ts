@@ -3,8 +3,9 @@ import i18n from '../../../i18n'
 
 export default function setAppMenu() {
   const menu = new Menu()
-  setMenuEntries(menu)
-  Menu.setApplicationMenu(menu)
+  // TODO MANAGE NEW MENU
+  // setMenuEntries(menu)
+  // Menu.setApplicationMenu(menu)
 }
 
 function localizeAppMenu(menuKey: string, localizationKey: string) {
