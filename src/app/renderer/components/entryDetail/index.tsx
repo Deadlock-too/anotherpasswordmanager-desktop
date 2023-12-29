@@ -2,12 +2,13 @@ import { Entry, uuid } from '../../types'
 import { usePasswordToggle } from '../../hooks/passwordVisibility'
 import { Formik } from 'formik'
 import { EyeIcon } from '../../../../assets/icons'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { FileContentContext } from '../../contexts'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
+  const { handleSelectEntry, handleDeleteEntry } = useContext(FileContentContext)
   const { type, passwordVisibility, handlePasswordVisibility } = usePasswordToggle()
-  // const [ readonly, setReadonly ] = useState(props.entry !== undefined) //TODO
-  const [ readonly, setReadonly ] = useState(false)
+  const [ readonly, setReadonly ] = useState(props.entry !== undefined)
 
   const toggleReadonly = () => {
     setReadonly(readonly => !readonly)
@@ -27,13 +28,14 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
       onSubmit={ (values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
           const entry: Entry = {
-            Id: uuid(),
+            Id: values.id ?? uuid(),
             Title: values.title,
             Username: values.username,
             Password: values.password
           }
           props.onSubmit(entry)
-          // toggleReadOnly()
+          toggleReadonly()
+          console.log('submitting')
           setSubmitting(false)
         }, 400)
       } }
@@ -126,31 +128,57 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           </div>
           <div className='flex flex-row w-full justify-between pt-12 pb-5'>
             {
-              // readonly ?
-              //   <button
-              //     type='button'
-              //     className='btn btn-outline w-1/3'
-              //     onClick={ toggleReadonly }
-              //   >
-              //     Edit
-              //   </button>
-              //   :
-                <button
-                  type='submit'
-                  disabled={ isSubmitting }
-                  className='btn btn-primary btn-outline w-1/3'
+              readonly ?
+                <button type='button'
+                        className='btn btn-outline w-1/3'
+                        onClick={ (event) => {
+                          event.preventDefault()
+                          event.stopPropagation()
+                          toggleReadonly()
+                        } }
+                        disabled={ isSubmitting }
+                >
+                  Edit
+                </button>
+                :
+                <button type='submit'
+                        disabled={ isSubmitting }
+                        className='btn btn-primary btn-outline w-1/3'
                 >
                   Save
                 </button>
             }
-            <button
-              type='reset'
-              disabled={ isSubmitting }
-              className='btn btn-outline w-1/3'
-              onClick={ handleReset }
-            >
-              Cancel
-            </button>
+            {
+              readonly ?
+                <button type='button'
+                        disabled={ isSubmitting }
+                        className='btn btn-error w-1/3'
+                        onClick={ () => {
+                          //TODO ADD CONFIRMATION
+                          handleDeleteEntry(values.id!)
+                          handleReset()
+                          handleSelectEntry(null, false)
+                        } }
+                >
+                  Delete
+                </button>
+                :
+                <button type='reset'
+                        disabled={ isSubmitting }
+                        className='btn btn-outline w-1/3'
+                        onClick={ () => {
+                          if (values.id !== undefined) {
+                            handleReset()
+                            toggleReadonly()
+                          } else {
+                            handleReset()
+                            handleSelectEntry(null, false)
+                          }
+                        } }
+                >
+                  Cancel
+                </button>
+            }
           </div>
         </form>
       ) }

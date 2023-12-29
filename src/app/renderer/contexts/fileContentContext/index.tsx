@@ -13,6 +13,8 @@ interface FileContentContextState {
   handleRemoveFolder: (id: UUID) => void
   handleAddEntry: (entry: Entry, folderId: UUID) => void
   handleAddFolder: (folder: Folder) => void
+  handleUpdateEntry: (entry: Entry) => void
+  handleDeleteEntry: (id: UUID) => void
   resetSelection: () => void
   selectedEntryId: UUID | null
   selectedFolderId: UUID | null
@@ -43,14 +45,30 @@ export function FileContentContextProvider({ children }) {
   }, [])
 
   const handleUpdateEntry = useCallback((entry: Entry) => {
-    const index = entries.findIndex((e) => e.Id === entry.Id)
-    if (index !== -1) {
-      setEntries((prevState) => {
-        prevState[index] = entry
-        return prevState
-      })
-    }
-  }, [ entries ])
+    setEntries((prevState) => {
+      const newState = [...prevState]
+      const index = newState.findIndex((e) => e.Id === entry.Id)
+      newState[index] = entry
+      return newState
+    })
+    setFolders((prevState) => {
+      const newState = [...prevState]
+      const folderIndex = newState.findIndex((folder) => folder.Entries.findIndex((e) => e.Id === entry.Id) !== -1)
+      const entryIndex = newState[folderIndex].Entries.findIndex((e) => e.Id === entry.Id)
+      newState[folderIndex].Entries[entryIndex] = entry
+      return newState
+    })
+  }, [])
+
+  const handleDeleteEntry = useCallback((id: UUID) => {
+    setEntries((prevState) => [...prevState.filter((entry) => entry.Id !== id)])
+    setFolders((prevState) => {
+      const newState = [...prevState]
+      const folderIndex = newState.findIndex((folder) => folder.Entries.findIndex((entry) => entry.Id === id) !== -1)
+      newState[folderIndex].Entries = newState[folderIndex].Entries.filter((entry) => entry.Id !== id)
+      return newState
+    })
+  }, [])
 
   const handleUpdateFolder = useCallback((folder: Folder) => {
     const index = folders.findIndex((f) => f.Id === folder.Id)
@@ -65,7 +83,6 @@ export function FileContentContextProvider({ children }) {
   const handleAddEntry = useCallback((entry: Entry, folderId: UUID) => {
     setEntries(prevState => [ ...prevState, entry ])
     setFolders((prevState) => {
-      console.log('Selected Folder ID: ' + folderId)
       const folderIndex = prevState.findIndex((folder) => folder.Id === folderId)
       prevState[folderIndex].Entries = [ ...prevState[folderIndex].Entries, entry ]
       return prevState
@@ -129,6 +146,8 @@ export function FileContentContextProvider({ children }) {
     handleRemoveFolder,
     handleAddEntry,
     handleAddFolder,
+    handleUpdateEntry,
+    handleDeleteEntry,
     resetSelection,
     selectedEntryId,
     selectedFolderId,

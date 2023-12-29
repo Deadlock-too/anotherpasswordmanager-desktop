@@ -71,14 +71,14 @@ const Column = ({
                   <h2 className='text-center font-thin pr-5 pl-5'>Tap on the plus icon to add a new { variant }</h2>
                 </div>
                 :
-                <ul className='menu menu-md bg-base-300 w-full flex-grow rounded-box'>
+                <ul className='menu menu-md bg-base-300 w-full flex-grow rounded-box gap-1'>
                   {
                     elements.map((child) => {
                       return (
                         <li key={ child.Id } className={ (
                           (variant === 'folders' && child.Id === selectedFolderId) ||
                           (variant === 'entries' && child.Id === selectedEntryId)
-                        ) ? 'selected ' : ''
+                        ) ? 'selected' : ''
                         }>
                           <a onClick={ () => {
                             variant === 'folders' ?

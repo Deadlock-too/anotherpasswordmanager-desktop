@@ -8,6 +8,7 @@ const DetailView = () => {
     selectedEntryId,
     selectedFolderId,
     handleAddEntry,
+    handleUpdateEntry,
     handleSelectEntry,
     entries
   } = useContext(FileContentContext)
@@ -26,7 +27,12 @@ const DetailView = () => {
         key={ selectedEntry?.Id }
         entry={ selectedEntry }
         onSubmit={ (entry) => {
-          handleAddEntry(entry, selectedFolderId)
+          if (selectedEntry === undefined) {
+            handleAddEntry(entry, selectedFolderId)
+          }
+          else {
+            handleUpdateEntry(entry)
+          }
           handleSelectEntry(entry, false)
         } }/>
       :
