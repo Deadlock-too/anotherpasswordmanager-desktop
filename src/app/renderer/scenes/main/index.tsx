@@ -4,7 +4,7 @@ import Column from '../../components/column'
 import Modal from '../../components/modal'
 import DetailView from '../../components/detailView'
 import { Formik } from 'formik'
-import { FileContentContext, SelectionContext } from '../../contexts'
+import { FileContentContext } from '../../contexts'
 
 const AddFolderDialog = (props: { onSubmit: (folder: Folder) => void }) => {
   return (
@@ -79,19 +79,10 @@ const Main = () => {
   const {
     folders,
     entries,
-    // setFolders,
-    // setEntries,
-    // handleAddEntry,
     handleAddFolder,
-    // handleRemoveEntry,
-    // handleRemoveFolder,
-  } = useContext(FileContentContext)
-  const {
     handleSelectEntry,
-    handleSelectFolder,
-    // selectedEntryID,
-    // selectedFolderID,
-  } = useContext(SelectionContext)
+    handleSelectFolder
+  } = useContext(FileContentContext)
 
   return (
     <div className="main-content flex flex-row justify-between p-2 items-center h-screen">
@@ -113,8 +104,8 @@ const Main = () => {
         variant="entries"
         unselectableContent={true}
         elements={entries}
-        onSelectEntry={handleSelectEntry}
-        onAddEntry={() => handleSelectEntry(uuid())}
+        onSelectEntry={(entry) => handleSelectEntry(entry, false)}
+        onAddEntry={() => handleSelectEntry(null, true)}
       />
       <Column
         label="Detail"

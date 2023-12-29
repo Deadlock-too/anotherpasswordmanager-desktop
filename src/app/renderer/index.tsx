@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import App from './app'
-import { FileContentContextProvider, SelectionContextProvider } from './contexts'
+import { FileContentContextProvider } from './contexts'
 
 
 /*
@@ -42,8 +42,6 @@ if (!rootDiv)
 const root = createRoot(rootDiv)
 root.render(
   <FileContentContextProvider>
-    <SelectionContextProvider>
-      <App/>
-    </SelectionContextProvider>
+    <App/>
   </FileContentContextProvider>
 )

@@ -19,7 +19,7 @@ export type Folder = {
 
 export type Entry = {
   Id: UUID
-  Title: string
+  Title?: string
   Username?: string
   Password?: string
 }

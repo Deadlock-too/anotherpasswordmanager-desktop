@@ -1,23 +1,34 @@
 import { useContext, useEffect, useState } from 'react'
-import { FileContentContext, SelectionContext } from '../../contexts'
+import { FileContentContext } from '../../contexts'
 import EntryDetail from '../entryDetail'
 import { Entry } from '../../types'
 
 const DetailView = () => {
-  const { selectedEntryID } = useContext(SelectionContext)
-  const { handleAddEntry, entries } = useContext(FileContentContext)
-  const [selectedEntry, setSelectedEntry] = useState<Entry | undefined>(undefined)
+  const {
+    selectedEntryId,
+    selectedFolderId,
+    handleAddEntry,
+    handleSelectEntry,
+    entries
+  } = useContext(FileContentContext)
+  const [ selectedEntry, setSelectedEntry ] = useState<Entry | undefined>(undefined)
 
   useEffect(() => {
-    if (selectedEntryID) {
-      const entry = entries.find((entry) => entry.Id === selectedEntryID)
+    if (selectedEntryId) {
+      const entry = entries.find((entry) => entry.Id === selectedEntryId)
       setSelectedEntry(entry)
     }
-  }, [selectedEntryID])
+  }, [ selectedEntryId ])
 
   return (
-    selectedEntryID ?
-      <EntryDetail entry={selectedEntry ?? { Id: selectedEntryID } as Entry} onSubmit={handleAddEntry}/>
+    selectedFolderId && selectedEntryId ?
+      <EntryDetail
+        key={ selectedEntry?.Id }
+        entry={ selectedEntry }
+        onSubmit={ (entry) => {
+          handleAddEntry(entry, selectedFolderId)
+          handleSelectEntry(entry, false)
+        } }/>
       :
       <div className='h-full justify-center flex flex-col unselectable'>
         <h1 className='text-center font-bold'>No entry selected</h1>
