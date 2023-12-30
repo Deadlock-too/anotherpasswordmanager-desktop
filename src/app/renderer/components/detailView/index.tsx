@@ -34,7 +34,8 @@ const DetailView = () => {
             handleUpdateEntry(entry)
           }
           handleSelectEntry(entry, false)
-        } }/>
+        } }
+      />
       :
       <div className='h-full justify-center flex flex-col unselectable'>
         <h1 className='text-center font-bold'>No entry selected</h1>

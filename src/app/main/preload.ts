@@ -45,3 +45,12 @@ contextBridge.exposeInMainWorld('dialog', {
     }
   }
 })
+
+contextBridge.exposeInMainWorld('clipboard', {
+  read: (): Promise<string> => {
+    return ipcRenderer.invoke('clipboard:read')
+  },
+  write: (text: string): Promise<void> => {
+    return ipcRenderer.invoke('clipboard:write', text)
+  }
+})

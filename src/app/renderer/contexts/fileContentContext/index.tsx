@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useState } from 'react'
 import { Entry, Folder, uuid, UUID } from '../../types'
 
 interface FileContentContextState {
@@ -25,7 +25,7 @@ interface FileContentContextState {
 export const FileContentContext = createContext<FileContentContextState>({} as FileContentContextState)
 
 export function FileContentContextProvider({ children }) {
-  const [ isInitialized, setIsInitialized ] = React.useState<boolean>(true) //default false
+  const [ isInitialized, setIsInitialized ] = React.useState<boolean>(false)
   const [ folders, setFolders ] = React.useState<Folder[]>([])
   const [ entries, setEntries ] = React.useState<Entry[]>([])
 
@@ -103,19 +103,10 @@ export function FileContentContextProvider({ children }) {
     } else {
       handleSelectFolderInternal(null)
     }
-    console.log('Selection Reset')
   }, [])
 
   const [ selectedFolderId, handleSelectFolderInternal ] = useState<UUID | null>(null)
   const [ selectedEntryId, handleSelectEntryInternal ] = useState<UUID | null>(null)
-
-  useEffect(() => {
-    console.log('Folders UseEffect: ' + JSON.stringify(folders))
-  }, [ folders ])
-
-  useEffect(() => {
-    console.log('Entries UseEffect: ' + JSON.stringify(entries))
-  }, [ entries, selectedFolderId ])
 
   const handleSelectEntry = useCallback((entry: Entry | null, newEntry: boolean) => {
     handleSelectEntryInternal(newEntry ? uuid() : (entry?.Id ?? null))
@@ -124,7 +115,6 @@ export function FileContentContextProvider({ children }) {
   const handleSelectFolder = useCallback((folder: Folder | null, currentSelectedEntryId: UUID | null, currentSelectedFolderId: UUID | null) => {
     if (currentSelectedFolderId !== folder?.Id) {
       handleSelectFolderInternal(folder ? folder.Id : null)
-      console.log('Selected Folder: ' + folder?.Id)
       if (folder) {
         setEntries(folder.Entries)
         if (!!currentSelectedEntryId && !(currentSelectedEntryId in folder.Entries.map((entry) => entry.Id))) {
@@ -154,6 +144,7 @@ export function FileContentContextProvider({ children }) {
     handleSelectEntry,
     handleSelectFolder
   }
+
   return (
     <FileContentContext.Provider value={ context }>
       { children }

@@ -19,9 +19,9 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
       initialValues={
         {
           id: props.entry?.Id,
-          title: props.entry?.Title,
-          username: props.entry?.Username,
-          password: props.entry?.Password
+          title: props.entry?.Title ?? '',
+          username: props.entry?.Username ?? '',
+          password: props.entry?.Password ?? ''
         }
       }
       // validate={} //Think about validations
@@ -35,7 +35,6 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           }
           props.onSubmit(entry)
           toggleReadonly()
-          console.log('submitting')
           setSubmitting(false)
         }, 400)
       } }
@@ -63,7 +62,10 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               // </label>
               // <div className='p-2'/>
             }
-            <label className='form-control w-full'>
+            <label className='form-control w-full' onClick={ () => {
+              if (readonly && values.title !== undefined)
+                window.clipboard.write(values.title)
+            } }>
               <div className='label'>
                 <span className='label-text font-bold'>Title</span>
               </div>
@@ -80,7 +82,10 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               />
             </label>
             <div className='p-2'/>
-            <label className='form-control w-full'>
+            <label className='form-control w-full' onClick={ () => {
+              if (readonly && values.username !== undefined)
+                window.clipboard.write(values.username)
+            } }>
               <div className='label'>
                 <span className='label-text font-bold'>Username</span>
               </div>
@@ -97,7 +102,10 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               />
             </label>
             <div className='p-2'/>
-            <label className='form-control w-full'>
+            <label className='form-control w-full' onClick={ () => {
+              if (readonly && values.password !== undefined)
+                window.clipboard.write(values.password)
+            } }>
               <div className='label'>
                 <span className='label-text font-bold'>Password</span>
               </div>

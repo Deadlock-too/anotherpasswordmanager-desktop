@@ -80,7 +80,7 @@ const Column = ({
                           (variant === 'entries' && child.Id === selectedEntryId)
                         ) ? 'selected' : ''
                         }>
-                          <a onClick={ () => {
+                          <a key={ child.Id } onClick={ () => {
                             variant === 'folders' ?
                               onSelectFolder!(child as Folder, selectedEntryId, selectedFolderId) :
                               onSelectEntry!(child as Entry)

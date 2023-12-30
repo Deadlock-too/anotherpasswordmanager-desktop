@@ -26,6 +26,10 @@ declare global {
     localization: {
       getInitialI18nStore: () => Promise<any>,
       changeLanguage: (lang: string) => Promise<void>,
+    },
+    clipboard: {
+      read: () => Promise<string>,
+      write: (text: string) => Promise<void>
     }
   }
 }

@@ -1,4 +1,4 @@
-import { ipcMain, nativeTheme } from 'electron'
+import { ipcMain, nativeTheme, clipboard } from 'electron'
 import { changeTitleBarOverlayTheme, openFileDialog, saveFileDialog } from './utils/windowManager'
 import { daisyui } from '../../../tailwind.config'
 import { Theme } from 'daisyui'
@@ -63,4 +63,12 @@ ipcMain.handle('darkMode:toggle', async (): Promise<boolean> => {
 
 ipcMain.handle('darkMode:system', () => {
   nativeTheme.themeSource = 'system'
+})
+
+ipcMain.handle('clipboard:read', async (): Promise<string> => {
+  return clipboard.readText('clipboard')
+})
+
+ipcMain.handle('clipboard:write', async (_, args): Promise<void> => {
+  return clipboard.writeText(args, 'clipboard')
 })
