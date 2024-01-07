@@ -1,8 +1,11 @@
 import { BrowserWindow, dialog } from 'electron'
 import i18n from '../../../i18n'
+import * as fs from 'fs'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
+
+let mainWindow: BrowserWindow | null
 
 async function createMainWindow() {
   function onClose() {
@@ -10,7 +13,7 @@ async function createMainWindow() {
     mainWindow = null
   }
 
-  let mainWindow: BrowserWindow | null = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
     },
@@ -64,18 +67,26 @@ export async function onWindowAllClosed(app: Electron.App) {
 }
 
 export async function openFileDialog() {
-  let path: string | undefined = undefined
-  await dialog.showOpenDialog({
-    properties: ['openFile']
-  }).then(
-    (result) => {
-      if (!result.canceled && result.filePaths.length > 0)
-        path = result.filePaths[0]
-    }).catch((err) => {
-    console.error(`Error: ${ err }`)
-  })
-  console.log(`Opening path: ${ path }`)
-  return path
+  let content: string | undefined = undefined
+  if (mainWindow) {
+    await dialog.showOpenDialog(mainWindow, {
+      properties: [ 'openFile' ],
+      filters: [
+        //{ name: 'Apm files', extensions: [ 'apm' ] } //TODO ADD SUPPORT FOR APM FILES
+      ]
+    }).then(
+      (result) => {
+        if (!result.canceled && result.filePaths.length > 0) {
+          const path = result.filePaths[0]
+          content = fs.readFileSync(path).toString()
+          if (mainWindow) {
+            mainWindow.webContents.send('file-opened', path, content)
+          }
+        }
+      }).catch((err) => {
+      console.error(`Error: ${ err }`)
+    })
+  }
 }
 
 export async function saveFileDialog() {
@@ -83,7 +94,7 @@ export async function saveFileDialog() {
   await dialog.showSaveDialog({
     'title': i18n.t('saveFile'),
     'defaultPath': 'passwords.apm',
-    properties: ['showOverwriteConfirmation']
+    properties: [ 'showOverwriteConfirmation' ]
   }).then(
     (result) => {
       if (!result.canceled && result.filePath)

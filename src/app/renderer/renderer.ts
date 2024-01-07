@@ -30,6 +30,10 @@ declare global {
     clipboard: {
       read: () => Promise<string>,
       write: (text: string) => Promise<void>
+    },
+    electron: {
+      subscribeToFileOpened: (callback: unknown) => void
+      saveFile: (path: string, data: string) => Promise<void>
     }
   }
 }

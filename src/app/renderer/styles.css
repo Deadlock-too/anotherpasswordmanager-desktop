@@ -65,3 +65,9 @@
   }
 
 }
+
+/* TODO MANAGE (USES DEFAULT SYSTEM FONT)
+body, input {
+  font: menu;
+}
+*/

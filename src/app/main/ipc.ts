@@ -2,6 +2,7 @@ import { ipcMain, nativeTheme, clipboard } from 'electron'
 import { changeTitleBarOverlayTheme, openFileDialog, saveFileDialog } from './utils/windowManager'
 import { daisyui } from '../../../tailwind.config'
 import { Theme } from 'daisyui'
+import * as fs from 'fs'
 
 /**
  * Ipc events
@@ -26,7 +27,10 @@ import { Theme } from 'daisyui'
 /**
  * Ipc event handlers
  */
-ipcMain.handle('fileManagement:open', async (): Promise<string | undefined> => {
+// ipcMain.handle('fileManagement:open', async (): Promise<string | undefined> => {
+//   return await openFileDialog()
+// })
+ipcMain.handle('fileManagement:open', async (): Promise<void> => {
   return await openFileDialog()
 })
 
@@ -71,4 +75,9 @@ ipcMain.handle('clipboard:read', async (): Promise<string> => {
 
 ipcMain.handle('clipboard:write', async (_, args): Promise<void> => {
   return clipboard.writeText(args, 'clipboard')
+})
+
+ipcMain.handle('electron:saveFile', async (_, path: string, data: string): Promise<void> => {
+  //TODO SAVE FILE
+  fs.writeFileSync(path, data, { encoding: 'utf-8' })
 })

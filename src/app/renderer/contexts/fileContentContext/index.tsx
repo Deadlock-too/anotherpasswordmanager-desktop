@@ -1,9 +1,13 @@
-import React, { createContext, useCallback, useState } from 'react'
-import { Entry, Folder, uuid, UUID } from '../../types'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
+import { Entry, File, Folder, uuid, UUID } from '../../types'
 
 interface FileContentContextState {
   isInitialized: boolean
-  toggleIsInitialized: () => void
+  setIsInitialized: (isInitialized: boolean) => void
+  initialize: (path: string, fileContent: string) => void
+  filePath: string
+  setFilePath: (path: string) => void
+  fileContent: File | null
   reset: () => void
   folders: Folder[]
   entries: Entry[]
@@ -28,6 +32,35 @@ export function FileContentContextProvider({ children }) {
   const [ isInitialized, setIsInitialized ] = React.useState<boolean>(false)
   const [ folders, setFolders ] = React.useState<Folder[]>([])
   const [ entries, setEntries ] = React.useState<Entry[]>([])
+  const [ filePath, setFilePath ] = React.useState<string>('')
+  const [ fileContent, setFileContent ] = React.useState<File | null>(null)
+
+  const initialize = useCallback((path: string, fileContent: string) => {
+    const fc: File = JSON.parse(fileContent)
+    setFolders(fc.Folders)
+    setIsInitialized(true)
+    setFilePath(path)
+  }, [])
+
+  useEffect(() => {
+    console.log(filePath)
+  }, [ filePath ])
+
+  useEffect(() => {
+    setFileContent({
+      AppVersion: '0.0.1',
+      Password: '',
+      Folders: folders
+    })
+
+    if (isInitialized && filePath) {
+      window.electron.saveFile(filePath, JSON.stringify({
+        AppVersion: '0.0.1',
+        Password: '',
+        Folders: folders
+      }))
+    }
+  }, [folders, filePath])
 
   const reset = useCallback(() => {
     setFolders([])
@@ -46,13 +79,13 @@ export function FileContentContextProvider({ children }) {
 
   const handleUpdateEntry = useCallback((entry: Entry) => {
     setEntries((prevState) => {
-      const newState = [...prevState]
+      const newState = [ ...prevState ]
       const index = newState.findIndex((e) => e.Id === entry.Id)
       newState[index] = entry
       return newState
     })
     setFolders((prevState) => {
-      const newState = [...prevState]
+      const newState = [ ...prevState ]
       const folderIndex = newState.findIndex((folder) => folder.Entries.findIndex((e) => e.Id === entry.Id) !== -1)
       const entryIndex = newState[folderIndex].Entries.findIndex((e) => e.Id === entry.Id)
       newState[folderIndex].Entries[entryIndex] = entry
@@ -61,9 +94,9 @@ export function FileContentContextProvider({ children }) {
   }, [])
 
   const handleDeleteEntry = useCallback((id: UUID) => {
-    setEntries((prevState) => [...prevState.filter((entry) => entry.Id !== id)])
+    setEntries((prevState) => [ ...prevState.filter((entry) => entry.Id !== id) ])
     setFolders((prevState) => {
-      const newState = [...prevState]
+      const newState = [ ...prevState ]
       const folderIndex = newState.findIndex((folder) => folder.Entries.findIndex((entry) => entry.Id === id) !== -1)
       newState[folderIndex].Entries = newState[folderIndex].Entries.filter((entry) => entry.Id !== id)
       return newState
@@ -126,7 +159,11 @@ export function FileContentContextProvider({ children }) {
 
   const context: FileContentContextState = {
     isInitialized,
-    toggleIsInitialized,
+    setIsInitialized,
+    initialize,
+    filePath,
+    setFilePath,
+    fileContent,
     reset,
     folders,
     entries,

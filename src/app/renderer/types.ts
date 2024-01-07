@@ -8,6 +8,8 @@ export type FileStoreData = {
 }
 
 export type File = {
+  AppVersion: string
+  Password: string
   Folders: Folder[]
 }
 

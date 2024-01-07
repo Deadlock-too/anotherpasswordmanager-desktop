@@ -8,11 +8,15 @@ import { FileContentContext } from './contexts'
 
 const App = () => {
   const [initialI18nStore, setInitialI18nStore] = useState(null)
-  const { isInitialized, toggleIsInitialized } = useContext(FileContentContext)
+  const { isInitialized, initialize, setIsInitialized } = useContext(FileContentContext)
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
   }, [])
+
+  window.electron.subscribeToFileOpened((path, content) => {
+    initialize(path, content)
+  })
 
   if (!initialI18nStore)
     return null
@@ -23,7 +27,7 @@ const App = () => {
       <div className="overflow-hidden">
         {
           (!isInitialized) ?
-            <Intro onNewButtonClick={toggleIsInitialized}/> :
+            <Intro onNewButtonClick={() => setIsInitialized(true)}/> :
             <Main/>
         }
       </div>

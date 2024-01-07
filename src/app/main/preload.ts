@@ -37,7 +37,7 @@ contextBridge.exposeInMainWorld('theming', {
 
 contextBridge.exposeInMainWorld('dialog', {
   fileManagement: {
-    open: (): Promise<string | undefined> => {
+    open: (): Promise<void> => {
       return ipcRenderer.invoke('fileManagement:open')
     },
     save: (): Promise<string | undefined> => {
@@ -52,5 +52,14 @@ contextBridge.exposeInMainWorld('clipboard', {
   },
   write: (text: string): Promise<void> => {
     return ipcRenderer.invoke('clipboard:write', text)
+  }
+})
+
+contextBridge.exposeInMainWorld('electron', {
+  subscribeToFileOpened: (callback) => {
+    ipcRenderer.on('file-opened', (event, ...args) => callback(...args))
+  },
+  saveFile: (path: string, data: string): Promise<void> => {
+    return ipcRenderer.invoke('electron:saveFile', path, data)
   }
 })
