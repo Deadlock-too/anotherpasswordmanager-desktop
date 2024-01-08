@@ -1,4 +1,4 @@
-import { Component, useContext } from 'react'
+import { useContext } from 'react'
 import DarkModeToggle from './darkModeToggle'
 import { SaveIcon } from '../../../../assets/icons'
 import { FileContentContext } from '../../contexts'
@@ -43,17 +43,19 @@ const SaveButton = () => {
   )
 }
 
-export default class TitleBar extends Component {
-  render() {
-    return (
-      <div className="flex justify-between titlebar text-black dark:text-white items-center px-3 py-1">
-        {/*<SaveIcon className="titlebar-icon"/>*/ }
-        <SaveButton/>
-        {/*<h1 className="truncate">Another password manager</h1>*/ }
-        {/* TODO MANAGE TITLE-BAR */ }
-        <h1 className="truncate"></h1>
-        <DarkModeToggle/>
-      </div>
-    )
-  }
+const TitleBar = () => {
+  const {isInitialized} = useContext(FileContentContext)
+
+  return (
+    <div className="flex justify-between titlebar text-black dark:text-white items-center px-3 py-1">
+      {/*<SaveIcon className="titlebar-icon"/>*/ }
+      { isInitialized ? <SaveButton/> : null }
+      {/*<h1 className="truncate">Another password manager</h1>*/ }
+      {/* TODO MANAGE TITLE-BAR */ }
+      <h1 className="truncate"></h1>
+      <DarkModeToggle/>
+    </div>
+  )
 }
+
+export default TitleBar
