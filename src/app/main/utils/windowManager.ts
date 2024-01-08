@@ -72,7 +72,7 @@ export async function openFileDialog() {
     await dialog.showOpenDialog(mainWindow, {
       properties: [ 'openFile' ],
       filters: [
-        //{ name: 'Apm files', extensions: [ 'apm' ] } //TODO ADD SUPPORT FOR APM FILES
+        { name: 'Apm files', extensions: [ 'apm' ] } //TODO ADD SUPPORT FOR APM FILES
       ]
     }).then(
       (result) => {

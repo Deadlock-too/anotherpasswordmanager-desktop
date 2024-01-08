@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import Column from '../../components/column'
 import DetailView from '../../components/detailView'
-import { FileContentContext } from '../../contexts'
+import { FileContentContext, ModalContext } from '../../contexts'
 import AddFolderDialog from '../../components/modal/addFolder'
 
 const Main = () => {
@@ -11,6 +11,7 @@ const Main = () => {
     handleSelectEntry,
     handleSelectFolder
   } = useContext(FileContentContext)
+  const { setIsAddFolderModalOpen } = useContext(ModalContext)
 
   return (
     <div className="main-content flex flex-row justify-between p-2 items-center h-screen">
@@ -22,9 +23,12 @@ const Main = () => {
         unselectableContent={ true }
         elements={ folders }
         onSelectFolder={ handleSelectFolder }
-        /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-        // @ts-ignore
-        onAddEntry={ () => document.getElementById('addFolderModal').showModal() }
+        onAddEntry={ () => {
+          /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+          // @ts-ignore
+          document.getElementById('addFolderModal').showModal()
+          setIsAddFolderModalOpen(true)
+        } }
       />
       <Column
         label="Entries"
