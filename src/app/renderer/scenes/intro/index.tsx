@@ -8,9 +8,6 @@ const Intro = ({ onNewButtonClick }) => (
         <div className='flex flex-col items-center justify-items-center gap-3 py-5'>
           <button className='btn' onClick={() => {
             window.dialog.fileManagement.open()
-              .then((result) => {
-                console.log(`Renderer result: ${result}`)
-              })
           }}>
             <FolderOpenIcon/>
             {i18n.t('Intro.Open Existing')}

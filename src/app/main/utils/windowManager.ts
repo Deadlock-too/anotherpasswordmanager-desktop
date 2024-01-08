@@ -70,6 +70,7 @@ export async function openFileDialog() {
   let content: string | undefined = undefined
   if (mainWindow) {
     await dialog.showOpenDialog(mainWindow, {
+      title: i18n.t('OpenDialog.Title'),
       properties: [ 'openFile' ],
       filters: [
         { name: 'Apm files', extensions: [ 'apm' ] } //TODO ADD SUPPORT FOR APM FILES
@@ -92,8 +93,8 @@ export async function openFileDialog() {
 export async function saveFileDialog() {
   let path: string | undefined = undefined
   await dialog.showSaveDialog({
-    'title': i18n.t('saveFile'),
-    'defaultPath': 'passwords.apm',
+    'title': i18n.t('SaveDialog.Title'),
+    'defaultPath': 'passwords.apm', //TODO CHOOSE DEFAULT FILE NAME
     properties: [ 'showOverwriteConfirmation' ]
   }).then(
     (result) => {

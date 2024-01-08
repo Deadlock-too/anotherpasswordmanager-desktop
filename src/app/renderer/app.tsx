@@ -7,27 +7,29 @@ import Intro from './scenes/intro'
 import { FileContentContext } from './contexts'
 
 const App = () => {
-  const [initialI18nStore, setInitialI18nStore] = useState(null)
+  const [ initialI18nStore, setInitialI18nStore ] = useState(null)
   const { isInitialized, initialize, setIsInitialized } = useContext(FileContentContext)
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
   }, [])
 
-  window.electron.subscribeToFileOpened((path, content) => {
-    initialize(path, content)
-  })
+  useEffect(() => {
+    const fileOpenedHandler = (path, content) => initialize(path, content)
+    window.electron.subscribeToFileOpened(fileOpenedHandler)
+    return () => window.electron.unsubscribeToFileOpened()
+  }, [])
 
   if (!initialI18nStore)
     return null
 
   return (
-    <I18nextProvider i18n={i18n}>
+    <I18nextProvider i18n={ i18n }>
       <TitleBar/>
       <div className="overflow-hidden">
         {
           (!isInitialized) ?
-            <Intro onNewButtonClick={() => setIsInitialized(true)}/> :
+            <Intro onNewButtonClick={ () => setIsInitialized(true) }/> :
             <Main/>
         }
       </div>

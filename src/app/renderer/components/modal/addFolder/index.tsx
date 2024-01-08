@@ -3,6 +3,7 @@ import { FileContentContext, ModalContext } from '../../../contexts'
 import Modal from '../index'
 import { Formik } from 'formik'
 import { uuid } from '../../../types'
+import i18n from '../../../../../i18n'
 
 const AddFolderDialog = () => {
   const {
@@ -20,7 +21,7 @@ const AddFolderDialog = () => {
       validate={ (values) => {
         const errors = {}
         if (values.title === undefined || values.title === '') {
-          errors['title'] = 'Required'
+          errors['title'] = i18n.t('Common.Validations.Required field')
         }
         return errors
       } }
@@ -55,7 +56,7 @@ const AddFolderDialog = () => {
       }) => (
         <Modal
           id="addFolderModal"
-          title="Add Folder"
+          title={ i18n.t('AddFolderDialog.Title') }
           handleReset={ () => {
             handleReset()
             setIsAddFolderModalOpen(false)
@@ -64,7 +65,7 @@ const AddFolderDialog = () => {
           <form onSubmit={ handleSubmit } className="justify-between">
             <label className="form-control w-full mb-4">
               <div className="label">
-                <span className="label-text">Enter folder name</span>
+                <span className="label-text">{i18n.t('AddFolderDialog.Field Label')}</span>
               </div>
               <input
                 type="text"
@@ -72,7 +73,7 @@ const AddFolderDialog = () => {
                 onChange={ handleChange }
                 onBlur={ handleBlur }
                 value={ values.title }
-                placeholder="Title"
+                placeholder={ i18n.t('AddFolderDialog.Field Placeholder') }
                 className="input input-sm input-bordered w-full"
                 disabled={ isSubmitting }
                 aria-hidden={ !isAddFolderModalOpen }
@@ -91,7 +92,7 @@ const AddFolderDialog = () => {
               type="submit"
               aria-hidden={ !isAddFolderModalOpen }
               tabIndex={ isAddFolderModalOpen ? 0 : -1 }>
-              Add Folder
+              { i18n.t('AddFolderDialog.Submit Button')}
             </button>
           </form>
         </Modal>

@@ -4,6 +4,7 @@ import { Formik } from 'formik'
 import { EyeIcon } from '../../../../assets/icons'
 import { useContext, useState } from 'react'
 import { FileContentContext } from '../../contexts'
+import i18n from '../../../../i18n'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
   const { handleSelectEntry, handleDeleteEntry } = useContext(FileContentContext)
@@ -24,7 +25,15 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           password: props.entry?.Password ?? ''
         }
       }
-      // validate={} //Think about validations
+      validate={
+        values => {
+          const errors: any = {}
+          if (!values.title) {
+            errors.title = i18n.t('Common.Validations.Required field')
+          }
+          return errors
+        }
+      } //Think about validations
       onSubmit={ (values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
           const entry: Entry = {
@@ -41,8 +50,8 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
     >
       { ({
         values,
-        // errors,
-        // touched,
+        errors,
+        touched,
         handleChange,
         handleBlur,
         handleSubmit,
@@ -67,7 +76,9 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                 window.clipboard.write(values.title)
             } }>
               <div className='label'>
-                <span className='label-text font-bold'>Title</span>
+                <span className='label-text font-bold'>
+                  { i18n.t('Entry Detail.Title Label') }
+                </span>
               </div>
               <input
                 type='text'
@@ -75,19 +86,27 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                 onChange={ handleChange }
                 onBlur={ handleBlur }
                 value={ values.title }
-                placeholder='Title'
+                placeholder={ i18n.t('Entry Detail.Title Placeholder') }
                 className='input input-sm input-bordered w-full'
                 disabled={ isSubmitting }
                 readOnly={ readonly }
               />
+              {
+                touched ?
+                  <div className='label'>
+                    <span className='label-text-alt text-error'>{ errors.title }</span>
+                  </div>
+                  : null
+              }
             </label>
-            <div className='p-2'/>
             <label className='form-control w-full' onClick={ () => {
               if (readonly && values.username !== undefined)
                 window.clipboard.write(values.username)
             } }>
               <div className='label'>
-                <span className='label-text font-bold'>Username</span>
+                <span className='label-text font-bold'>
+                  { i18n.t('Entry Detail.Username Label') }
+                </span>
               </div>
               <input
                 type='text'
@@ -95,19 +114,27 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                 onChange={ handleChange }
                 onBlur={ handleBlur }
                 value={ values.username }
-                placeholder='Username'
+                placeholder={ i18n.t('Entry Detail.Username Placeholder') }
                 className='input input-sm input-bordered w-full'
                 disabled={ isSubmitting }
                 readOnly={ readonly }
               />
+              {
+                touched ?
+                  <div className='label'>
+                    <span className='label-text-alt text-error'>{ errors.username }</span>
+                  </div>
+                  : null
+              }
             </label>
-            <div className='p-2'/>
             <label className='form-control w-full' onClick={ () => {
               if (readonly && values.password !== undefined)
                 window.clipboard.write(values.password)
             } }>
               <div className='label'>
-                <span className='label-text font-bold'>Password</span>
+                <span className='label-text font-bold'>
+                  { i18n.t('Entry Detail.Password Label') }
+                </span>
               </div>
               <div className='relative'>
                 <input
@@ -116,15 +143,17 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   onChange={ handleChange }
                   onBlur={ handleBlur }
                   value={ values.password }
-                  placeholder='Password'
+                  placeholder={ i18n.t('Entry Detail.Password Placeholder') }
                   className='input input-sm input-bordered w-full pr-16'
                   disabled={ isSubmitting }
                   readOnly={ readonly }
                 />
                 <button type='button'
-                        className='tooltip tooltip-base-100 absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info focus:tooltip-open'
+                        // className='tooltip tooltip-base-100 absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info focus:tooltip-open' //TODO MANAGE TOOLTIP PROBLEM
+                        className='absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info'
                         disabled={ isSubmitting }
-                        data-tip={ passwordVisibility ? 'Show password' : 'Hide password' }
+                        title={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password')}
+                        // data-tip={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password') }
                         onClick={ () => {
                           handlePasswordVisibility()
                         } }
@@ -132,6 +161,13 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   <EyeIcon/>
                 </button>
               </div>
+              {
+                touched ?
+                  <div className='label'>
+                    <span className='label-text-alt text-error'>{ errors.password }</span>
+                  </div>
+                  : null
+              }
             </label>
           </div>
           <div className='flex flex-row w-full justify-between pt-12 pb-5'>
@@ -146,14 +182,14 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                         } }
                         disabled={ isSubmitting }
                 >
-                  Edit
+                  { i18n.t('Entry Detail.Edit Button') }
                 </button>
                 :
                 <button type='submit'
                         disabled={ isSubmitting }
                         className='btn btn-primary btn-outline w-1/3'
                 >
-                  Save
+                  { i18n.t('Entry Detail.Save Button') }
                 </button>
             }
             {
@@ -168,7 +204,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                           handleSelectEntry(null, false)
                         } }
                 >
-                  Delete
+                  { i18n.t('Entry Detail.Delete Button') }
                 </button>
                 :
                 <button type='reset'
@@ -184,7 +220,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                           }
                         } }
                 >
-                  Cancel
+                  { i18n.t('Entry Detail.Cancel Button') }
                 </button>
             }
           </div>

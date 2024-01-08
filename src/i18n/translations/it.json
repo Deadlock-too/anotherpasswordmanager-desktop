@@ -80,5 +80,47 @@
     "Open Existing": "Apri file",
     "Add New": "Aggiungi nuovo",
     "Or": "oppure"
+  },
+  "Main": {
+    "Folders": "Cartelle",
+    "No folders": "Nessuna cartella",
+    "Add folders": "Premi il pulsante + per aggiungere una nuova cartella",
+    "Entries": "Voci",
+    "No entries": "Nessuna voce",
+    "Add entries": "Premi il pulsante + per aggiungere una nuova voce",
+    "Detail": "Dettaglio",
+    "No Entry Selected": "Nessuna voce selezionata",
+    "Entry Detail": "Seleziona una voce per visualizzarne i dettagli"
+  },
+  "Entry Detail": {
+    "Title Label": "Titolo",
+    "Title Placeholder": "Titolo",
+    "Username Label": "Nome utente",
+    "Username Placeholder": "Nome utente",
+    "Password Label": "Password",
+    "Password Placeholder": "Password",
+    "Save Button": "Salva",
+    "Cancel Button": "Annulla",
+    "Edit Button": "Modifica",
+    "Delete Button": "Elimina",
+    "Show Password": "Mostra password",
+    "Hide Password": "Nascondi password"
+  },
+  "OpenDialog": {
+    "Title": "Apri file"
+  },
+  "SaveDialog": {
+    "Title": "Salva file"
+  },
+  "AddFolderDialog": {
+    "Title": "Aggiungi cartella",
+    "Field Label": "Inserisci il nome della cartella",
+    "Field Placeholder": "Nome cartella",
+    "Submit Button": "Aggiungi cartella"
+  },
+  "Common": {
+    "Validations": {
+      "Required field": "Campo obbligatorio"
+    }
   }
 }

@@ -80,5 +80,47 @@
     "Open Existing": "Open file",
     "Add New": "Add new",
     "Or": "or"
+  },
+  "Main": {
+    "Folders": "Folders",
+    "No folders": "No folders found",
+    "Add folders": "Tap on the + button to add new a folder",
+    "Entries": "Entries",
+    "No entries": "No entries found",
+    "Add entries": "Tap on the + button to add new an entry",
+    "Detail": "Detail",
+    "No Entry Selected": "No entry selected",
+    "Entry Detail": "Select an entry to view its details"
+  },
+  "Entry Detail": {
+    "Title Label": "Title",
+    "Title Placeholder": "Title",
+    "Username Label": "Username",
+    "Username Placeholder": "Username",
+    "Password Label": "Password",
+    "Password Placeholder": "Password",
+    "Save Button": "Save",
+    "Cancel Button": "Cancel",
+    "Edit Button": "Edit",
+    "Delete Button": "Delete",
+    "Show Password": "Show password",
+    "Hide Password": "Hide password"
+  },
+  "OpenDialog": {
+    "Title": "Open file"
+  },
+  "SaveDialog": {
+    "Title": "Save file"
+  },
+  "AddFolderDialog": {
+    "Title": "Add folder",
+    "Field Label": "Enter folder name",
+    "Field Placeholder": "Folder name",
+    "Submit Button": "Add Folder"
+  },
+  "Common": {
+    "Validations": {
+      "Required field": "Required field"
+    }
   }
 }

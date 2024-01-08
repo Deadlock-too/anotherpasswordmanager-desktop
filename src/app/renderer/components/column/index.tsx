@@ -2,6 +2,7 @@ import { Entry, Folder, UUID } from '../../types'
 import { ReactNode, useContext } from 'react'
 import { PlusIcon } from '../../../../assets/icons'
 import { FileContentContext } from '../../contexts'
+import i18n from '../../../../i18n'
 
 interface ColumnProps {
   label: string | undefined
@@ -66,9 +67,11 @@ const Column = ({
               elements?.length === 0 ?
                 <div className='h-full justify-center flex flex-col'>
                   <h1 className='text-center font-bold'>
-                    No { variant } found
+                    { i18n.t(`Main.No ${variant}`) }
                   </h1>
-                  <h2 className='text-center font-thin pr-5 pl-5'>Tap on the plus icon to add a new { variant }</h2>
+                  <h2 className='text-center font-thin pr-5 pl-5'>
+                    { i18n.t(`Main.Add ${variant}`) }
+                  </h2>
                 </div>
                 :
                 <ul className='menu menu-md bg-base-300 w-full flex-grow rounded-box gap-1'>

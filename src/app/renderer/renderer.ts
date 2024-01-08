@@ -33,6 +33,7 @@ declare global {
     },
     electron: {
       subscribeToFileOpened: (callback: unknown) => void
+      unsubscribeToFileOpened: () => void
       saveFile: (path: string, data: string) => Promise<void>
     }
   }

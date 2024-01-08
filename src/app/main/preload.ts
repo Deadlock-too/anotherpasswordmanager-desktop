@@ -59,6 +59,9 @@ contextBridge.exposeInMainWorld('electron', {
   subscribeToFileOpened: (callback) => {
     ipcRenderer.on('file-opened', (event, ...args) => callback(...args))
   },
+  unsubscribeToFileOpened: () => {
+    ipcRenderer.removeAllListeners('file-opened')
+  },
   saveFile: (path: string, data: string): Promise<void> => {
     return ipcRenderer.invoke('electron:saveFile', path, data)
   }
