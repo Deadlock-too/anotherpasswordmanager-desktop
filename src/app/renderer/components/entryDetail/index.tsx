@@ -136,7 +136,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   { i18n.t('Entry Detail.Password Label') }
                 </span>
               </div>
-              <div className='relative'>
+              <div className='join'>
                 <input
                   type={ type }
                   name='password'
@@ -144,13 +144,13 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   onBlur={ handleBlur }
                   value={ values.password }
                   placeholder={ i18n.t('Entry Detail.Password Placeholder') }
-                  className='input input-sm input-bordered w-full pr-16'
+                  className='input input-sm input-bordered w-full pr-16 rounded-r-none'
                   disabled={ isSubmitting }
                   readOnly={ readonly }
                 />
                 <button type='button'
                         // className='tooltip tooltip-base-100 absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info focus:tooltip-open' //TODO MANAGE TOOLTIP PROBLEM
-                        className='absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info'
+                        className='relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info'
                         disabled={ isSubmitting }
                         title={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password')}
                         // data-tip={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password') }
