@@ -18,6 +18,7 @@ interface ColumnProps {
   entry?: Entry
 }
 
+// TODO MAKE SPECIFIC COLUMN IMPLEMENTATION FOR FOLDERS AND ENTRIES
 const Column = ({
   label = undefined,
   width = 'w-3/12',
@@ -92,6 +93,16 @@ const Column = ({
                               variant === 'folders' ?
                                 (child as Folder).Name :
                                 (child as Entry).Title
+
+                              // TODO: Fix this
+                              // Check if any of the children has the same name as the current child
+                              // If so, append the folder id to the name
+                              // This is to prevent duplicate names in the UI
+                              // variant === 'folders' ?
+                              //   elements.filter((element) => element.Name === child.Name).length > 1 ?
+                              //     `${ child.Name } (${ child.Username })` :
+                              //     child.Name :
+                              //   child.Name
                             }
                           </a>
                         </li>

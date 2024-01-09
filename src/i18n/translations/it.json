@@ -99,12 +99,15 @@
     "Username Placeholder": "Nome utente",
     "Password Label": "Password",
     "Password Placeholder": "Password",
+    "OTP Label": "OTP",
+    "OTP Placeholder": "OTP URI",
     "Save Button": "Salva",
     "Cancel Button": "Annulla",
     "Edit Button": "Modifica",
     "Delete Button": "Elimina",
     "Show Password": "Mostra password",
-    "Hide Password": "Nascondi password"
+    "Hide Password": "Nascondi password",
+    "URI not provided": "URI non fornito"
   },
   "OpenDialog": {
     "Title": "Apri file"
@@ -120,7 +123,8 @@
   },
   "Common": {
     "Validations": {
-      "Required field": "Campo obbligatorio"
+      "Required field": "Campo obbligatorio",
+      "Invalid URI": "URI non valido"
     }
   }
 }

@@ -1,7 +1,9 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
 import { Entry, File, Folder, uuid, UUID } from '../../types'
+import { encrypt } from '../../../main/utils/crypt'
 
 interface FileContentContextState {
+  password: string | null
   isInitialized: boolean
   setIsInitialized: (isInitialized: boolean) => void
   initialize: (path: string, fileContent: string) => void
@@ -29,6 +31,7 @@ interface FileContentContextState {
 export const FileContentContext = createContext<FileContentContextState>({} as FileContentContextState)
 
 export function FileContentContextProvider({ children }) {
+  const [ password, setPassword ] = React.useState<string | null>(null)
   const [ isInitialized, setIsInitialized ] = React.useState<boolean>(false)
   const [ folders, setFolders ] = React.useState<Folder[]>([])
   const [ entries, setEntries ] = React.useState<Entry[]>([])
@@ -47,18 +50,18 @@ export function FileContentContextProvider({ children }) {
   }, [ filePath ])
 
   useEffect(() => {
-    setFileContent({
-      AppVersion: '0.0.1',
-      Password: '',
+    const fc = {
+      AppVersion: '0.0.1', //TODO READ FROM PACKAGE.JSON
       Folders: folders
-    })
-
+    }
+    setFileContent(fc)
     if (isInitialized && filePath) {
-      window.electron.saveFile(filePath, JSON.stringify({
-        AppVersion: '0.0.1',
-        Password: '',
-        Folders: folders
-      }))
+      const content = JSON.stringify(fc)
+      if (password) {
+        window.electron.saveFile(filePath, encrypt(content, password))
+      } else {
+        window.electron.saveFile(filePath, content)
+      }
     }
   }, [folders, filePath])
 
@@ -158,6 +161,7 @@ export function FileContentContextProvider({ children }) {
   }, [])
 
   const context: FileContentContextState = {
+    password,
     isInitialized,
     setIsInitialized,
     initialize,

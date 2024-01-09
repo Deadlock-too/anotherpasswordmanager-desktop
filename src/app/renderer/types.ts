@@ -9,7 +9,6 @@ export type FileStoreData = {
 
 export type File = {
   AppVersion: string
-  Password: string
   Folders: Folder[]
 }
 
@@ -24,6 +23,7 @@ export type Entry = {
   Title?: string
   Username?: string
   Password?: string
+  OTPUri?: string
 }
 
 export type UUID = string

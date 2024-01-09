@@ -5,6 +5,7 @@ import { EyeIcon } from '../../../../assets/icons'
 import { useContext, useState } from 'react'
 import { FileContentContext } from '../../contexts'
 import i18n from '../../../../i18n'
+import OTP, { RegExpPattern } from '../otp'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
   const { handleSelectEntry, handleDeleteEntry } = useContext(FileContentContext)
@@ -22,7 +23,8 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           id: props.entry?.Id,
           title: props.entry?.Title ?? '',
           username: props.entry?.Username ?? '',
-          password: props.entry?.Password ?? ''
+          password: props.entry?.Password ?? '',
+          otpURI: props.entry?.OTPUri ?? ''
         }
       }
       validate={
@@ -31,6 +33,14 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           if (!values.title) {
             errors.title = i18n.t('Common.Validations.Required field')
           }
+
+          if (values.otpURI) {
+            const regex = new RegExp(RegExpPattern)
+            const isMatch = regex.test(values.otpURI)
+            if (!isMatch)
+              errors.otpURI = i18n.t('Common.Validations.Invalid URI')
+          }
+
           return errors
         }
       } //Think about validations
@@ -40,7 +50,8 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
             Id: values.id ?? uuid(),
             Title: values.title,
             Username: values.username,
-            Password: values.password
+            Password: values.password,
+            OTPUri: values.otpURI,
           }
           props.onSubmit(entry)
           toggleReadonly()
@@ -60,17 +71,6 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
       }) => (
         <form onSubmit={ handleSubmit } className='flex flex-col justify-between h-full px-10 py-5'>
           <div className='flex flex-col'>
-            {
-              // <label className='form-control w-full'>
-              //   <div className='label'>
-              //     <span className='label-text font-bold'>ID</span>
-              //   </div>
-              //   <div className='label'>
-              //     <span className='label-text'>{ values.id }</span>
-              //   </div>
-              // </label>
-              // <div className='p-2'/>
-            }
             <label className='form-control w-full' onClick={ () => {
               if (readonly && values.title !== undefined)
                 window.clipboard.write(values.title)
@@ -152,7 +152,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                         // className='tooltip tooltip-base-100 absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info focus:tooltip-open' //TODO MANAGE TOOLTIP PROBLEM
                         className='relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info'
                         disabled={ isSubmitting }
-                        title={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password')}
+                        title={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password') }
                         // data-tip={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password') }
                         onClick={ () => {
                           handlePasswordVisibility()
@@ -169,6 +169,50 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   : null
               }
             </label>
+            {
+              <label className='form-control w-full'>
+                <div className='label'>
+                  <span className='label-text font-bold'>
+                    { i18n.t('Entry Detail.OTP Label') }
+                  </span>
+                </div>
+                {
+                  (readonly) ?
+                    (
+                      (values.otpURI) ?
+                      <OTP otpURI={ values.otpURI } />
+                        :
+                        <div className='h-full justify-center'>
+                          <h1 className='text-center font-thin unselectable'>
+                            { i18n.t('Entry Detail.URI not provided') }
+                          </h1>
+                        </div>
+                    ) :
+                    (
+                      <>
+                        <input
+                          type='text'
+                          name='otpURI'
+                          onChange={ handleChange }
+                          onBlur={ handleBlur }
+                          value={ values.otpURI }
+                          placeholder={ i18n.t('Entry Detail.OTP Placeholder') }
+                          className='input input-sm input-bordered w-full pr-16 rounded-r-none'
+                          disabled={ isSubmitting }
+                          readOnly={ readonly }
+                        />
+                        {
+                          touched ?
+                            <div className='label'>
+                              <span className='label-text-alt text-error'>{ errors.otpURI }</span>
+                            </div>
+                            : null
+                        }
+                      </>
+                    )
+                }
+              </label>
+            }
           </div>
           <div className='flex flex-row w-full justify-between pt-12 pb-5'>
             {

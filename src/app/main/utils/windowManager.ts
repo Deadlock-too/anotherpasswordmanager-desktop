@@ -1,6 +1,7 @@
 import { BrowserWindow, dialog } from 'electron'
 import i18n from '../../../i18n'
 import * as fs from 'fs'
+import { decrypt } from './crypt'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -77,11 +78,17 @@ export async function openFileDialog() {
       ]
     }).then(
       (result) => {
-        if (!result.canceled && result.filePaths.length > 0) {
+        if (!result.canceled && result.filePaths.length > 0 && mainWindow) {
           const path = result.filePaths[0]
           content = fs.readFileSync(path).toString()
-          if (mainWindow) {
+
+          //Try to parse the file as JSON to check if it's not encrypted
+          let output = JSON.parse(content)
+          if (output && typeof output === 'object') {
             mainWindow.webContents.send('file-opened', path, content)
+          } else { //If it's not JSON, it's encrypted
+            const pw = '' //TODO ASK FOR PASSWORD
+            mainWindow.webContents.send('file-opened', path, decrypt(content, pw))
           }
         }
       }).catch((err) => {
