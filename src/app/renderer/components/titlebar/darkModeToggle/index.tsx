@@ -1,23 +1,28 @@
 import { MoonIcon, SunIcon } from '../../../../../assets/icons'
-import { Component } from 'react'
+import { useContext } from 'react'
+import { ThemeContext } from '../../../contexts'
 
-export default class DarkModeToggle extends Component {
-  render() {
-    const toggleDarkMode = () => {
-      window.theming.darkMode.toggle()
-    }
 
-    return (
-      <label className="swap swap-rotate pr-32 items-center">
-        <input
-          /* this hidden checkbox controls the state */
-          type="checkbox"
-          className="titlebar-icon"
-          onClick={toggleDarkMode}
-        />
-        <SunIcon className="swap-on fill-current titlebar-icon"/>
-        <MoonIcon className="swap-off fill-current titlebar-icon"/>
-      </label>
-    )
+const DarkModeToggle = () => {
+  const { toggleDarkMode } = useContext(ThemeContext)
+
+  const toggle = () => {
+    window.theming.darkMode.toggle()
+    toggleDarkMode()
   }
+
+  return (
+    <label className="swap swap-rotate pr-32 items-center">
+      <input
+        /* this hidden checkbox controls the state */
+        type="checkbox"
+        className="titlebar-icon"
+        onClick={ toggle }
+      />
+      <SunIcon className="swap-on fill-current titlebar-icon"/>
+      <MoonIcon className="swap-off fill-current titlebar-icon"/>
+    </label>
+  )
 }
+
+export default DarkModeToggle

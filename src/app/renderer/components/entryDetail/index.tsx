@@ -43,7 +43,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
 
           return errors
         }
-      } //Think about validations
+      }
       onSubmit={ (values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
           const entry: Entry = {

@@ -52,8 +52,8 @@
       "2 months": "2 months",
       "Future": "Future"
     },
-    "View" : {
-      "View" : "View",
+    "View": {
+      "View": "View",
       "Change Language": "Change language",
       "Show Toolbar": "Show toolbar",
       "Show Entry View": "Show entry notes",
@@ -120,6 +120,34 @@
     "Field Label": "Enter folder name",
     "Field Placeholder": "Folder name",
     "Submit Button": "Add Folder"
+  },
+  "PasswordDialog": {
+    "Open": {
+      "Title": "Enter the master key password",
+      "Message": "Enter the master key password to open the file",
+      "Password Label": "Master key password",
+      "Password Placeholder": "Master key password",
+      "Submit Button": "Open",
+      "Cancel Button": "Cancel"
+    },
+    "Create": {
+      "Title": "Create the master key password",
+      "Message": "The master key password is used to access the file. Enter a strong password.",
+      "Password Label": "Master key password",
+      "Password Placeholder": "Master key password",
+      "Confirm Label": "Confirm master key password",
+      "Confirm Placeholder": "Confirm master key password",
+      "Submit Button": "Create"
+    },
+    "Update": {
+      "Title": "Change the master key password",
+      "Message": "Enter the new master key password",
+      "Password Label": "New master key password",
+      "Password Placeholder": "New master key password",
+      "Confirm Label": "Confirm new master key password",
+      "Confirm Placeholder": "Confirm new master key password",
+      "Submit Button": "Update"
+    }
   },
   "Common": {
     "Validations": {

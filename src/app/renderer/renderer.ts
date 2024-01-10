@@ -13,7 +13,8 @@ declare global {
     },
     theming: {
       darkMode: {
-        toggle: () => void
+        isDark: () => boolean
+        toggle: () => boolean
         system: () => void
       }
     },
@@ -34,6 +35,9 @@ declare global {
     electron: {
       subscribeToFileOpened: (callback: unknown) => void
       unsubscribeToFileOpened: () => void
+      subscribeToPasswordInput: (callback: unknown) => void
+      unsubscribeToPasswordInput: () => void
+      sendPasswordResult: (password: string) => void
       saveFile: (path: string, data: string) => Promise<void>
     }
   }

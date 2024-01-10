@@ -1,5 +1,6 @@
 import { TOTP } from 'otpauth'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { ThemeContext } from '../../contexts'
 
 const RADIUS : number = 30
 const CIRCUMFERENCE : number = RADIUS * 2 * Math.PI
@@ -8,15 +9,12 @@ export const RegExpPattern : string = 'otpauth:\\/\\/(?<protocol>totp|hotp)\\/(?
 const copyOTP = ({ props, key, altKey, metaKey, shiftKey, ctrlKey }) => {
   if (key === 'Enter') {
     window.clipboard.write(props.otp)
-    console.log('enter')
   }
   if (key === ' ') {
     window.clipboard.write(props.otp)
-    console.log('space')
   }
   if (!altKey && !metaKey && !shiftKey && ctrlKey && key === 'c') {
     window.clipboard.write(props.otp)
-    console.log('copied')
   }
 }
 
@@ -61,6 +59,15 @@ const SmallOTPComponentError = () => {
 }
 
 const LargeOTPComponent = (props: { otp: string, timer: { time: number, percentage: number } }) => {
+  let componentColor = 'text-info'
+  if (props.timer.percentage < 50 && props.timer.percentage >= 25) {
+    componentColor = 'text-warning'
+  } else if (props.timer.percentage < 25) {
+    componentColor = 'text-error'
+  }
+
+  const { isDark } = useContext(ThemeContext)
+
   return (
     <div className='flex flex-row items-center cursor-pointer justify-center hide-on-small-window'
          onClick={ () => {
@@ -74,7 +81,7 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
       >
         <svg className='w-full h-full absolute'>
           <circle
-            className='text-neutral'
+            className={isDark ? 'text-neutral' : 'text-neutral-content'}
             strokeWidth='7'
             stroke='currentColor'
             fill='transparent'
@@ -83,7 +90,7 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
             cy='50%'
           />
           <circle
-            className='text-info'
+            className={ componentColor }
             strokeWidth='4'
             strokeDasharray={ CIRCUMFERENCE }
             strokeDashoffset={ (CIRCUMFERENCE - (props.timer.percentage / 100) * CIRCUMFERENCE) }
@@ -96,7 +103,7 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
             transform='rotate(-90 40 40)'
           />
         </svg>
-        <span className='absolute text-info text-xl unselectable'>{ props.timer.time } s</span>
+        <span className={'absolute text-xl unselectable ' + componentColor}>{ props.timer.time } s</span>
       </div>
       <div className='text-center text-xl px-5'>
         <OTPCode value={ props.otp } size={ props.otp.length }/>

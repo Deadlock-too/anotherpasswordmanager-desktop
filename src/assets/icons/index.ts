@@ -8,6 +8,8 @@ import { ReactComponent as EyeSlashIcon } from './svg/eye-slash.svg'
 import { ReactComponent as CloseIcon } from './svg/x-mark.svg'
 import { ReactComponent as SaveIcon } from './svg/save.svg'
 
+import { ReactComponent as UpdateIcon } from './svg/update.svg'
+
 export {
   LockIcon,
   FolderOpenIcon,
@@ -17,5 +19,6 @@ export {
   EyeIcon,
   EyeSlashIcon,
   CloseIcon,
-  SaveIcon
+  SaveIcon,
+  UpdateIcon
 }

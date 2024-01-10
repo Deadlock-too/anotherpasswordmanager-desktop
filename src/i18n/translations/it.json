@@ -121,6 +121,33 @@
     "Field Placeholder": "Nome cartella",
     "Submit Button": "Aggiungi cartella"
   },
+  "PasswordDialog": {
+    "Open": {
+      "Title": "Inserisci la password principale",
+      "Message": "Inserisci la password principale per sbloccare il database.",
+      "Password Label": "Password principale",
+      "Submit Button": "Sblocca",
+      "Cancel Button": "Annulla"
+    },
+    "Create": {
+      "Title": "Crea la password principale",
+      "Message": "La password principale è necessaria per accedere al database. Inserisci una password sicura.",
+      "Password Label": "Password principale",
+      "Password Placeholder": "Password principale",
+      "Confirm Label": "Conferma password",
+      "Confirm Placeholder": "Conferma password",
+      "Submit Button": "Crea"
+    },
+    "Update": {
+      "Title": "Cambia la password principale",
+      "Message": "Inserisci la nuova password principale.",
+      "Password Label": "Password principale",
+      "Password Placeholder": "Password principale",
+      "Confirm Label": "Conferma password",
+      "Confirm Placeholder": "Conferma password",
+      "Submit Button": "Aggiorna"
+    }
+  },
   "Common": {
     "Validations": {
       "Required field": "Campo obbligatorio",

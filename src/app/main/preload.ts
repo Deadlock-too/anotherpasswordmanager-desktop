@@ -30,6 +30,7 @@ contextBridge.exposeInMainWorld('system', {
 
 contextBridge.exposeInMainWorld('theming', {
   darkMode: {
+    isDark: () => ipcRenderer.invoke('darkMode:isDark'),
     toggle: () => ipcRenderer.invoke('darkMode:toggle'),
     system: () => ipcRenderer.invoke('darkMode:system')
   }
@@ -61,6 +62,15 @@ contextBridge.exposeInMainWorld('electron', {
   },
   unsubscribeToFileOpened: () => {
     ipcRenderer.removeAllListeners('file-opened')
+  },
+  subscribeToPasswordInput: (callback) => {
+    ipcRenderer.on('password:input', (event, ...args) => callback(...args))
+  },
+  unsubscribeToPasswordInput: () => {
+    ipcRenderer.removeAllListeners('password:input')
+  },
+  sendPasswordResult: (password: string) => {
+    return ipcRenderer.invoke('password:result', password)
   },
   saveFile: (path: string, data: string): Promise<void> => {
     return ipcRenderer.invoke('electron:saveFile', path, data)

@@ -4,6 +4,7 @@ import { encrypt } from '../../../main/utils/crypt'
 
 interface FileContentContextState {
   password: string | null
+  setPassword: (password: string | null) => void
   isInitialized: boolean
   setIsInitialized: (isInitialized: boolean) => void
   initialize: (path: string, fileContent: string) => void
@@ -46,8 +47,8 @@ export function FileContentContextProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    console.log(filePath)
-  }, [ filePath ])
+    console.log(password)
+  }, [ password ])
 
   useEffect(() => {
     const fc = {
@@ -63,7 +64,7 @@ export function FileContentContextProvider({ children }) {
         window.electron.saveFile(filePath, content)
       }
     }
-  }, [folders, filePath])
+  }, [folders, filePath, password])
 
   const reset = useCallback(() => {
     setFolders([])
@@ -162,6 +163,7 @@ export function FileContentContextProvider({ children }) {
 
   const context: FileContentContextState = {
     password,
+    setPassword,
     isInitialized,
     setIsInitialized,
     initialize,

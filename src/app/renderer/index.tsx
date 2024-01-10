@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import App from './app'
-import { FileContentContextProvider, ModalContextProvider } from './contexts'
+import { FileContentContextProvider, ModalContextProvider, ThemeContextProvider } from './contexts'
 
 
 /*
@@ -41,9 +41,11 @@ if (!rootDiv)
 
 const root = createRoot(rootDiv)
 root.render(
-  <ModalContextProvider>
-    <FileContentContextProvider>
-      <App/>
-    </FileContentContextProvider>
-  </ModalContextProvider>
+  <ThemeContextProvider>
+    <ModalContextProvider>
+      <FileContentContextProvider>
+        <App/>
+      </FileContentContextProvider>
+    </ModalContextProvider>
+  </ThemeContextProvider>
 )

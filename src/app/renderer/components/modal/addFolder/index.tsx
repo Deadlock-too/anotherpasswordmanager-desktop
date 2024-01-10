@@ -4,6 +4,7 @@ import Modal from '../index'
 import { Formik } from 'formik'
 import { uuid } from '../../../types'
 import i18n from '../../../../../i18n'
+import FormField from '../../formField'
 
 const AddFolderDialog = () => {
   const {
@@ -44,55 +45,31 @@ const AddFolderDialog = () => {
         resetForm()
       } }
     >
-      { ({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        isSubmitting,
-        handleReset
-      }) => (
+      { (formik) => (
         <Modal
           id="addFolderModal"
           title={ i18n.t('AddFolderDialog.Title') }
           handleReset={ () => {
-            handleReset()
+            formik.handleReset()
             setIsAddFolderModalOpen(false)
           } }
           isModalVisible={ isAddFolderModalOpen }>
-          <form onSubmit={ handleSubmit } className="justify-between">
-            <label className="form-control w-full mb-4">
-              <div className="label">
-                <span className="label-text">{i18n.t('AddFolderDialog.Field Label')}</span>
-              </div>
-              <input
-                type="text"
-                name="title"
-                onChange={ handleChange }
-                onBlur={ handleBlur }
-                value={ values.title }
-                placeholder={ i18n.t('AddFolderDialog.Field Placeholder') }
-                className="input input-sm input-bordered w-full"
-                disabled={ isSubmitting }
-                aria-hidden={ !isAddFolderModalOpen }
-                tabIndex={ isAddFolderModalOpen ? 0 : -1 }
-              />
-              {
-                touched ?
-                  <div className="label">
-                    <span className="label-text-alt text-error">{ errors.title }</span>
-                  </div>
-                  : null
-              }
-            </label>
+          <form onSubmit={ formik.handleSubmit } className="justify-between">
+            <FormField
+              formik={ formik }
+              field="title"
+              label={ i18n.t('AddFolderDialog.Field Label') }
+              placeholder={ i18n.t('AddFolderDialog.Field Placeholder') }
+              unselectable={ !isAddFolderModalOpen }
+            />
             <button
-              className="btn ml-auto"
+              className="btn ml-auto mt-8"
               type="submit"
+              disabled={ formik.isSubmitting }
               aria-hidden={ !isAddFolderModalOpen }
-              tabIndex={ isAddFolderModalOpen ? 0 : -1 }>
-              { i18n.t('AddFolderDialog.Submit Button')}
+              tabIndex={ isAddFolderModalOpen ? 0 : -1 }
+            >
+              { i18n.t('AddFolderDialog.Submit Button') }
             </button>
           </form>
         </Modal>

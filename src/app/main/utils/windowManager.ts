@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog } from 'electron'
+import { BrowserWindow, dialog, ipcMain } from 'electron'
 import i18n from '../../../i18n'
 import * as fs from 'fs'
 import { decrypt } from './crypt'
@@ -83,12 +83,27 @@ export async function openFileDialog() {
           content = fs.readFileSync(path).toString()
 
           //Try to parse the file as JSON to check if it's not encrypted
-          let output = JSON.parse(content)
+          let output
+          try {
+            output = JSON.parse(content)
+          } catch (e) { /* File is not JSON, so it's encrypted */ }
+
           if (output && typeof output === 'object') {
             mainWindow.webContents.send('file-opened', path, content)
           } else { //If it's not JSON, it's encrypted
-            const pw = '' //TODO ASK FOR PASSWORD
-            mainWindow.webContents.send('file-opened', path, decrypt(content, pw))
+            ipcMain.removeHandler('password:result')
+            ipcMain.handleOnce('password:result', (_, password) => {
+              const decryptedContent = decrypt(content!, password)
+              try {
+                output = JSON.parse(decryptedContent)
+                mainWindow!.webContents.send('file-opened', path, decrypt(content!, password))
+              } catch (e) {
+                //TODO HANDLE ERROR
+                mainWindow!.webContents.send('failed-open-file', path, content)
+              }
+            })
+
+            mainWindow.webContents.send('password:input')
           }
         }
       }).catch((err) => {

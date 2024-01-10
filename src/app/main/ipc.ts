@@ -65,6 +65,10 @@ ipcMain.handle('darkMode:toggle', async (): Promise<boolean> => {
   return nativeTheme.shouldUseDarkColors
 })
 
+ipcMain.handle('darkMode:isDark', () => {
+  return nativeTheme.shouldUseDarkColors
+})
+
 ipcMain.handle('darkMode:system', () => {
   nativeTheme.themeSource = 'system'
 })
