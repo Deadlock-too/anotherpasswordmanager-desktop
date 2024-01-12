@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('localization', {
     })
   },
   getInitialI18nStore: (): Promise<any> => {
-    return Promise.resolve(i18n.store.data)
+    return Promise.resolve(i18n.default.store.data)
   }
 })
 
@@ -68,6 +68,12 @@ contextBridge.exposeInMainWorld('electron', {
   },
   unsubscribeToPasswordInput: () => {
     ipcRenderer.removeAllListeners('password:input')
+  },
+  subscribeToFailedOpenFile: (callback) => {
+    ipcRenderer.on('failed-open-file', (event, ...args) => callback(...args))
+  },
+  unsubscribeToFailedOpenFile: () => {
+    ipcRenderer.removeAllListeners('failed-open-file')
   },
   sendPasswordResult: (password: string) => {
     return ipcRenderer.invoke('password:result', password)

@@ -149,10 +149,33 @@
       "Submit Button": "Update"
     }
   },
+  "FailedOpenDialog": {
+    "Title": "Failed to open file",
+    "Message": "Failed to open file. Please check the password and try again."
+  },
+  "DeletionDialog": {
+    "Folder": {
+      "Title": "Delete folder",
+      "Message": {
+        "Pt1": "Are you sure you want to delete the folder \"",
+        "Pt2": "\"? All entries in the folder will be deleted as well."
+      }
+    },
+    "Entry": {
+      "Title": "Delete entry",
+      "Message": {
+        "Pt1": "Are you sure you want to delete the entry \"",
+        "Pt2": "\"?"
+      }
+    },
+    "Submit Button": "Delete",
+    "Cancel Button": "Cancel"
+  },
   "Common": {
     "Validations": {
       "Required field": "Required field",
-      "Invalid URI": "Invalid URI"
+      "Invalid URI": "Invalid URI",
+      "ValuesMustMatch": "The values must match"
     }
   }
 }

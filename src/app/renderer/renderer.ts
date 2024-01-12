@@ -37,6 +37,8 @@ declare global {
       unsubscribeToFileOpened: () => void
       subscribeToPasswordInput: (callback: unknown) => void
       unsubscribeToPasswordInput: () => void
+      subscribeToFailedOpenFile: (callback: unknown) => void
+      unsubscribeToFailedOpenFile: () => void
       sendPasswordResult: (password: string) => void
       saveFile: (path: string, data: string) => Promise<void>
     }

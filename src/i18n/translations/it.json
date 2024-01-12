@@ -148,10 +148,33 @@
       "Submit Button": "Aggiorna"
     }
   },
+  "FailedOpenDialog": {
+    "Title": "Errore apertura file",
+    "Message": "Impossibile aprire il file. Controlla la password principale e riprova."
+  },
+  "DeletionDialog": {
+    "Folder": {
+      "Title": "Elimina cartella",
+      "Message": {
+        "Pt1": "Sei sicuro di voler eliminare la cartella \"",
+        "Pt2": "\"? Tutte le voci contenute in questa cartella saranno eliminate."
+      }
+    },
+    "Entry": {
+      "Title": "Elimina voce",
+      "Message": {
+        "Pt1": "Sei sicuro di voler eliminare la voce \"",
+        "Pt2": "\"?"
+      }
+    },
+    "Submit Button": "Elimina",
+    "Cancel Button": "Annulla"
+  },
   "Common": {
     "Validations": {
       "Required field": "Campo obbligatorio",
-      "Invalid URI": "URI non valido"
+      "Invalid URI": "URI non valido",
+      "ValuesMustMatch": "I valori devono corrispondere"
     }
   }
 }

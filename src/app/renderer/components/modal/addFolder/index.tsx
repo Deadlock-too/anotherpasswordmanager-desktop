@@ -53,7 +53,8 @@ const AddFolderDialog = () => {
             formik.handleReset()
             setIsAddFolderModalOpen(false)
           } }
-          isModalVisible={ isAddFolderModalOpen }>
+          isModalVisible={ isAddFolderModalOpen }
+        >
           <form onSubmit={ formik.handleSubmit } className="justify-between">
             <FormField
               formik={ formik }

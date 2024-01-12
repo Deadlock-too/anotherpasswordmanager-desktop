@@ -9,7 +9,7 @@ const Modal = ({ id, title, children, isModalVisible, handleReset }) => {
           <form method='dialog'>
             <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'
                     onClick={ () => handleReset() }
-                    tabIndex={ isModalVisible ? 1 : -1 }
+                    tabIndex={ isModalVisible ? 100 : -1 }
             ><CloseIcon/></button>
           </form>
         </div>

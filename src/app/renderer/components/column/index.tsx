@@ -1,6 +1,6 @@
 import { Entry, Folder, UUID } from '../../types'
-import { ReactNode, useContext } from 'react'
-import { PlusIcon } from '../../../../assets/icons'
+import { ReactNode, useContext, useState } from 'react'
+import { PlusIcon, TrashIcon } from '../../../../assets/icons'
 import { FileContentContext } from '../../contexts'
 import i18n from '../../../../i18n'
 
@@ -39,18 +39,52 @@ const Column = ({
     margin = 'ml-1'
   }
 
-  const { selectedFolderId, selectedEntryId } = useContext(FileContentContext)
+  const {
+    selectedFolderId,
+    hoveringFolderId,
+    setHoveringFolderId,
+    setDeletingFolder,
+    selectedEntryId,
+    hoveringEntryId,
+    setHoveringEntryId,
+    setDeletingEntry,
+  } = useContext(FileContentContext)
+
+  const [ disableElementSelection, setDisableElementSelection ] = useState(false)
+
+  // const textRef = useRef(null);
+  //
+  // useEffect(() => {
+  //   const textElement = textRef.current
+  //   if (textElement) {
+  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //     // @ts-ignore
+  //     console.log('Width: ' + textElement.width); console.log(`ScrollWidth: ${textElement.scrollWidth} OffsetWidth: ${textElement.offsetWidth} ClientWidth: ${textElement.clientWidth}`)
+  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //     // @ts-ignore
+  //     const isOverflowing = textElement.getBoundingClientRect().width < textElement.scrollWidth
+  //     if (isOverflowing) {
+  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //       // @ts-ignore
+  //       textElement.addEventListener('mouseenter', () => textElement.classList.add('truncate-scroll'))
+  //
+  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //       // @ts-ignore
+  //       textElement.addEventListener('mouseleave', () => textElement.classList.remove('truncate-scroll'))
+  //     }
+  //   }
+  // })
 
   return (
     <div className={ `${ width } ${ margin } h-full flex flex-col ${ unselectableContent ? 'unselectable' : '' }` }>
-      <div className='flex flex-row justify-between items-center'>
+      <div className="flex flex-row justify-between items-center">
         <label className={ `pl-1.5 font-bold ${ unselectableContent ? '' : 'unselectable' }` }>
           { label }
         </label>
         {
           ((variant === 'folders' || variant === 'entries') &&
             <button
-              className='btn btn-xs btn-circle'
+              className="btn btn-xs btn-circle"
               onClick={ onAddEntry }
               disabled={ variant === 'entries' && selectedFolderId === null }
             >
@@ -59,51 +93,97 @@ const Column = ({
           )
         }
       </div>
-      <div className='divider m-0'/>
-      <div className='bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper'>
-        <div className='scrollbar'>
+      <div className="divider m-0"/>
+      <div className="bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper">
+        <div className="scrollbar">
           {
             variant === 'detail' ?
               children :
               elements?.length === 0 ?
-                <div className='h-full justify-center flex flex-col'>
-                  <h1 className='text-center font-bold'>
-                    { i18n.t(`Main.No ${variant}`) }
+                <div className="h-full justify-center flex flex-col">
+                  <h1 className="text-center font-bold">
+                    { i18n.t(`Main.No ${ variant }`) }
                   </h1>
-                  <h2 className='text-center font-thin pr-5 pl-5'>
-                    { i18n.t(`Main.Add ${variant}`) }
+                  <h2 className="text-center font-thin pr-5 pl-5">
+                    { i18n.t(`Main.Add ${ variant }`) }
                   </h2>
                 </div>
                 :
-                <ul className='menu menu-md bg-base-300 w-full flex-grow rounded-box gap-1'>
+                <ul className="menu menu-md bg-base-300 w-full flex-grow rounded-box gap-1">
                   {
                     elements.map((child) => {
+                      const isHovered = (variant === 'folders' && child.Id === hoveringFolderId) || (variant === 'entries' && child.Id === hoveringEntryId)
+                      const isSelected = (variant === 'folders' && child.Id === selectedFolderId) || (variant === 'entries' && child.Id === selectedEntryId)
+
                       return (
-                        <li key={ child.Id } className={ (
-                          (variant === 'folders' && child.Id === selectedFolderId) ||
-                          (variant === 'entries' && child.Id === selectedEntryId)
-                        ) ? 'selected' : ''
-                        }>
+                        <li
+                          key={ child.Id }
+                          className={ isSelected ? 'selected' : '' }
+                          onMouseEnter={ () => {
+                            if (variant === 'folders') {
+                              setHoveringFolderId(child.Id)
+                            } else if (variant === 'entries') {
+                              setHoveringEntryId(child.Id)
+                            }
+                          } }
+                          onMouseLeave={ () => {
+                            if (variant === 'folders') {
+                              setHoveringFolderId(null)
+                            } else if (variant === 'entries') {
+                              setHoveringEntryId(null)
+                            }
+                          } }
+                        >
                           <a key={ child.Id } onClick={ () => {
+                            if (disableElementSelection) return
+
                             variant === 'folders' ?
                               onSelectFolder!(child as Folder, selectedEntryId, selectedFolderId) :
                               onSelectEntry!(child as Entry)
-                          } }>
-                            {
-                              variant === 'folders' ?
-                                (child as Folder).Name :
-                                (child as Entry).Title
+                          } }
+                             className='justify-between items-center'
+                          >
+                            {/*<div className='display-truncated'>*/}
+                            <div className='display-truncated scrolling'>
+                              {
+                                variant === 'folders' ?
+                                  (child as Folder).Name :
+                                  (child as Entry).Title
 
-                              // TODO: Fix this
-                              // Check if any of the children has the same name as the current child
-                              // If so, append the folder id to the name
-                              // This is to prevent duplicate names in the UI
-                              // variant === 'folders' ?
-                              //   elements.filter((element) => element.Name === child.Name).length > 1 ?
-                              //     `${ child.Name } (${ child.Username })` :
-                              //     child.Name :
-                              //   child.Name
-                            }
+                                // TODO: Fix this
+                                // Check if any of the children has the same name as the current child
+                                // If so, append the folder id to the name
+                                // This is to prevent duplicate names in the UI
+                                // variant === 'folders' ?
+                                //   elements.filter((element) => element.Name === child.Name).length > 1 ?
+                                //     `${ child.Name } (${ child.Username })` :
+                                //     child.Name :
+                                //   child.Name
+                              }
+                            </div>
+                                <button
+                                  className={ isHovered ?
+                                    'btn btn-xs btn-square btn-error justify-center items-center -mr-2 -mt-1 -mb-1' :
+                                    'hidden'
+                                  }
+                                  onClick={ () => {
+                                    if (variant === 'folders') {
+                                      setDeletingFolder(child as Folder)
+                                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                      // @ts-ignore
+                                      document.getElementById('folderDeletionModal').showModal()
+                                    } else {
+                                      setDeletingEntry(child as Entry)
+                                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                      // @ts-ignore
+                                      document.getElementById('entryDeletionModal').showModal()
+                                    }
+                                  } }
+                                  onMouseEnter={ () => setDisableElementSelection(true) }
+                                  onMouseLeave={ () => setDisableElementSelection(false) }
+                                >
+                                  <TrashIcon/>
+                                </button>
                           </a>
                         </li>
                       )

@@ -1,14 +1,14 @@
 import { Entry, uuid } from '../../types'
 import { usePasswordToggle } from '../../hooks/passwordVisibility'
 import { Formik } from 'formik'
-import { EyeIcon } from '../../../../assets/icons'
+import { EyeIcon, EyeSlashIcon } from '../../../../assets/icons'
 import { useContext, useState } from 'react'
 import { FileContentContext } from '../../contexts'
 import i18n from '../../../../i18n'
 import OTP, { RegExpPattern } from '../otp'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
-  const { handleSelectEntry, handleDeleteEntry } = useContext(FileContentContext)
+  const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useContext(FileContentContext)
   const { type, passwordVisibility, handlePasswordVisibility } = usePasswordToggle()
   const [ readonly, setReadonly ] = useState(props.entry !== undefined)
 
@@ -44,7 +44,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           return errors
         }
       }
-      onSubmit={ (values, { setSubmitting, resetForm }) => {
+      onSubmit={ (values, { setSubmitting }) => {
         setTimeout(() => {
           const entry: Entry = {
             Id: values.id ?? uuid(),
@@ -55,6 +55,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           }
           props.onSubmit(entry)
           toggleReadonly()
+          toggleRefreshDetail()
           setSubmitting(false)
         }, 400)
       } }
@@ -158,7 +159,11 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                           handlePasswordVisibility()
                         } }
                 >
-                  <EyeIcon/>
+                  {
+                    passwordVisibility ?
+                      <EyeIcon/> :
+                      <EyeSlashIcon/>
+                  }
                 </button>
               </div>
               {
@@ -180,7 +185,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   (readonly) ?
                     (
                       (values.otpURI) ?
-                      <OTP otpURI={ values.otpURI } />
+                        <OTP otpURI={ values.otpURI }/>
                         :
                         <div className='h-full justify-center'>
                           <h1 className='text-center font-thin unselectable'>
@@ -197,7 +202,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                           onBlur={ handleBlur }
                           value={ values.otpURI }
                           placeholder={ i18n.t('Entry Detail.OTP Placeholder') }
-                          className='input input-sm input-bordered w-full pr-16 rounded-r-none'
+                          className='input input-sm input-bordered w-full'
                           disabled={ isSubmitting }
                           readOnly={ readonly }
                         />
@@ -242,10 +247,13 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                         disabled={ isSubmitting }
                         className='btn btn-error w-1/3'
                         onClick={ () => {
-                          //TODO ADD CONFIRMATION
-                          handleDeleteEntry(values.id!)
-                          handleReset()
-                          handleSelectEntry(null, false)
+                          if (values.id !== undefined) {
+                            setDeletingEntry({ Id: values.id, Title: values.title })
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            window.document.getElementById('entryDeletionModal').showModal()
+                            handleReset()
+                          }
                         } }
                 >
                   { i18n.t('Entry Detail.Delete Button') }

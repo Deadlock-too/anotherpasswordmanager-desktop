@@ -64,6 +64,41 @@
     border-radius: 4px;
   }
 
+  /* Menu */
+  .display-truncated {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /*min-width: 0;*/
+    /*text-indent: 0;*/
+    /*transition: text-indent 0.5s;*/
+  }
+
+  /*.display-truncated:hover {*/
+  /*  @apply truncate-scroll;*/
+  /*}*/
+
+  /*.truncate-scroll {*/
+  /*  text-indent: -100%;*/
+  /*  text-overflow: clip;*/
+  /*  transition: text-indent 5s linear;*/
+  /*}*/
+
+  @keyframes scroll {
+    0% {
+      text-indent: 0;
+    }
+    50% {
+      text-indent: -100%;
+    }
+    100% {
+      text-indent: 0;
+    }
+  }
+
+  .scrolling:hover {
+    animation: scroll 10s ease-in-out infinite;
+  }
 }
 
 @media (max-width: 835px) {

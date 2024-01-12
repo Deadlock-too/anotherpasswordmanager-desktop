@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import Column from '../../components/column'
 import DetailView from '../../components/detailView'
 import { FileContentContext, ModalContext } from '../../contexts'
-import AddFolderDialog from '../../components/modal/addFolder'
 import i18n from '../../../../i18n'
 
 const Main = () => {
@@ -16,7 +15,6 @@ const Main = () => {
 
   return (
     <div className='main-content flex flex-row justify-between p-2 items-center h-screen'>
-      <AddFolderDialog/>
       <Column
         label={i18n.t('Main.Folders')}
         width='w-3/12'

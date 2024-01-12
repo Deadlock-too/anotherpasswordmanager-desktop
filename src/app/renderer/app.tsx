@@ -6,11 +6,14 @@ import Main from './scenes/main'
 import Intro from './scenes/intro'
 import { FileContentContext, ModalContext, ThemeContext } from './contexts'
 import PasswordDialog from './components/modal/password'
+import AddFolderDialog from './components/modal/addFolder'
+import FailedOpenDialog from './components/modal/failedOpen'
+import { FolderDeletionModal, EntryDeletionModal } from './components/modal/deletion'
 
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
   const { isInitialized, initialize } = useContext(FileContentContext)
-  const { setIsPasswordModalOpen } = useContext(ModalContext)
+  const { setIsPasswordModalOpen, setIsFailedOpenModalOpen } = useContext(ModalContext)
   const { setIsDark } = useContext(ThemeContext)
 
   useEffect(() => {
@@ -28,9 +31,18 @@ const App = () => {
     }
     window.electron.subscribeToPasswordInput(passwordInputHandler)
 
+    const fileOpenFailedHandler = () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      document.getElementById('failedOpenModal').showModal()
+      setIsFailedOpenModalOpen(true)
+    }
+    window.electron.subscribeToFailedOpenFile(fileOpenFailedHandler)
+
     return () => {
       window.electron.unsubscribeToFileOpened()
       window.electron.unsubscribeToPasswordInput()
+      window.electron.unsubscribeToFailedOpenFile()
     }
   }, [])
 
@@ -38,10 +50,14 @@ const App = () => {
     return null
 
   return (
-    <I18nextProvider i18n={ i18n }>
-      <PasswordDialog variant={'open'} />
-      <PasswordDialog variant={'create'} />
-      <PasswordDialog variant={'update'} />
+    <I18nextProvider i18n={ i18n.default }>
+      <PasswordDialog variant={ 'open' }/>
+      <PasswordDialog variant={ 'create' }/>
+      <PasswordDialog variant={ 'update' }/>
+      <AddFolderDialog />
+      <FailedOpenDialog />
+      <FolderDeletionModal />
+      <EntryDeletionModal />
       <TitleBar/>
       <div className="overflow-hidden">
         {
@@ -50,6 +66,7 @@ const App = () => {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               document.getElementById('createPasswordModal').showModal()
+              setIsPasswordModalOpen(true)
             } }/> :
             <Main/>
         }
@@ -59,8 +76,6 @@ const App = () => {
 }
 export default App
 
-//TODO: MANAGE FAILED OPEN ATTEMPTS
-//TODO: HIDE PASSWORD IN INPUT
 //TODO: ADD PASSWORD STRENGTH METER
 //TODO: ADD PASSWORD GENERATOR
 //TODO: ADD PASSWORD GENERATOR SETTINGS

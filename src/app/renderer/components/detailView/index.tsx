@@ -11,7 +11,8 @@ const DetailView = () => {
     handleAddEntry,
     handleUpdateEntry,
     handleSelectEntry,
-    entries
+    entries,
+    refreshDetail
   } = useContext(FileContentContext)
   const [ selectedEntry, setSelectedEntry ] = useState<Entry | undefined>(undefined)
 
@@ -20,12 +21,12 @@ const DetailView = () => {
       const entry = entries.find((entry) => entry.Id === selectedEntryId)
       setSelectedEntry(entry)
     }
-  }, [ selectedEntryId ])
+  }, [ selectedEntryId, refreshDetail ])
 
   return (
     selectedFolderId && selectedEntryId ?
       <EntryDetail
-        key={ selectedEntry?.Id }
+        key={ JSON.stringify(selectedEntry) }
         entry={ selectedEntry }
         onSubmit={ (entry) => {
           if (selectedEntry === undefined) {

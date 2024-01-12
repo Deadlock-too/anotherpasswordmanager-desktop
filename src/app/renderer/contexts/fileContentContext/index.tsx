@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
 import { Entry, File, Folder, uuid, UUID } from '../../types'
 import { encrypt } from '../../../main/utils/crypt'
+import { bool } from 'yup'
 
 interface FileContentContextState {
   password: string | null
@@ -16,17 +17,27 @@ interface FileContentContextState {
   entries: Entry[]
   setFolders: (folders: Folder[]) => void
   setEntries: (entries: Entry[]) => void
-  handleRemoveEntry: (id: UUID) => void
-  handleRemoveFolder: (id: UUID) => void
   handleAddEntry: (entry: Entry, folderId: UUID) => void
   handleAddFolder: (folder: Folder) => void
   handleUpdateEntry: (entry: Entry) => void
   handleDeleteEntry: (id: UUID) => void
+  handleDeleteFolder: (id: UUID) => void
   resetSelection: () => void
   selectedEntryId: UUID | null
   selectedFolderId: UUID | null
   handleSelectEntry: (entry: Entry | null, newEntry: boolean) => void
   handleSelectFolder: (folder: Folder | null, currentlySelectedEntryId: UUID | null, currentlySelectedFolderId: UUID | null) => void
+  updateFileContent: () => void
+  hoveringFolderId: UUID | null
+  hoveringEntryId: UUID | null
+  setHoveringFolderId: (id: UUID | null) => void
+  setHoveringEntryId: (id: UUID | null) => void
+  deletingFolder: Folder | null
+  deletingEntry: Entry | null
+  setDeletingFolder: (id: Folder | null) => void
+  setDeletingEntry: (id: Entry | null) => void
+  refreshDetail: boolean
+  toggleRefreshDetail: () => void
 }
 
 export const FileContentContext = createContext<FileContentContextState>({} as FileContentContextState)
@@ -38,6 +49,9 @@ export function FileContentContextProvider({ children }) {
   const [ entries, setEntries ] = React.useState<Entry[]>([])
   const [ filePath, setFilePath ] = React.useState<string>('')
   const [ fileContent, setFileContent ] = React.useState<File | null>(null)
+  const [ internalUpdateFileContentToggle, setInternalUpdateFileContentToggle ] = React.useState(false)
+
+  const updateFileContent = () => setInternalUpdateFileContentToggle((prevState) => !prevState)
 
   const initialize = useCallback((path: string, fileContent: string) => {
     const fc: File = JSON.parse(fileContent)
@@ -64,21 +78,11 @@ export function FileContentContextProvider({ children }) {
         window.electron.saveFile(filePath, content)
       }
     }
-  }, [folders, filePath, password])
+  }, [internalUpdateFileContentToggle, filePath, password])
 
   const reset = useCallback(() => {
     setFolders([])
     setEntries([])
-  }, [])
-
-  const handleRemoveEntry = useCallback((id: UUID) => {
-    const index = entries.findIndex((entry) => entry.Id === id)
-    setEntries((prevState) => prevState.filter((_, i) => i !== index))
-  }, [])
-
-  const handleRemoveFolder = useCallback((id: UUID) => {
-    const index = folders.findIndex((folder) => folder.Id === id)
-    setFolders((prevState) => prevState.filter((_, i) => i !== index))
   }, [])
 
   const handleUpdateEntry = useCallback((entry: Entry) => {
@@ -95,6 +99,15 @@ export function FileContentContextProvider({ children }) {
       newState[folderIndex].Entries[entryIndex] = entry
       return newState
     })
+    updateFileContent()
+  }, [])
+
+  const handleDeleteFolder = useCallback((id: UUID) => {
+    setFolders((prevState) => {
+      const index = prevState.findIndex((folder) => folder.Id === id)
+      return prevState.filter((_, i) => i !== index)
+    })
+    updateFileContent()
   }, [])
 
   const handleDeleteEntry = useCallback((id: UUID) => {
@@ -105,8 +118,16 @@ export function FileContentContextProvider({ children }) {
       newState[folderIndex].Entries = newState[folderIndex].Entries.filter((entry) => entry.Id !== id)
       return newState
     })
+    handleSelectEntryInternal(prevState => {
+      if (prevState === id) {
+        return null
+      }
+      return prevState
+    })
+    updateFileContent()
   }, [])
 
+  //TODO: Manage folder rename
   const handleUpdateFolder = useCallback((folder: Folder) => {
     const index = folders.findIndex((f) => f.Id === folder.Id)
     if (index !== -1) {
@@ -124,14 +145,12 @@ export function FileContentContextProvider({ children }) {
       prevState[folderIndex].Entries = [ ...prevState[folderIndex].Entries, entry ]
       return prevState
     })
+    updateFileContent()
   }, [])
 
   const handleAddFolder = useCallback((folder: Folder) => {
     setFolders(prevState => [ ...prevState, folder ])
-  }, [])
-
-  const toggleIsInitialized = useCallback(() => {
-    setIsInitialized(prevState => !prevState)
+    updateFileContent()
   }, [])
 
   const resetSelection = useCallback(() => {
@@ -161,6 +180,14 @@ export function FileContentContextProvider({ children }) {
     }
   }, [])
 
+  const [ hoveringFolderId, setHoveringFolderId ] = useState<UUID | null>(null)
+  const [ hoveringEntryId, setHoveringEntryId ] = useState<UUID | null>(null)
+  const [ deletingFolder, setDeletingFolder ] = useState<Folder | null>(null)
+  const [ deletingEntry, setDeletingEntry ] = useState<Entry | null>(null)
+  const [ refreshDetail, setRefreshDetail ] = useState<boolean>(false)
+
+  const toggleRefreshDetail = () => setRefreshDetail((prevState) => !prevState)
+
   const context: FileContentContextState = {
     password,
     setPassword,
@@ -175,17 +202,27 @@ export function FileContentContextProvider({ children }) {
     entries,
     setFolders,
     setEntries,
-    handleRemoveEntry,
-    handleRemoveFolder,
     handleAddEntry,
     handleAddFolder,
     handleUpdateEntry,
     handleDeleteEntry,
+    handleDeleteFolder,
     resetSelection,
     selectedEntryId,
     selectedFolderId,
     handleSelectEntry,
-    handleSelectFolder
+    handleSelectFolder,
+    updateFileContent,
+    hoveringFolderId,
+    hoveringEntryId,
+    setHoveringFolderId,
+    setHoveringEntryId,
+    deletingFolder,
+    deletingEntry,
+    setDeletingFolder,
+    setDeletingEntry,
+    refreshDetail,
+    toggleRefreshDetail
   }
 
   return (
