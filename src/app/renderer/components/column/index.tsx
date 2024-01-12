@@ -1,5 +1,5 @@
 import { Entry, Folder, UUID } from '../../types'
-import { ReactNode, useContext, useState } from 'react'
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { PlusIcon, TrashIcon } from '../../../../assets/icons'
 import { FileContentContext } from '../../contexts'
 import i18n from '../../../../i18n'
@@ -52,28 +52,40 @@ const Column = ({
 
   const [ disableElementSelection, setDisableElementSelection ] = useState(false)
 
-  // const textRef = useRef(null);
-  //
-  // useEffect(() => {
-  //   const textElement = textRef.current
-  //   if (textElement) {
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     // @ts-ignore
-  //     console.log('Width: ' + textElement.width); console.log(`ScrollWidth: ${textElement.scrollWidth} OffsetWidth: ${textElement.offsetWidth} ClientWidth: ${textElement.clientWidth}`)
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     // @ts-ignore
-  //     const isOverflowing = textElement.getBoundingClientRect().width < textElement.scrollWidth
-  //     if (isOverflowing) {
-  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //       // @ts-ignore
-  //       textElement.addEventListener('mouseenter', () => textElement.classList.add('truncate-scroll'))
-  //
-  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //       // @ts-ignore
-  //       textElement.addEventListener('mouseleave', () => textElement.classList.remove('truncate-scroll'))
-  //     }
-  //   }
-  // })
+  const textRefs = useRef<(HTMLDivElement | null)[]>([])
+  const liRefs = useRef<(HTMLLIElement | null)[]>([])
+
+  useEffect(() => {
+    textRefs.current = textRefs.current.slice(0, elements.length)
+    liRefs.current = liRefs.current.slice(0, elements.length)
+
+    elements.forEach((_, i) => {
+      if (!textRefs.current[i]) {
+        textRefs.current[i] = null
+      }
+      if (!liRefs.current[i]) {
+        liRefs.current[i] = null
+      }
+    })
+
+    elements.forEach((_, i) => {
+      const textElement = textRefs.current[i]
+      const liElement = liRefs.current[i]
+      if (textElement && liElement) {
+        liElement.addEventListener('mouseenter', () => {
+          const scrollAmount = (textElement.scrollWidth - textElement.offsetWidth) + 24
+          if (scrollAmount <= 0) return
+          const scrollTime = scrollAmount / 7.5
+          textElement.style.setProperty('--scroll-amount', `-${ scrollAmount }px`)
+          textElement.style.setProperty('--scroll-time', `${ scrollTime }s`)
+          textElement.classList.add('truncate-scroll')
+        })
+
+        liElement.addEventListener('mouseleave', () => textElement.classList.remove('truncate-scroll'))
+      }
+    })
+  })
+
 
   return (
     <div className={ `${ width } ${ margin } h-full flex flex-col ${ unselectableContent ? 'unselectable' : '' }` }>
@@ -111,7 +123,7 @@ const Column = ({
                 :
                 <ul className="menu menu-md bg-base-300 w-full flex-grow rounded-box gap-1">
                   {
-                    elements.map((child) => {
+                    elements.map((child, i) => {
                       const isHovered = (variant === 'folders' && child.Id === hoveringFolderId) || (variant === 'entries' && child.Id === hoveringEntryId)
                       const isSelected = (variant === 'folders' && child.Id === selectedFolderId) || (variant === 'entries' && child.Id === selectedEntryId)
 
@@ -133,6 +145,7 @@ const Column = ({
                               setHoveringEntryId(null)
                             }
                           } }
+                          ref={ el => liRefs.current[i] = el }
                         >
                           <a key={ child.Id } onClick={ () => {
                             if (disableElementSelection) return
@@ -141,10 +154,9 @@ const Column = ({
                               onSelectFolder!(child as Folder, selectedEntryId, selectedFolderId) :
                               onSelectEntry!(child as Entry)
                           } }
-                             className='justify-between items-center'
+                             className="justify-between items-center"
                           >
-                            {/*<div className='display-truncated'>*/}
-                            <div className='display-truncated scrolling'>
+                            <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
                               {
                                 variant === 'folders' ?
                                   (child as Folder).Name :
@@ -161,29 +173,29 @@ const Column = ({
                                 //   child.Name
                               }
                             </div>
-                                <button
-                                  className={ isHovered ?
-                                    'btn btn-xs btn-square btn-error justify-center items-center -mr-2 -mt-1 -mb-1' :
-                                    'hidden'
-                                  }
-                                  onClick={ () => {
-                                    if (variant === 'folders') {
-                                      setDeletingFolder(child as Folder)
-                                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                      // @ts-ignore
-                                      document.getElementById('folderDeletionModal').showModal()
-                                    } else {
-                                      setDeletingEntry(child as Entry)
-                                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                      // @ts-ignore
-                                      document.getElementById('entryDeletionModal').showModal()
-                                    }
-                                  } }
-                                  onMouseEnter={ () => setDisableElementSelection(true) }
-                                  onMouseLeave={ () => setDisableElementSelection(false) }
-                                >
-                                  <TrashIcon/>
-                                </button>
+                            <button
+                              className={ isHovered ?
+                                'btn btn-xs btn-square btn-error justify-center items-center -mr-2 -mt-1 -mb-1' :
+                                'hidden'
+                              }
+                              onClick={ () => {
+                                if (variant === 'folders') {
+                                  setDeletingFolder(child as Folder)
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore
+                                  document.getElementById('folderDeletionModal').showModal()
+                                } else {
+                                  setDeletingEntry(child as Entry)
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore
+                                  document.getElementById('entryDeletionModal').showModal()
+                                }
+                              } }
+                              onMouseEnter={ () => setDisableElementSelection(true) }
+                              onMouseLeave={ () => setDisableElementSelection(false) }
+                            >
+                              <TrashIcon/>
+                            </button>
                           </a>
                         </li>
                       )

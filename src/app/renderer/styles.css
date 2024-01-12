@@ -2,8 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
+:root {
+  --scroll-amount: 0;
+  --scroll-time: 0s;
+}
 
+@layer utilities {
   /* App content */
   .main-content {
     height: calc(100vh - 30px);
@@ -20,7 +24,7 @@
   /* Menu item */
   .selected {
     @apply bg-base-200;
-    border-radius: var(--rounded-btn, 0.5rem/* 8px */)
+    border-radius: var(--rounded-btn, 0.5rem /* 8px */)
   }
 
   /* Title-bar */
@@ -69,35 +73,23 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    /*min-width: 0;*/
-    /*text-indent: 0;*/
-    /*transition: text-indent 0.5s;*/
   }
 
-  /*.display-truncated:hover {*/
-  /*  @apply truncate-scroll;*/
-  /*}*/
-
-  /*.truncate-scroll {*/
-  /*  text-indent: -100%;*/
-  /*  text-overflow: clip;*/
-  /*  transition: text-indent 5s linear;*/
-  /*}*/
+  .truncate-scroll {
+    animation: scroll var(--scroll-time) ease-in-out infinite;
+    text-overflow: clip;
+  }
 
   @keyframes scroll {
     0% {
       text-indent: 0;
     }
-    50% {
-      text-indent: -100%;
+    45%, 50% {
+      text-indent: var(--scroll-amount);
     }
-    100% {
+    95%, 100% {
       text-indent: 0;
     }
-  }
-
-  .scrolling:hover {
-    animation: scroll 10s ease-in-out infinite;
   }
 }
 
@@ -106,6 +98,7 @@
     display: none;
   }
 }
+
 @media (min-width: 836px) {
   .hide-on-large-window {
     display: none;
