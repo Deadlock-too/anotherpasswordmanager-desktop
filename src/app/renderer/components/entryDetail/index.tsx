@@ -46,13 +46,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
       }
       onSubmit={ (values, { setSubmitting }) => {
         setTimeout(() => {
-          const entry: Entry = {
-            Id: values.id ?? uuid(),
-            Title: values.title,
-            Username: values.username,
-            Password: values.password,
-            OTPUri: values.otpURI,
-          }
+          const entry = new Entry(values.id ?? uuid(), values.title, values.username, values.password, values.otpURI)
           props.onSubmit(entry)
           toggleReadonly()
           toggleRefreshDetail()
@@ -248,7 +242,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                         className='btn btn-error w-1/3'
                         onClick={ () => {
                           if (values.id !== undefined) {
-                            setDeletingEntry({ Id: values.id, Title: values.title })
+                            setDeletingEntry(new Entry(values.id, values.title))
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore
                             window.document.getElementById('entryDeletionModal').showModal()

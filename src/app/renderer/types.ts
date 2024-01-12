@@ -12,18 +12,43 @@ export type File = {
   Folders: Folder[]
 }
 
-export type Folder = {
+export type NamedType = {
   Id: UUID
-  Name: string
-  Entries: Entry[]
+  Text: string
 }
 
-export type Entry = {
+export class Folder implements NamedType {
   Id: UUID
-  Title?: string
+  Text: string
+  Name: string
+  Entries: Entry[]
+
+  constructor(id: UUID, name: string, entries?: Entry[]) {
+    this.Id = id
+    this.Name = name
+    this.Entries = entries ?? []
+
+    this.Text = this.Name
+  }
+}
+
+export class Entry implements NamedType {
+  Id: UUID
+  Text: string
+  Title: string
   Username?: string
   Password?: string
   OTPUri?: string
+
+  constructor(id: UUID, title: string, username?: string, password?: string, otpUri?: string) {
+    this.Id = id
+    this.Title = title
+    this.Username = username
+    this.Password = password
+    this.OTPUri = otpUri
+
+    this.Text = this.Title
+  }
 }
 
 export type UUID = string

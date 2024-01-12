@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { FileContentContext, ModalContext } from '../../../contexts'
 import Modal from '../index'
 import { Formik } from 'formik'
-import { uuid } from '../../../types'
+import { Folder, uuid } from '../../../types'
 import i18n from '../../../../../i18n'
 import FormField from '../../formField'
 
@@ -28,11 +28,7 @@ const AddFolderDialog = () => {
       } }
       onSubmit={ (values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
-          const folder = {
-            Id: uuid(),
-            Name: values.title,
-            Entries: []
-          }
+          const folder = new Folder(uuid(), values.title)
           handleAddFolder(folder)
           handleSelectFolder(folder, selectedEntryId, selectedFolderId)
           setSubmitting(false)

@@ -73,8 +73,9 @@ const Column = ({
       const liElement = liRefs.current[i]
       if (textElement && liElement) {
         liElement.addEventListener('mouseenter', () => {
-          const scrollAmount = (textElement.scrollWidth - textElement.offsetWidth) + 24
+          let scrollAmount = (textElement.scrollWidth - textElement.offsetWidth)
           if (scrollAmount <= 0) return
+          scrollAmount += 24
           const scrollTime = scrollAmount / 7.5
           textElement.style.setProperty('--scroll-amount', `-${ scrollAmount }px`)
           textElement.style.setProperty('--scroll-time', `${ scrollTime }s`)
