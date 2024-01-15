@@ -12,6 +12,9 @@ import { ReactComponent as SaveIcon } from './svg/save.svg'
 /* From http://www.radix-ui.com/icons/ */
 import { ReactComponent as UpdateIcon } from './svg/update.svg'
 import { ReactComponent as TrashIcon } from './svg/trash.svg'
+import { ReactComponent as PencilIcon } from './svg/pencil.svg'
+import { ReactComponent as CheckIcon } from './svg/check.svg'
+import { ReactComponent as CrossIcon } from './svg/cross.svg'
 
 // TODO MOVE TO RADIX ICONS
 // TODO ADD MORE ICONS
@@ -28,4 +31,7 @@ export {
   SaveIcon,
   UpdateIcon,
   TrashIcon,
+  PencilIcon,
+  CrossIcon,
+  CheckIcon,
 }

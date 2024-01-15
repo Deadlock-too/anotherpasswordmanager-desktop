@@ -1,8 +1,9 @@
 import { Entry, Folder, UUID } from '../../types'
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
-import { PlusIcon, TrashIcon } from '../../../../assets/icons'
+import { CheckIcon, CrossIcon, PencilIcon, PlusIcon, TrashIcon } from '../../../../assets/icons'
 import { FileContentContext } from '../../contexts'
 import i18n from '../../../../i18n'
+import { Formik } from 'formik'
 
 interface ColumnProps {
   label: string | undefined
@@ -44,16 +45,23 @@ const Column = ({
     hoveringFolderId,
     setHoveringFolderId,
     setDeletingFolder,
+    editingFolderId,
+    setEditingFolderId,
+    handleUpdateFolder,
     selectedEntryId,
     hoveringEntryId,
     setHoveringEntryId,
     setDeletingEntry,
+    editingEntryId,
+    setEditingEntryId,
+    handleUpdateEntry
   } = useContext(FileContentContext)
 
   const [ disableElementSelection, setDisableElementSelection ] = useState(false)
 
   const textRefs = useRef<(HTMLDivElement | null)[]>([])
   const liRefs = useRef<(HTMLLIElement | null)[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     textRefs.current = textRefs.current.slice(0, elements.length)
@@ -127,6 +135,7 @@ const Column = ({
                     elements.map((child, i) => {
                       const isHovered = (variant === 'folders' && child.Id === hoveringFolderId) || (variant === 'entries' && child.Id === hoveringEntryId)
                       const isSelected = (variant === 'folders' && child.Id === selectedFolderId) || (variant === 'entries' && child.Id === selectedEntryId)
+                      const isEditing = (variant === 'folders' && child.Id === editingFolderId) || (variant === 'entries' && child.Id === editingEntryId)
 
                       return (
                         <li
@@ -148,56 +157,177 @@ const Column = ({
                           } }
                           ref={ el => liRefs.current[i] = el }
                         >
-                          <a key={ child.Id } onClick={ () => {
-                            if (disableElementSelection) return
-
-                            variant === 'folders' ?
-                              onSelectFolder!(child as Folder, selectedEntryId, selectedFolderId) :
-                              onSelectEntry!(child as Entry)
-                          } }
-                             className="justify-between items-center"
-                          >
-                            <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
-                              {
-                                variant === 'folders' ?
-                                  (child as Folder).Name :
-                                  (child as Entry).Title
-
-                                // TODO: Fix this
-                                // Check if any of the children has the same name as the current child
-                                // If so, append the folder id to the name
-                                // This is to prevent duplicate names in the UI
-                                // variant === 'folders' ?
-                                //   elements.filter((element) => element.Name === child.Name).length > 1 ?
-                                //     `${ child.Name } (${ child.Username })` :
-                                //     child.Name :
-                                //   child.Name
-                              }
-                            </div>
-                            <button
-                              className={ isHovered ?
-                                'btn btn-xs btn-square btn-error justify-center items-center -mr-2 -mt-1 -mb-1' :
-                                'hidden'
-                              }
-                              onClick={ () => {
-                                if (variant === 'folders') {
-                                  setDeletingFolder(child as Folder)
-                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                  // @ts-ignore
-                                  document.getElementById('folderDeletionModal').showModal()
-                                } else {
-                                  setDeletingEntry(child as Entry)
-                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                  // @ts-ignore
-                                  document.getElementById('entryDeletionModal').showModal()
+                          <Formik
+                            initialValues={ { title: variant === 'folders' ? (child as Folder).Name : (child as Entry).Title } }
+                            validate={
+                              values => {
+                                const errors: any = {}
+                                if (!values.title) {
+                                  errors.title = i18n.t('Common.Validations.Required field')
                                 }
+                                return errors
+                              }
+                            }
+                            onSubmit={ (values, { setSubmitting }) => {
+                              setTimeout(() => {
+                                if (variant === 'folders') {
+                                  const folderChild = child as Folder
+                                  folderChild.Name = values.title
+                                  handleUpdateFolder(folderChild)
+                                } else {
+                                  const entryChild = child as Entry
+                                  entryChild.Title = values.title
+                                  handleUpdateEntry(entryChild)
+                                }
+                                setSubmitting(false)
+                              }, 400)
+                            } }
+                          >
+                            { ({
+                              values,
+                              errors,
+                              touched,
+                              handleChange,
+                              handleBlur,
+                              handleSubmit,
+                              isSubmitting,
+                              handleReset,
+                            }) => (
+                              <a key={ child.Id } onClick={ () => {
+                                if (disableElementSelection || editingFolderId || editingEntryId) return
+
+                                variant === 'folders' ?
+                                  onSelectFolder!(child as Folder, selectedEntryId, selectedFolderId) :
+                                  onSelectEntry!(child as Entry)
                               } }
-                              onMouseEnter={ () => setDisableElementSelection(true) }
-                              onMouseLeave={ () => setDisableElementSelection(false) }
-                            >
-                              <TrashIcon/>
-                            </button>
-                          </a>
+                                 className="justify-between items-center"
+                              >
+                                <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
+                                  {
+                                    (child.Id == editingFolderId || child.Id == editingEntryId) ?
+                                      <input
+                                        type="text"
+                                        name="title"
+                                        onChange={ handleChange }
+                                        onBlur={ handleBlur }
+                                        value={ values.title }
+                                        className={ errors.title ?
+                                          'input input-sm input-error w-full' :
+                                          'input input-sm input-ghost w-full'
+                                        }
+                                        disabled={ isSubmitting }
+                                        ref={ inputRef }
+                                        onKeyUp={ (e) => {
+                                          if (e.key === 'Escape') {
+                                            handleReset()
+                                            setEditingFolderId(null)
+                                          }
+                                        } }
+                                      />
+                                      :
+                                      (variant === 'folders' ?
+                                        (child as Folder).Name :
+                                        (child as Entry).Title)
+
+                                    // TODO: Fix this
+                                    // Check if any of the children has the same name as the current child
+                                    // If so, append the folder id to the name
+                                    // This is to prevent duplicate names in the UI
+                                    // variant === 'folders' ?
+                                    //   elements.filter((element) => element.Name === child.Name).length > 1 ?
+                                    //     `${ child.Name } (${ child.Username })` :
+                                    //     child.Name :
+                                    //   child.Name
+                                  }
+                                </div>
+                                {
+                                  isEditing ?
+                                    (
+                                      <div className="flex gap-1 -mr-2.5 -mt-1 -mb-1">
+                                        <button
+                                          className="btn btn-xs btn-square btn-neutral justify-center items-center"
+                                          onClick={ () => {
+                                            handleSubmit()
+                                            if (variant === 'folders') {
+                                              setEditingFolderId(null)
+                                            } else {
+                                              setEditingEntryId(null)
+                                            }
+                                          } }
+                                          onMouseEnter={ () => setDisableElementSelection(true) }
+                                          onMouseLeave={ () => setDisableElementSelection(false) }
+                                        >
+                                          <CheckIcon/>
+                                        </button>
+                                        <button
+                                          className="btn btn-xs btn-square btn-neutral justify-center items-center"
+                                          onClick={ () => {
+                                            if (variant === 'folders') {
+                                              setEditingFolderId(null)
+                                            } else {
+                                              setEditingEntryId(null)
+                                            }
+                                            handleReset()
+                                          } }
+                                          onMouseEnter={ () => setDisableElementSelection(true) }
+                                          onMouseLeave={ () => setDisableElementSelection(false) }
+                                        >
+                                          <CrossIcon/>
+                                        </button>
+                                      </div>
+                                    )
+                                    :
+                                    (
+                                      <div className="flex gap-1 -mr-2.5 -mt-1 -mb-1">
+                                        <button
+                                          className={ isHovered ?
+                                            'btn btn-xs btn-square btn-neutral justify-center items-center' :
+                                            'hidden'
+                                          }
+                                          onClick={ () => {
+                                            if (variant === 'folders') {
+                                              setEditingFolderId(child.Id)
+                                            } else {
+                                              setEditingEntryId(child.Id)
+                                            }
+                                            setTimeout(() => {
+                                              inputRef.current?.focus()
+                                            }, 100)
+                                          } }
+                                          onMouseEnter={ () => setDisableElementSelection(true) }
+                                          onMouseLeave={ () => setDisableElementSelection(false) }
+                                        >
+                                          <PencilIcon/>
+                                        </button>
+                                        <button
+                                          className={ isHovered ?
+                                            'btn btn-xs btn-square btn-error justify-center items-center' :
+                                            'hidden'
+                                          }
+                                          onClick={ () => {
+                                            if (variant === 'folders') {
+                                              setDeletingFolder(child as Folder)
+                                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                              // @ts-ignore
+                                              document.getElementById('folderDeletionModal').showModal()
+                                            } else {
+                                              setDeletingEntry(child as Entry)
+                                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                              // @ts-ignore
+                                              document.getElementById('entryDeletionModal').showModal()
+                                            }
+                                          } }
+                                          onMouseEnter={ () => setDisableElementSelection(true) }
+                                          onMouseLeave={ () => setDisableElementSelection(false) }
+                                        >
+                                          <TrashIcon/>
+                                        </button>
+                                      </div>
+                                    )
+                                }
+                              </a>
+                            ) }
+                          </Formik>
                         </li>
                       )
                     }) }

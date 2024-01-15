@@ -14,12 +14,10 @@ export type File = {
 
 export type NamedType = {
   Id: UUID
-  Text: string
 }
 
 export class Folder implements NamedType {
   Id: UUID
-  Text: string
   Name: string
   Entries: Entry[]
 
@@ -27,14 +25,11 @@ export class Folder implements NamedType {
     this.Id = id
     this.Name = name
     this.Entries = entries ?? []
-
-    this.Text = this.Name
   }
 }
 
 export class Entry implements NamedType {
   Id: UUID
-  Text: string
   Title: string
   Username?: string
   Password?: string
@@ -46,8 +41,6 @@ export class Entry implements NamedType {
     this.Username = username
     this.Password = password
     this.OTPUri = otpUri
-
-    this.Text = this.Title
   }
 }
 

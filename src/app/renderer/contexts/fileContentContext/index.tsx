@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
 import { Entry, File, Folder, uuid, UUID } from '../../types'
 import { encrypt } from '../../../main/utils/crypt'
-import { bool } from 'yup'
 
 interface FileContentContextState {
   password: string | null
@@ -20,6 +19,7 @@ interface FileContentContextState {
   handleAddEntry: (entry: Entry, folderId: UUID) => void
   handleAddFolder: (folder: Folder) => void
   handleUpdateEntry: (entry: Entry) => void
+  handleUpdateFolder: (folder: Folder) => void
   handleDeleteEntry: (id: UUID) => void
   handleDeleteFolder: (id: UUID) => void
   resetSelection: () => void
@@ -36,6 +36,10 @@ interface FileContentContextState {
   deletingEntry: Entry | null
   setDeletingFolder: (id: Folder | null) => void
   setDeletingEntry: (id: Entry | null) => void
+  editingFolderId: UUID | null
+  editingEntryId: UUID | null
+  setEditingFolderId: (id: UUID | null) => void
+  setEditingEntryId: (id: UUID | null) => void
   refreshDetail: boolean
   toggleRefreshDetail: () => void
 }
@@ -78,7 +82,7 @@ export function FileContentContextProvider({ children }) {
         window.electron.saveFile(filePath, content)
       }
     }
-  }, [internalUpdateFileContentToggle, filePath, password])
+  }, [ internalUpdateFileContentToggle, filePath, password ])
 
   const reset = useCallback(() => {
     setFolders([])
@@ -129,14 +133,13 @@ export function FileContentContextProvider({ children }) {
 
   //TODO: Manage folder rename
   const handleUpdateFolder = useCallback((folder: Folder) => {
-    const index = folders.findIndex((f) => f.Id === folder.Id)
-    if (index !== -1) {
-      setFolders((prevState) => {
-        prevState[index] = folder
-        return prevState
-      })
-    }
-  }, [ folders ])
+    setFolders((prevState) => {
+      const folderIndex = prevState.findIndex((f) => f.Id === folder.Id)
+      prevState[folderIndex] = folder
+      return prevState
+    })
+    updateFileContent()
+  }, [])
 
   const handleAddEntry = useCallback((entry: Entry, folderId: UUID) => {
     setEntries(prevState => [ ...prevState, entry ])
@@ -184,6 +187,8 @@ export function FileContentContextProvider({ children }) {
   const [ hoveringEntryId, setHoveringEntryId ] = useState<UUID | null>(null)
   const [ deletingFolder, setDeletingFolder ] = useState<Folder | null>(null)
   const [ deletingEntry, setDeletingEntry ] = useState<Entry | null>(null)
+  const [ editingFolderId, setEditingFolderId ] = useState<UUID | null>(null)
+  const [ editingEntryId, setEditingEntryId ] = useState<UUID | null>(null)
   const [ refreshDetail, setRefreshDetail ] = useState<boolean>(false)
 
   const toggleRefreshDetail = () => setRefreshDetail((prevState) => !prevState)
@@ -205,6 +210,7 @@ export function FileContentContextProvider({ children }) {
     handleAddEntry,
     handleAddFolder,
     handleUpdateEntry,
+    handleUpdateFolder,
     handleDeleteEntry,
     handleDeleteFolder,
     resetSelection,
@@ -221,6 +227,10 @@ export function FileContentContextProvider({ children }) {
     deletingEntry,
     setDeletingFolder,
     setDeletingEntry,
+    editingFolderId,
+    editingEntryId,
+    setEditingFolderId,
+    setEditingEntryId,
     refreshDetail,
     toggleRefreshDetail
   }
