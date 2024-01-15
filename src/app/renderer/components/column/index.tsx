@@ -223,6 +223,7 @@ const Column = ({
                                             setEditingFolderId(null)
                                           }
                                         } }
+                                        spellCheck={false}
                                       />
                                       :
                                       (variant === 'folders' ?

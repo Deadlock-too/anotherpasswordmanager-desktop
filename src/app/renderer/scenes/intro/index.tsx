@@ -1,4 +1,4 @@
-import { FolderOpenIcon, PlusIcon } from '../../../../assets/icons'
+import { DirectoryOpenIcon, PlusIcon } from '../../../../assets/icons'
 import i18n from '../../../../i18n'
 
 const Intro = ({ onNewButtonClick }) => (
@@ -7,7 +7,7 @@ const Intro = ({ onNewButtonClick }) => (
       <div className='grid flex-grow card place-items-center'>
         <div className='flex flex-col items-center justify-items-center gap-3 py-5'>
           <button className='btn' onClick={ window.dialog.fileManagement.open } tabIndex={ 1 }>
-            <FolderOpenIcon/>
+            <DirectoryOpenIcon/>
             { i18n.t('Intro.Open Existing') }
           </button>
         </div>

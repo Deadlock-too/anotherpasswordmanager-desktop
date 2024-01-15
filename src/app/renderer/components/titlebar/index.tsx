@@ -2,17 +2,24 @@ import { useContext } from 'react'
 import DarkModeToggle from './darkModeToggle'
 import { SaveIcon, UpdateIcon } from '../../../../assets/icons'
 import { FileContentContext, ModalContext } from '../../contexts'
+import password from '../modal/password'
+import { encrypt } from '../../../main/utils/crypt'
 
 const SaveButton = () => {
-  const { filePath, setFilePath, fileContent } = useContext(FileContentContext)
+  const { filePath, setFilePath, fileContent, password } = useContext(FileContentContext)
 
   const saveFile = () => {
     const saveFile = (path: string, content: string) => {
       window.electron.saveFile(path, content)
     }
 
+    let content = JSON.stringify(fileContent)
+    if (password) {
+      content = encrypt(content, password)
+    }
+
     if (filePath) {
-      saveFile(filePath, JSON.stringify(fileContent))
+      saveFile(filePath, content)
       return
     } else {
       window.dialog.fileManagement.save()
@@ -24,7 +31,7 @@ const SaveButton = () => {
         })
         .then(() => {
           if (filePath)
-            saveFile(filePath, JSON.stringify(fileContent))
+            saveFile(filePath, content)
         })
     }
   }
