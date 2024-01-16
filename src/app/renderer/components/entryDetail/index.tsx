@@ -169,6 +169,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               }
             </label>
             {
+              //(readonly && !values.otpURI) ? null : //Uncomment to hide OTP field
               <label className='form-control w-full'>
                 <div className='label'>
                   <span className='label-text font-bold'>

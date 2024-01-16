@@ -2,6 +2,7 @@ import { BrowserWindow, dialog, ipcMain } from 'electron'
 import i18n from '../../../i18n'
 import * as fs from 'fs'
 import { decrypt } from './crypt'
+import IpcEventNames from '../ipc/ipcEventNames'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -89,21 +90,21 @@ export async function openFileDialog() {
           } catch (e) { /* File is not JSON, so it's encrypted */ }
 
           if (output && typeof output === 'object') {
-            mainWindow.webContents.send('file-opened', path, content)
+            mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, content)
           } else { //If it's not JSON, it's encrypted
-            ipcMain.removeHandler('password:result')
-            ipcMain.handleOnce('password:result', (_, password) => {
+            const eventName = IpcEventNames.PASSWORD.RESULT
+            ipcMain.removeHandler(eventName)
+            ipcMain.handleOnce(eventName, (_, password) => {
               const decryptedContent = decrypt(content!, password)
               try {
                 output = JSON.parse(decryptedContent)
-                mainWindow!.webContents.send('file-opened', path, decrypt(content!, password))
+                mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, decrypt(content!, password))
               } catch (e) {
-                //TODO HANDLE ERROR
-                mainWindow!.webContents.send('failed-open-file', path, content)
+                mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
               }
             })
 
-            mainWindow.webContents.send('password:input')
+            mainWindow.webContents.send(IpcEventNames.PASSWORD.INPUT)
           }
         }
       }).catch((err) => {
@@ -126,6 +127,5 @@ export async function saveFileDialog() {
       console.error(`Error: ${ err }`)
     }
   )
-  console.log(`Saving path: ${ path }`)
   return path
 }

@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import i18n from '../../i18n'
+import IpcEventNames from './ipc/ipcEventNames'
 
 contextBridge.exposeInMainWorld('localization', {
   changeLanguage: (lang: string): Promise<void> => {
@@ -30,55 +31,55 @@ contextBridge.exposeInMainWorld('system', {
 
 contextBridge.exposeInMainWorld('theming', {
   darkMode: {
-    isDark: () => ipcRenderer.invoke('darkMode:isDark'),
-    toggle: () => ipcRenderer.invoke('darkMode:toggle'),
-    system: () => ipcRenderer.invoke('darkMode:system')
+    isDark: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.IS_DARK),
+    toggle: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.TOGGLE),
+    system: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.SYSTEM)
   }
 })
 
 contextBridge.exposeInMainWorld('dialog', {
   fileManagement: {
     open: (): Promise<void> => {
-      return ipcRenderer.invoke('fileManagement:open')
+      return ipcRenderer.invoke(IpcEventNames.FILE_MANAGEMENT.OPEN)
     },
     save: (): Promise<string | undefined> => {
-      return ipcRenderer.invoke('fileManagement:save')
+      return ipcRenderer.invoke(IpcEventNames.FILE_MANAGEMENT.SAVE)
     }
   }
 })
 
 contextBridge.exposeInMainWorld('clipboard', {
   read: (): Promise<string> => {
-    return ipcRenderer.invoke('clipboard:read')
+    return ipcRenderer.invoke(IpcEventNames.CLIPBOARD.READ)
   },
   write: (text: string): Promise<void> => {
-    return ipcRenderer.invoke('clipboard:write', text)
+    return ipcRenderer.invoke(IpcEventNames.CLIPBOARD.WRITE, text)
   }
 })
 
 contextBridge.exposeInMainWorld('electron', {
   subscribeToFileOpened: (callback) => {
-    ipcRenderer.on('file-opened', (event, ...args) => callback(...args))
+    ipcRenderer.on(IpcEventNames.FILE_OPEN.OPENED, (event, ...args) => callback(...args))
   },
   unsubscribeToFileOpened: () => {
-    ipcRenderer.removeAllListeners('file-opened')
+    ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.OPENED)
   },
   subscribeToPasswordInput: (callback) => {
-    ipcRenderer.on('password:input', (event, ...args) => callback(...args))
+    ipcRenderer.on(IpcEventNames.PASSWORD.INPUT, (event, ...args) => callback(...args))
   },
   unsubscribeToPasswordInput: () => {
-    ipcRenderer.removeAllListeners('password:input')
+    ipcRenderer.removeAllListeners(IpcEventNames.PASSWORD.INPUT)
   },
   subscribeToFailedOpenFile: (callback) => {
-    ipcRenderer.on('failed-open-file', (event, ...args) => callback(...args))
+    ipcRenderer.on(IpcEventNames.FILE_OPEN.FAILED, (event, ...args) => callback(...args))
   },
   unsubscribeToFailedOpenFile: () => {
-    ipcRenderer.removeAllListeners('failed-open-file')
+    ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.FAILED)
   },
   sendPasswordResult: (password: string) => {
-    return ipcRenderer.invoke('password:result', password)
+    return ipcRenderer.invoke(IpcEventNames.PASSWORD.RESULT, password)
   },
   saveFile: (path: string, data: string): Promise<void> => {
-    return ipcRenderer.invoke('electron:saveFile', path, data)
+    return ipcRenderer.invoke(IpcEventNames.ELECTRON.SAVE_FILE, path, data)
   }
 })

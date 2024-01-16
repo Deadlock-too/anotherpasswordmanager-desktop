@@ -8,10 +8,11 @@ export default class Main {
   static mainWindow: Electron.BrowserWindow
   static application: Electron.App
   static BrowserWindow: typeof BrowserWindow
+  static StartupUrl: string | null
 
   private static onWindowAllClosed() {
     if (process.platform !== 'darwin') {
-      Main.application.quit()
+      this.application.quit()
     }
   }
 
@@ -28,21 +29,21 @@ export default class Main {
 
   private static onActivate() {
     if (BrowserWindow.getAllWindows().length === 0) {
-      Main.onReady()
+      this.onReady()
     }
   }
 
   private static manageLock() {
-    const gotTheLock = Main.application.requestSingleInstanceLock()
+    const gotTheLock = this.application.requestSingleInstanceLock()
     if (!gotTheLock) {
-      Main.application.quit()
+      this.application.quit()
     } else {
-      Main.application.on('second-instance', () => {
-        if (Main.mainWindow) {
-          if (Main.mainWindow.isMinimized()) {
-            Main.mainWindow.restore()
+      this.application.on('second-instance', () => {
+        if (this.mainWindow) {
+          if (this.mainWindow.isMinimized()) {
+            this.mainWindow.restore()
           }
-          Main.mainWindow.focus()
+          this.mainWindow.focus()
         }
       })
     }
@@ -51,18 +52,36 @@ export default class Main {
   private static manageProtocol() {
     if (process.defaultApp) {
       if (process.argv.length >= 2) {
-        Main.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [path.resolve(process.argv[1])])
+        this.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [ path.resolve(process.argv[1]) ])
       } else {
-        Main.application.setAsDefaultProtocolClient('anotherpasswordmanager')
+        this.application.setAsDefaultProtocolClient('anotherpasswordmanager')
       }
     }
   }
 
+  // TODO: Continue implementation (see example in this github repo: https://github.com/gary-archer/oauth.desktopsample.final/blob/master/src/main.ts#L127)
+  // private static manageOpenFile() {
+  //   for (const arg of process.argv) {
+  //     if (arg.startsWith('anotherpasswordmanager://')) {
+  //       this.StartupUrl = arg
+  //     } else if (arg.endsWith('.apm')) {
+  //       this.StartupUrl = arg
+  //     }
+  //   }
+  //
+  //   this.application.on('open-file', (event, path) => {
+  //     event.preventDefault()
+  //     this.StartupUrl = path
+  //   })
+  // }
+
   static main(app: Electron.App, browserWindow: typeof BrowserWindow) {
-    Main.BrowserWindow = browserWindow
-    Main.application = app
-    Main.manageLock()
-    Main.application.whenReady()
+    this.BrowserWindow = browserWindow
+    this.application = app
+    this.StartupUrl = null
+    this.manageLock()
+    //this.manageOpenFile()
+    this.application.whenReady()
       .then(async () => await init())
       .then(async () => {
         // TODO MANAGE WITH SETTING
@@ -74,21 +93,21 @@ export default class Main {
       })
       .catch((e) => {
         console.error(e)
-        Main.application.quit()
+        this.application.quit()
       })
-    Main.application.on('ready', Main.onReady)
+    this.application.on('ready', this.onReady)
 
     // TODO Move logic to when ready
-    // Main.application.whenReady()
+    // this.application.whenReady()
 
     // TODO Move logic to window manager and when ready
-    Main.application.on('window-all-closed', Main.onWindowAllClosed)
-    Main.application.on('activate', Main.onActivate)
+    this.application.on('window-all-closed', this.onWindowAllClosed)
+    this.application.on('activate', this.onActivate)
 
     // TODO onOpenUrl
-    //Main.application.on('open-url', Main.onOpenUrl)
+    //this.application.on('open-url', this.onOpenUrl)
 
     // TODO Move logic to protocol dedicated class
-    Main.manageProtocol()
+    this.manageProtocol()
   }
 }

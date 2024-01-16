@@ -65,10 +65,6 @@ export function FileContentContextProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    console.log(password)
-  }, [ password ])
-
-  useEffect(() => {
     const fc = {
       AppVersion: '0.0.1', //TODO READ FROM PACKAGE.JSON
       Folders: folders

@@ -1,8 +1,9 @@
 import { ipcMain, nativeTheme, clipboard } from 'electron'
-import { changeTitleBarOverlayTheme, openFileDialog, saveFileDialog } from './utils/windowManager'
-import { daisyui } from '../../../tailwind.config'
+import { changeTitleBarOverlayTheme, openFileDialog, saveFileDialog } from '../utils/windowManager'
+import { daisyui } from '../../../../tailwind.config'
 import { Theme } from 'daisyui'
 import * as fs from 'fs'
+import IpcEventNames from './ipcEventNames'
 
 /**
  * Ipc events
@@ -27,18 +28,16 @@ import * as fs from 'fs'
 /**
  * Ipc event handlers
  */
-// ipcMain.handle('fileManagement:open', async (): Promise<string | undefined> => {
-//   return await openFileDialog()
-// })
-ipcMain.handle('fileManagement:open', async (): Promise<void> => {
+
+ipcMain.handle(IpcEventNames.FILE_MANAGEMENT.OPEN, async (): Promise<void> => {
   return await openFileDialog()
 })
 
-ipcMain.handle('fileManagement:save', async (): Promise<string | undefined> => {
+ipcMain.handle(IpcEventNames.FILE_MANAGEMENT.SAVE, async (): Promise<string | undefined> => {
   return await saveFileDialog()
 })
 
-ipcMain.handle('darkMode:toggle', async (): Promise<boolean> => {
+ipcMain.handle(IpcEventNames.DARK_MODE.TOGGLE, async (): Promise<boolean> => {
   if (nativeTheme.shouldUseDarkColors) {
     nativeTheme.themeSource = 'light'
   } else {
@@ -65,23 +64,22 @@ ipcMain.handle('darkMode:toggle', async (): Promise<boolean> => {
   return nativeTheme.shouldUseDarkColors
 })
 
-ipcMain.handle('darkMode:isDark', () => {
+ipcMain.handle(IpcEventNames.DARK_MODE.IS_DARK, () => {
   return nativeTheme.shouldUseDarkColors
 })
 
-ipcMain.handle('darkMode:system', () => {
+ipcMain.handle(IpcEventNames.DARK_MODE.SYSTEM, () => {
   nativeTheme.themeSource = 'system'
 })
 
-ipcMain.handle('clipboard:read', async (): Promise<string> => {
+ipcMain.handle(IpcEventNames.CLIPBOARD.READ, async (): Promise<string> => {
   return clipboard.readText('clipboard')
 })
 
-ipcMain.handle('clipboard:write', async (_, args): Promise<void> => {
+ipcMain.handle(IpcEventNames.CLIPBOARD.WRITE, async (_, args): Promise<void> => {
   return clipboard.writeText(args, 'clipboard')
 })
 
-ipcMain.handle('electron:saveFile', async (_, path: string, data: string): Promise<void> => {
-  //TODO SAVE FILE
+ipcMain.handle(IpcEventNames.ELECTRON.SAVE_FILE, async (_, path: string, data: string): Promise<void> => {
   fs.writeFileSync(path, data, { encoding: 'utf-8' })
 })

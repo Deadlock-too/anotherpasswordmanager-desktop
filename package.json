@@ -31,6 +31,13 @@
     "name": "Deadlock-too",
     "email": "craescu.stefangabriel@gmail.com"
   },
+  "fileAssociations": [
+    {
+      "ext": "apm",
+      "name": "Another Password Manager",
+      "role": "Editor"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.2.0",
