@@ -12,11 +12,11 @@ export type File = {
   Folders: Folder[]
 }
 
-export type NamedType = {
+export type IdentifiableType = {
   Id: UUID
 }
 
-export class Folder implements NamedType {
+export class Folder implements IdentifiableType {
   Id: UUID
   Name: string
   Entries: Entry[]
@@ -28,7 +28,7 @@ export class Folder implements NamedType {
   }
 }
 
-export class Entry implements NamedType {
+export class Entry implements IdentifiableType {
   Id: UUID
   Title: string
   Username?: string
