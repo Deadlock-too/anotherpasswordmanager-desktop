@@ -75,7 +75,7 @@ export async function openFileDialog() {
       title: i18n.t('OpenDialog.Title'),
       properties: [ 'openFile' ],
       filters: [
-        { name: 'Apm files', extensions: [ 'apm' ] } //TODO ADD SUPPORT FOR APM FILES
+        { name: 'Apm files', extensions: [ 'apm' ] }
       ]
     }).then(
       (result) => {

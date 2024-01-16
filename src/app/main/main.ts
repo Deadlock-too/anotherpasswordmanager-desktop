@@ -12,7 +12,7 @@ export default class Main {
 
   private static onWindowAllClosed() {
     if (process.platform !== 'darwin') {
-      this.application.quit()
+      Main.application.quit()
     }
   }
 
@@ -29,21 +29,21 @@ export default class Main {
 
   private static onActivate() {
     if (BrowserWindow.getAllWindows().length === 0) {
-      this.onReady()
+      Main.onReady()
     }
   }
 
   private static manageLock() {
-    const gotTheLock = this.application.requestSingleInstanceLock()
+    const gotTheLock = Main.application.requestSingleInstanceLock()
     if (!gotTheLock) {
-      this.application.quit()
+      Main.application.quit()
     } else {
-      this.application.on('second-instance', () => {
-        if (this.mainWindow) {
-          if (this.mainWindow.isMinimized()) {
-            this.mainWindow.restore()
+      Main.application.on('second-instance', () => {
+        if (Main.mainWindow) {
+          if (Main.mainWindow.isMinimized()) {
+            Main.mainWindow.restore()
           }
-          this.mainWindow.focus()
+          Main.mainWindow.focus()
         }
       })
     }
@@ -52,9 +52,9 @@ export default class Main {
   private static manageProtocol() {
     if (process.defaultApp) {
       if (process.argv.length >= 2) {
-        this.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [ path.resolve(process.argv[1]) ])
+        Main.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [path.resolve(process.argv[1])])
       } else {
-        this.application.setAsDefaultProtocolClient('anotherpasswordmanager')
+        Main.application.setAsDefaultProtocolClient('anotherpasswordmanager')
       }
     }
   }
@@ -76,12 +76,12 @@ export default class Main {
   // }
 
   static main(app: Electron.App, browserWindow: typeof BrowserWindow) {
-    this.BrowserWindow = browserWindow
-    this.application = app
+    Main.BrowserWindow = browserWindow
+    Main.application = app
     this.StartupUrl = null
-    this.manageLock()
-    //this.manageOpenFile()
-    this.application.whenReady()
+    Main.manageLock()
+    //Main.manageOpenFile()
+    Main.application.whenReady()
       .then(async () => await init())
       .then(async () => {
         // TODO MANAGE WITH SETTING
@@ -93,21 +93,21 @@ export default class Main {
       })
       .catch((e) => {
         console.error(e)
-        this.application.quit()
+        Main.application.quit()
       })
-    this.application.on('ready', this.onReady)
+    Main.application.on('ready', Main.onReady)
 
     // TODO Move logic to when ready
-    // this.application.whenReady()
+    // Main.application.whenReady()
 
     // TODO Move logic to window manager and when ready
-    this.application.on('window-all-closed', this.onWindowAllClosed)
-    this.application.on('activate', this.onActivate)
+    Main.application.on('window-all-closed', Main.onWindowAllClosed)
+    Main.application.on('activate', Main.onActivate)
 
     // TODO onOpenUrl
-    //this.application.on('open-url', this.onOpenUrl)
+    //Main.application.on('open-url', Main.onOpenUrl)
 
     // TODO Move logic to protocol dedicated class
-    this.manageProtocol()
+    Main.manageProtocol()
   }
 }
