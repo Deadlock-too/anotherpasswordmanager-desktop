@@ -3,6 +3,7 @@ import i18n from '../../../i18n'
 import * as fs from 'fs'
 import { decrypt } from './crypt'
 import IpcEventNames from '../ipc/ipcEventNames'
+import main from '../../renderer/scenes/main'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -25,7 +26,7 @@ async function createMainWindow() {
     minWidth: 550,
     titleBarStyle: 'hidden',
     /* TODO MAKE DYNAMIC BASED ON CURRENT SAVED THEME */
-    /* TODO MANAGE OPENED DIALOG COLOR */
+    /* TODO MANAGE OPENED DIALOG COLOR (if any dialog is opened set darker color) */
     titleBarOverlay: {
       color: '#1d232a',
       symbolColor: '#ffffff',
@@ -57,7 +58,7 @@ export async function openMainWindow(targetRoute: string | null = null): Promise
     windows[0].focus()
   }
   if (targetRoute) {
-    windows[0].webContents.send('route', targetRoute)
+    windows[0].webContents.send(IpcEventNames.ROUTE, targetRoute)
   }
   return windows[0]
 }
@@ -81,31 +82,31 @@ export async function openFileDialog() {
       (result) => {
         if (!result.canceled && result.filePaths.length > 0 && mainWindow) {
           const path = result.filePaths[0]
-          content = fs.readFileSync(path).toString()
+          // content = fs.readFileSync(path).toString()
+          //
+          // //Try to parse the file as JSON to check if it's not encrypted
+          // let output
+          // try {
+          //   output = JSON.parse(content)
+          // } catch (e) { /* File is not JSON, so it's encrypted */ }
+          //
+          // if (output && typeof output === 'object') {
+          //   mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, content)
+          // } else { //If it's not JSON, it's encrypted
+          //   const eventName = IpcEventNames.PASSWORD.RESULT
+          //   ipcMain.removeHandler(eventName)
+          //   ipcMain.handleOnce(eventName, (_, password) => {
+          //     const decryptedContent = decrypt(content!, password)
+          //     try {
+          //       output = JSON.parse(decryptedContent)
+          //       mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, decrypt(content!, password))
+          //     } catch (e) {
+          //       mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
+          //     }
+          //   })
 
-          //Try to parse the file as JSON to check if it's not encrypted
-          let output
-          try {
-            output = JSON.parse(content)
-          } catch (e) { /* File is not JSON, so it's encrypted */ }
-
-          if (output && typeof output === 'object') {
-            mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, content)
-          } else { //If it's not JSON, it's encrypted
-            const eventName = IpcEventNames.PASSWORD.RESULT
-            ipcMain.removeHandler(eventName)
-            ipcMain.handleOnce(eventName, (_, password) => {
-              const decryptedContent = decrypt(content!, password)
-              try {
-                output = JSON.parse(decryptedContent)
-                mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, decrypt(content!, password))
-              } catch (e) {
-                mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
-              }
-            })
-
-            mainWindow.webContents.send(IpcEventNames.PASSWORD.INPUT)
-          }
+            mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, path)
+          // }
         }
       }).catch((err) => {
       console.error(`Error: ${ err }`)
@@ -113,6 +114,31 @@ export async function openFileDialog() {
   }
 }
 
+export async function openFileFromPath(path: string, password: string) : Promise<void> {
+  const content = fs.readFileSync(path).toString()
+  let result
+  const tryParseContent = (content: string) => {
+    try {
+      const rs = JSON.parse(content)
+      return rs && typeof rs === 'object'
+    } catch (e) {
+      /* File is not JSON, so it's encrypted */
+      return false
+    }
+  }
+  if (tryParseContent(content)) {
+    result = content
+  } else {
+    const decryptedContent = decrypt(content, password)
+    if (tryParseContent(decryptedContent)) {
+      result = decryptedContent
+    } else {
+      mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
+    }
+  }
+
+  mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, result)
+}
 export async function saveFileDialog() {
   let path: string | undefined = undefined
   await dialog.showSaveDialog({

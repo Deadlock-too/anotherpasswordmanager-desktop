@@ -12,7 +12,7 @@ import { FolderDeletionModal, EntryDeletionModal } from './components/modal/dele
 
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
-  const { isInitialized, initialize } = useContext(FileContentContext)
+  const { isInitialized, initialize, setFilePath } = useContext(FileContentContext)
   const { setIsPasswordModalOpen, setIsFailedOpenModalOpen } = useContext(ModalContext)
   const { setIsDark } = useContext(ThemeContext)
 
@@ -23,14 +23,6 @@ const App = () => {
     const fileOpenedHandler = (path, content) => initialize(path, content)
     window.electron.subscribeToFileOpened(fileOpenedHandler)
 
-    const passwordInputHandler = () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      document.getElementById('openPasswordModal').showModal()
-      setIsPasswordModalOpen(true)
-    }
-    window.electron.subscribeToPasswordInput(passwordInputHandler)
-
     const fileOpenFailedHandler = () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -39,10 +31,19 @@ const App = () => {
     }
     window.electron.subscribeToFailedOpenFile(fileOpenFailedHandler)
 
+    const openFileFromPathHandler = (path) => {
+      setFilePath(path)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      document.getElementById('openPasswordModal').showModal()
+      setIsPasswordModalOpen(true)
+    }
+    window.electron.subscribeToOpenFileFromPath(openFileFromPathHandler)
+
     return () => {
       window.electron.unsubscribeToFileOpened()
-      window.electron.unsubscribeToPasswordInput()
       window.electron.unsubscribeToFailedOpenFile()
+      window.electron.unsubscribeToOpenFileFromPath()
     }
   }, [])
 
@@ -79,3 +80,5 @@ export default App
 //TODO: ADD PASSWORD STRENGTH METER
 //TODO: ADD PASSWORD GENERATOR
 //TODO: ADD PASSWORD GENERATOR SETTINGS
+
+//TODO: If file already open, ask if use wants to open another

@@ -1,8 +1,9 @@
 import { BrowserWindow } from 'electron'
 import { openMainWindow } from './utils/windowManager'
-import * as path from 'path'
 import { init } from './services/init'
 import './ipc'
+import IpcEventNames from './ipc/ipcEventNames'
+import * as fs from 'fs'
 
 export default class Main {
   static mainWindow: Electron.BrowserWindow
@@ -16,8 +17,8 @@ export default class Main {
     }
   }
 
-  private static async onReady() {
-    await openMainWindow()
+  private static async onReady() : Promise<BrowserWindow> {
+    return await openMainWindow()
   }
 
   // TODO Move logic to protocol dedicated class
@@ -38,49 +39,52 @@ export default class Main {
     if (!gotTheLock) {
       Main.application.quit()
     } else {
-      Main.application.on('second-instance', () => {
-        if (Main.mainWindow) {
-          if (Main.mainWindow.isMinimized()) {
-            Main.mainWindow.restore()
-          }
-          Main.mainWindow.focus()
+      Main.application.on('second-instance', async (event, argv) => {
+        const window = await openMainWindow()
+        Main.setStartupUrl(argv)
+        if (Main.StartupUrl) {
+          window.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, Main.StartupUrl)
+          Main.StartupUrl = null
         }
       })
     }
   }
 
-  private static manageProtocol() {
-    if (process.defaultApp) {
-      if (process.argv.length >= 2) {
-        Main.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [path.resolve(process.argv[1])])
-      } else {
-        Main.application.setAsDefaultProtocolClient('anotherpasswordmanager')
+  private static setStartupUrl(argv: string[]) {
+    for (const arg of argv) {
+      if (arg.startsWith('anotherpasswordmanager://') || arg.endsWith('.apm')) {
+        this.StartupUrl = arg
       }
     }
   }
 
-  // TODO: Continue implementation (see example in this github repo: https://github.com/gary-archer/oauth.desktopsample.final/blob/master/src/main.ts#L127)
-  // private static manageOpenFile() {
-  //   for (const arg of process.argv) {
-  //     if (arg.startsWith('anotherpasswordmanager://')) {
-  //       this.StartupUrl = arg
-  //     } else if (arg.endsWith('.apm')) {
-  //       this.StartupUrl = arg
-  //     }
-  //   }
-  //
-  //   this.application.on('open-file', (event, path) => {
-  //     event.preventDefault()
-  //     this.StartupUrl = path
-  //   })
-  // }
+  private static manageProtocol() {
+    // TODO Manage protocol
+    // if (process.defaultApp) {
+    //   if (process.argv.length >= 2) {
+    //     Main.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [path.resolve(process.argv[1])])
+    //   } else {
+    //     Main.application.setAsDefaultProtocolClient('anotherpasswordmanager')
+    //   }
+    // }
+  }
+
+  //TODO: Continue implementation (see example in this github repo: https://github.com/gary-archer/oauth.desktopsample.final/blob/master/src/main.ts#L127)
+  private static manageOpenFile() {
+    Main.setStartupUrl(process.argv)
+
+    this.application.on('open-file', (event, path) => {
+      event.preventDefault()
+      this.StartupUrl = path
+    })
+  }
 
   static main(app: Electron.App, browserWindow: typeof BrowserWindow) {
     Main.BrowserWindow = browserWindow
     Main.application = app
     this.StartupUrl = null
     Main.manageLock()
-    //Main.manageOpenFile()
+    Main.manageOpenFile()
     Main.application.whenReady()
       .then(async () => await init())
       .then(async () => {
@@ -89,13 +93,17 @@ export default class Main {
         if (startInBackground) {
           return
         }
-        await openMainWindow()
+        const window = await Main.onReady()
+        if (Main.StartupUrl) {
+          window.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, Main.StartupUrl)
+          Main.StartupUrl = null
+        }
       })
       .catch((e) => {
         console.error(e)
         Main.application.quit()
       })
-    Main.application.on('ready', Main.onReady)
+    // Main.application.on('ready', Main.onReady)
 
     // TODO Move logic to when ready
     // Main.application.whenReady()
@@ -111,3 +119,10 @@ export default class Main {
     Main.manageProtocol()
   }
 }
+
+//TODO DISABLE CTRL+W, CTRL+Q AND CTRL+R
+//TODO DISABLE F5
+//TODO DISABLE F11
+//TODO PREVENT ALT+F4 WITH CONFIRM
+
+//TODO MANAGE AUTO UPDATE

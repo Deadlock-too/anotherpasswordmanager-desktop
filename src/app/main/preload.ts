@@ -64,20 +64,20 @@ contextBridge.exposeInMainWorld('electron', {
   unsubscribeToFileOpened: () => {
     ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.OPENED)
   },
-  subscribeToPasswordInput: (callback) => {
-    ipcRenderer.on(IpcEventNames.PASSWORD.INPUT, (event, ...args) => callback(...args))
-  },
-  unsubscribeToPasswordInput: () => {
-    ipcRenderer.removeAllListeners(IpcEventNames.PASSWORD.INPUT)
-  },
   subscribeToFailedOpenFile: (callback) => {
     ipcRenderer.on(IpcEventNames.FILE_OPEN.FAILED, (event, ...args) => callback(...args))
   },
   unsubscribeToFailedOpenFile: () => {
     ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.FAILED)
   },
-  sendPasswordResult: (password: string) => {
-    return ipcRenderer.invoke(IpcEventNames.PASSWORD.RESULT, password)
+  subscribeToOpenFileFromPath: (callback) => {
+    ipcRenderer.on(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, (event, ...args) => callback(...args))
+  },
+  unsubscribeToOpenFileFromPath: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH)
+  },
+  setFileContent: async (path: string, password: string) => {
+    return await ipcRenderer.invoke(IpcEventNames.FILE_OPEN.SET_FILE_CONTENT, path, password)
   },
   saveFile: (path: string, data: string): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.ELECTRON.SAVE_FILE, path, data)

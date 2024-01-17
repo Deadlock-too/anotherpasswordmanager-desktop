@@ -15,14 +15,13 @@ const IpcEventNames = {
   ELECTRON: {
     SAVE_FILE: 'electron:save-file',
   },
-  PASSWORD: {
-    INPUT: 'password:input',
-    RESULT: 'password:result',
-  },
   FILE_OPEN: {
     OPENED: 'file-opened',
     FAILED: 'failed-open-file',
-  }
+    OPEN_FROM_PATH: 'open-file-from-path',
+    SET_FILE_CONTENT: 'set-file-content'
+  },
+  ROUTE: 'route',
 }
 
 export default IpcEventNames

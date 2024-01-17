@@ -1,5 +1,5 @@
 import { ipcMain, nativeTheme, clipboard } from 'electron'
-import { changeTitleBarOverlayTheme, openFileDialog, saveFileDialog } from '../utils/windowManager'
+import { changeTitleBarOverlayTheme, openFileDialog, openFileFromPath, saveFileDialog } from '../utils/windowManager'
 import { daisyui } from '../../../../tailwind.config'
 import { Theme } from 'daisyui'
 import * as fs from 'fs'
@@ -35,6 +35,10 @@ ipcMain.handle(IpcEventNames.FILE_MANAGEMENT.OPEN, async (): Promise<void> => {
 
 ipcMain.handle(IpcEventNames.FILE_MANAGEMENT.SAVE, async (): Promise<string | undefined> => {
   return await saveFileDialog()
+})
+
+ipcMain.handle(IpcEventNames.FILE_OPEN.SET_FILE_CONTENT, async (_, path: string, password: string): Promise<void> => {
+  return await openFileFromPath(path, password)
 })
 
 ipcMain.handle(IpcEventNames.DARK_MODE.TOGGLE, async (): Promise<boolean> => {
