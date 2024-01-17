@@ -49,9 +49,8 @@ const EntriesColumn = ({elements}) => {
         editingId: editingEntryId,
         getElementName: (entry: Entry) => entry.Title,
         getUniqueElementName: (element, elements) => {
-          // TODO FIX THIS
-          if (elements.filter(e => e.Title === element.Title).length > 0) {
-            return element.Title + ' ' + element.Username
+          if (elements.filter(e => e.Id !== element.Id && e.Title === element.Title).length > 0) {
+            return element.Title + ' (' + element.Username + ')'
           }
           return element.Title
         }
