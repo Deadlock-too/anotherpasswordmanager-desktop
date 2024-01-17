@@ -1,10 +1,15 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
 import { Entry, File, Folder, uuid, UUID } from '../../types'
 import { encrypt } from '../../../main/utils/crypt'
+import pkg from '../../../../../package.json'
+
+const CURRENT_APP_VERSION = pkg.version
 
 interface FileContentContextState {
   password: string | null
   setPassword: (password: string | null) => void
+  contentVersion: string | null
+  setContentVersion: (version: string | null) => void
   isInitialized: boolean
   setIsInitialized: (isInitialized: boolean) => void
   initialize: (path: string, fileContent: string) => void
@@ -48,6 +53,7 @@ export const FileContentContext = createContext<FileContentContextState>({} as F
 
 export function FileContentContextProvider({ children }) {
   const [ password, setPassword ] = React.useState<string | null>(null)
+  const [ contentVersion, setContentVersion ] = React.useState<string | null>(null)
   const [ isInitialized, setIsInitialized ] = React.useState<boolean>(false)
   const [ folders, setFolders ] = React.useState<Folder[]>([])
   const [ entries, setEntries ] = React.useState<Entry[]>([])
@@ -60,13 +66,16 @@ export function FileContentContextProvider({ children }) {
   const initialize = useCallback((path: string, fileContent: string) => {
     const fc: File = JSON.parse(fileContent)
     setFolders(fc.Folders)
+
+    setContentVersion(fc.AppVersion) //TODO: Check if version is compatible with current version
+
     setIsInitialized(true)
     setFilePath(path)
   }, [])
 
   useEffect(() => {
     const fc = {
-      AppVersion: '0.0.1', //TODO READ FROM PACKAGE.JSON
+      AppVersion: pkg.version,
       Folders: folders
     }
     setFileContent(fc)
@@ -127,7 +136,6 @@ export function FileContentContextProvider({ children }) {
     updateFileContent()
   }, [])
 
-  //TODO: Manage folder rename
   const handleUpdateFolder = useCallback((folder: Folder) => {
     setFolders((prevState) => {
       const folderIndex = prevState.findIndex((f) => f.Id === folder.Id)
@@ -192,6 +200,8 @@ export function FileContentContextProvider({ children }) {
   const context: FileContentContextState = {
     password,
     setPassword,
+    contentVersion,
+    setContentVersion,
     isInitialized,
     setIsInitialized,
     initialize,
