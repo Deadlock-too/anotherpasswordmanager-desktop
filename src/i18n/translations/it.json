@@ -170,6 +170,9 @@
     "Submit Button": "Elimina",
     "Cancel Button": "Annulla"
   },
+  "SettingsDialog": {
+    "Title": "Impostazioni"
+  },
   "Common": {
     "Validations": {
       "Required field": "Campo obbligatorio",

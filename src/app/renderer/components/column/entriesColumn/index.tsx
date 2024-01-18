@@ -1,8 +1,7 @@
 import { ColumnBase, ColumnContentBase } from '../index'
-import { useContext } from 'react'
-import { FileContentContext } from '../../../contexts'
 import { Entry } from '../../../types'
 import i18n from '../../../../../i18n'
+import { useFileContentContext } from '../../../contexts'
 
 const EntriesColumn = ({elements}) => {
   const {
@@ -14,7 +13,7 @@ const EntriesColumn = ({elements}) => {
     setEditingEntryId,
     handleUpdateEntry,
     handleSelectEntry
-  } = useContext(FileContentContext)
+  } = useFileContentContext()
 
   const column = new ColumnBase<Entry>({
     style: {

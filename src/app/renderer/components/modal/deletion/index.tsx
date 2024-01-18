@@ -1,7 +1,7 @@
 import Modal from '../index'
 import i18n from '../../../../../i18n'
-import { FileContentContext, ModalContext } from '../../../contexts'
-import { ReactNode, useContext } from 'react'
+import { ReactNode } from 'react'
+import { useFileContentContext, useModalContext } from '../../../contexts'
 
 interface DeletionModalProps {
   modalId: string
@@ -12,7 +12,7 @@ interface DeletionModalProps {
 }
 
 export const FolderDeletionModal = () => {
-  const { handleDeleteFolder, deletingFolder, setDeletingFolder } = useContext(FileContentContext)
+  const { handleDeleteFolder, deletingFolder, setDeletingFolder } = useFileContentContext()
   return (
     <DeletionModal
       modalId={ 'folderDeletionModal' }
@@ -36,7 +36,7 @@ export const FolderDeletionModal = () => {
 }
 
 export const EntryDeletionModal = () => {
-  const { handleDeleteEntry, deletingEntry, setDeletingEntry } = useContext(FileContentContext)
+  const { handleDeleteEntry, deletingEntry, setDeletingEntry } = useFileContentContext()
   return (
     <DeletionModal
       modalId={ 'entryDeletionModal' }
@@ -60,7 +60,7 @@ export const EntryDeletionModal = () => {
 }
 
 const DeletionModal = (props: DeletionModalProps) => {
-  const { isDeletionModalOpen, setIsDeletionModalOpen } = useContext(ModalContext)
+  const { isDeletionModalOpen, setIsDeletionModalOpen } = useModalContext()
 
   return (
     <Modal

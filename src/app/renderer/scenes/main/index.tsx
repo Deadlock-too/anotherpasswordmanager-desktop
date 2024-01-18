@@ -1,5 +1,4 @@
-import { useContext } from 'react'
-import { FileContentContext } from '../../contexts'
+import { useFileContentContext } from '../../contexts'
 import FoldersColumn from '../../components/column/foldersColumn'
 import EntriesColumn from '../../components/column/entriesColumn'
 import DetailsColumn from '../../components/column/detailsColumn'
@@ -8,7 +7,7 @@ const Main = () => {
   const {
     folders,
     entries,
-  } = useContext(FileContentContext)
+  } = useFileContentContext()
 
   return (
     <div className="main-content flex flex-row justify-between p-2 items-center h-screen">

@@ -1,10 +1,9 @@
-import { useContext } from 'react'
-import { ModalContext } from '../../../contexts'
 import Modal from '../index'
 import i18n from '../../../../../i18n'
+import { useModalContext } from '../../../contexts'
 
 const FailedOpenDialog = () => {
-  const { isFailedOpenModalOpen, setIsFailedOpenModalOpen } = useContext(ModalContext)
+  const { isFailedOpenModalOpen, setIsFailedOpenModalOpen } = useModalContext()
 
   return (
     <Modal

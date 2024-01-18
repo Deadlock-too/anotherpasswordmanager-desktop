@@ -87,3 +87,11 @@ ipcMain.handle(IpcEventNames.CLIPBOARD.WRITE, async (_, args): Promise<void> => 
 ipcMain.handle(IpcEventNames.ELECTRON.SAVE_FILE, async (_, path: string, data: string): Promise<void> => {
   fs.writeFileSync(path, data, { encoding: 'utf-8' })
 })
+
+ipcMain.handle(IpcEventNames.CONFIG.GET, async (_, path: string): Promise<string> => {
+  return ''
+})
+
+ipcMain.handle(IpcEventNames.CONFIG.SET, async (_, path: string, data: string): Promise<void> => {
+
+})

@@ -1,8 +1,7 @@
 import { ColumnBase, ColumnContentBase } from '../index'
-import { useContext } from 'react'
-import { FileContentContext, ModalContext } from '../../../contexts'
 import { Folder } from '../../../types'
 import i18n from '../../../../../i18n'
+import { useFileContentContext, useModalContext } from '../../../contexts'
 
 const FoldersColumn = ({elements}) => {
   const {
@@ -15,9 +14,9 @@ const FoldersColumn = ({elements}) => {
     setEditingFolderId,
     handleUpdateFolder,
     handleSelectFolder
-  } = useContext(FileContentContext)
+  } = useFileContentContext()
 
-  const { setIsAddFolderModalOpen } = useContext(ModalContext)
+  const { setIsAddFolderModalOpen } = useModalContext()
 
   const column = new ColumnBase<Folder>({
     style: {

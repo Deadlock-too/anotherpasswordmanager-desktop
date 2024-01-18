@@ -1,9 +1,9 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, dialog } from 'electron'
 import { openMainWindow } from './utils/windowManager'
 import { init } from './services/init'
 import './ipc'
 import IpcEventNames from './ipc/ipcEventNames'
-import * as fs from 'fs'
+import { setShortcuts } from './utils/shortcutManager'
 
 export default class Main {
   static mainWindow: Electron.BrowserWindow
@@ -75,7 +75,7 @@ export default class Main {
 
     this.application.on('open-file', (event, path) => {
       event.preventDefault()
-      this.StartupUrl = path
+      Main.StartupUrl = path
     })
   }
 
@@ -86,18 +86,31 @@ export default class Main {
     Main.manageLock()
     Main.manageOpenFile()
     Main.application.whenReady()
-      .then(async () => await init())
+      .then(async () => await init(Main.application))
+      .then(async () => await setShortcuts(Main.application))
       .then(async () => {
         // TODO MANAGE WITH SETTING
         const startInBackground = false
         if (startInBackground) {
           return
         }
-        const window = await Main.onReady()
+        Main.mainWindow = await Main.onReady()
         if (Main.StartupUrl) {
-          window.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, Main.StartupUrl)
+          Main.mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, Main.StartupUrl)
           Main.StartupUrl = null
         }
+        Main.mainWindow.on('close', (e) => {
+          // TODO DO NOT CLOSE ONLY IF MODIFIED AND ADD i18n
+          const choice = dialog.showMessageBoxSync(Main.mainWindow, {
+            type: 'question',
+            buttons: ['Yes', 'No'],
+            title: 'Confirm',
+            message: 'Are you sure you want to quit?'
+          })
+          if (choice === 1) {
+            e.preventDefault()
+          }
+        })
       })
       .catch((e) => {
         console.error(e)
@@ -119,10 +132,5 @@ export default class Main {
     Main.manageProtocol()
   }
 }
-
-//TODO DISABLE CTRL+W, CTRL+Q AND CTRL+R
-//TODO DISABLE F5
-//TODO DISABLE F11
-//TODO PREVENT ALT+F4 WITH CONFIRM
 
 //TODO MANAGE AUTO UPDATE

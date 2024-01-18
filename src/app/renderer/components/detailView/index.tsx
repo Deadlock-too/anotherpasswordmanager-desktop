@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from 'react'
-import { FileContentContext } from '../../contexts'
+import { useEffect, useState } from 'react'
 import EntryDetail from '../entryDetail'
 import { Entry } from '../../types'
 import i18n from '../../../../i18n'
+import { useFileContentContext } from '../../contexts'
 
 const DetailView = () => {
   const {
@@ -13,7 +13,7 @@ const DetailView = () => {
     handleSelectEntry,
     entries,
     refreshDetail
-  } = useContext(FileContentContext)
+  } = useFileContentContext()
   const [ selectedEntry, setSelectedEntry ] = useState<Entry | undefined>(undefined)
 
   useEffect(() => {

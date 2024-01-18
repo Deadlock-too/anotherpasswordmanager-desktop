@@ -2,13 +2,13 @@ import { Entry, uuid } from '../../types'
 import { usePasswordToggle } from '../../hooks/passwordVisibility'
 import { Formik } from 'formik'
 import { EyeIcon, EyeSlashIcon } from '../../../../assets/icons'
-import { useContext, useState } from 'react'
-import { FileContentContext } from '../../contexts'
+import { useState } from 'react'
 import i18n from '../../../../i18n'
 import OTP, { RegExpPattern } from '../otp'
+import { useFileContentContext } from '../../contexts'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
-  const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useContext(FileContentContext)
+  const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useFileContentContext()
   const { type, passwordVisibility, handlePasswordVisibility } = usePasswordToggle()
   const [ readonly, setReadonly ] = useState(props.entry !== undefined)
 
@@ -144,7 +144,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   readOnly={ readonly }
                 />
                 <button type='button'
-                        // className='tooltip tooltip-base-100 absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info focus:tooltip-open' //TODO MANAGE TOOLTIP PROBLEM
+                        // className='tooltip tooltip-base-100 absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info focus:tooltip-open' //TODO MANAGE TOOLTIP OVERLAPPING PROBLEM
                         className='relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info'
                         disabled={ isSubmitting }
                         title={ passwordVisibility ? i18n.t('Entry Detail.Show Password') : i18n.t('Entry Detail.Hide Password') }

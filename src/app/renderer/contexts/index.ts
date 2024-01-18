@@ -1,12 +1,21 @@
+import { useContext } from 'react'
 import { FileContentContext, FileContentContextProvider } from './fileContentContext'
 import { ModalContext, ModalContextProvider } from './modalContext'
 import { ThemeContext, ThemeContextProvider } from './themeContext'
+import { ConfigContext, ConfigContextProvider } from './configContext'
+
+const useFileContentContext = () => useContext(FileContentContext)
+const useModalContext = () => useContext(ModalContext)
+const useThemeContext = () => useContext(ThemeContext)
+const useConfigContext = () => useContext(ConfigContext)
 
 export {
-  FileContentContext,
+  useFileContentContext,
   FileContentContextProvider,
-  ModalContext,
+  useModalContext,
   ModalContextProvider,
-  ThemeContext,
+  useThemeContext,
   ThemeContextProvider,
+  useConfigContext,
+  ConfigContextProvider,
 }

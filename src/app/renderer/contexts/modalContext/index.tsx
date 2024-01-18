@@ -1,4 +1,4 @@
-import React, { createContext } from 'react'
+import { createContext, useState } from 'react'
 
 interface ModalContextState {
   isAddFolderModalOpen: boolean
@@ -9,15 +9,18 @@ interface ModalContextState {
   setIsFailedOpenModalOpen: (isOpen: boolean) => void
   isDeletionModalOpen: boolean
   setIsDeletionModalOpen: (isOpen: boolean) => void
+  isSettingsModalOpen: boolean
+  setIsSettingsModalOpen: (isOpen: boolean) => void
 }
 
 export const ModalContext = createContext<ModalContextState>({} as ModalContextState)
 
 export function ModalContextProvider({ children }) {
-  const [ isAddFolderModalOpen, setIsAddFolderModalOpen ] = React.useState<boolean>(false)
-  const [ isPasswordModalOpen, setIsPasswordModalOpen ] = React.useState<boolean>(false)
-  const [ isFailedOpenModalOpen, setIsFailedOpenModalOpen ] = React.useState<boolean>(false)
-  const [ isDeletionModalOpen, setIsDeletionModalOpen ] = React.useState<boolean>(false)
+  const [ isAddFolderModalOpen, setIsAddFolderModalOpen ] = useState<boolean>(false)
+  const [ isPasswordModalOpen, setIsPasswordModalOpen ] = useState<boolean>(false)
+  const [ isFailedOpenModalOpen, setIsFailedOpenModalOpen ] = useState<boolean>(false)
+  const [ isDeletionModalOpen, setIsDeletionModalOpen ] = useState<boolean>(false)
+  const [ isSettingsModalOpen, setIsSettingsModalOpen ] = useState<boolean>(false)
 
   const context: ModalContextState = {
     isAddFolderModalOpen,
@@ -27,7 +30,9 @@ export function ModalContextProvider({ children }) {
     isFailedOpenModalOpen,
     setIsFailedOpenModalOpen,
     isDeletionModalOpen,
-    setIsDeletionModalOpen
+    setIsDeletionModalOpen,
+    isSettingsModalOpen,
+    setIsSettingsModalOpen
   }
 
   return (

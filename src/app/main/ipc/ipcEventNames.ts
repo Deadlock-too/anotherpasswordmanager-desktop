@@ -21,6 +21,10 @@ const IpcEventNames = {
     OPEN_FROM_PATH: 'open-file-from-path',
     SET_FILE_CONTENT: 'set-file-content'
   },
+  CONFIG: {
+    GET: 'config:get',
+    SET: 'config:set',
+  },
   ROUTE: 'route',
 }
 

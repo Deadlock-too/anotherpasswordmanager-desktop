@@ -171,6 +171,9 @@
     "Submit Button": "Delete",
     "Cancel Button": "Cancel"
   },
+  "SettingsDialog": {
+    "Title": "Settings"
+  },
   "Common": {
     "Validations": {
       "Required field": "Required field",

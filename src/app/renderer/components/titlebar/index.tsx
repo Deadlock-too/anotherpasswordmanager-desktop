@@ -1,13 +1,21 @@
-import { useContext } from 'react'
-import DarkModeToggle from './darkModeToggle'
-import { SaveIcon, UpdateIcon } from '../../../../assets/icons'
-import { FileContentContext, ModalContext } from '../../contexts'
-import password from '../modal/password'
+import { SaveIcon, SettingsIcon, TemporaryAppIcon, UpdateIcon } from '../../../../assets/icons'
 import { encrypt } from '../../../main/utils/crypt'
+import { useFileContentContext, useModalContext } from '../../contexts'
+import { ReactNode } from 'react'
+
+const TitleBarButton = ({ icon, onClick }: { icon: ReactNode, onClick: () => void }) => {
+  return (
+    <button
+      className="titlebar-icon btn btn-xs btn-square btn-ghost"
+      onClick={ onClick }
+    >
+      { icon }
+    </button>
+  )
+}
 
 const SaveButton = () => {
-  const { filePath, setFilePath, fileContent, password } = useContext(FileContentContext)
-
+  const { filePath, setFilePath, fileContent, password } = useFileContentContext()
   const saveFile = () => {
     const saveFile = (path: string, content: string) => {
       window.electron.saveFile(path, content)
@@ -35,57 +43,63 @@ const SaveButton = () => {
         })
     }
   }
-
   return (
-    <label className="swap swap-rotate items-center">
-      <input
-        /* this hidden checkbox controls the state */
-        type="checkbox"
-        className="titlebar-icon"
-        onClick={ saveFile }
-      />
-      <SaveIcon/>
-    </label>
+    <TitleBarButton
+      icon={ <SaveIcon/> }
+      onClick={ saveFile }
+    />
   )
 }
 
 const ChangeMasterKeyButton = () => {
-  const { setIsPasswordModalOpen } = useContext(ModalContext)
-
+  const { setIsPasswordModalOpen } = useModalContext()
   return (
-    <label className="swap swap-rotate pl-2 items-center">
-      <input
-        /* this hidden checkbox controls the state */
-        type="checkbox"
-        className="titlebar-icon"
-        onClick={ () => {
-          /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-          // @ts-ignore
-          document.getElementById('updatePasswordModal').showModal()
-          setIsPasswordModalOpen(true)
-        } }
-      />
-      <UpdateIcon/>
-    </label>
+    <TitleBarButton
+      icon={ <UpdateIcon/> }
+      onClick={ () => {
+        /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+        // @ts-ignore
+        document.getElementById('updatePasswordModal').showModal()
+        setIsPasswordModalOpen(true)
+      } }
+    />
+  )
+}
+
+const SettingsButton = () => {
+  const { setIsSettingsModalOpen } = useModalContext()
+  return (
+    <TitleBarButton
+      icon={ <SettingsIcon/> }
+      onClick={ () => {
+        /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+        // @ts-ignore
+        document.getElementById('settingsModal').showModal()
+        setIsSettingsModalOpen(true)
+      } }
+    />
   )
 }
 
 const TitleBar = () => {
-  const {isInitialized} = useContext(FileContentContext)
+  const { isInitialized } = useFileContentContext()
 
   return (
-    <div className="flex justify-between titlebar text-black dark:text-white items-center px-3 py-1">
-      {/*<SaveIcon className="titlebar-icon"/>*/ }
-      { isInitialized ?
-        <div>
-          <SaveButton/>
-          <ChangeMasterKeyButton />
-        </div>
-        : null }
+    <div className="flex justify-between titlebar text-black dark:text-white items-center px-2 pr-36 py-1">
+      <div className="flex items-center">
+        <TemporaryAppIcon/>
+        { isInitialized ?
+          <div>
+            <SaveButton/>
+            <ChangeMasterKeyButton/>
+          </div>
+          : null }
+      </div>
       {/*<h1 className="truncate">Another password manager</h1>*/ }
       {/* TODO MANAGE TITLE-BAR */ }
       <h1 className="truncate"></h1>
-      <DarkModeToggle/>
+      {/*<DarkModeToggle/>*/ }
+      <SettingsButton/>
     </div>
   )
 }

@@ -1,10 +1,8 @@
-import { useContext } from 'react'
-import { FileContentContext, ModalContext } from '../../../contexts'
 import { Formik, FormikProps } from 'formik'
 import Modal from '../index'
 import i18n from '../../../../../i18n'
 import FormField from '../../formField'
-import IpcEventNames from '../../../../main/ipc/ipcEventNames'
+import { useFileContentContext, useModalContext } from '../../../contexts'
 
 interface PasswordDialogProps {
   variant: 'open' | 'create' | 'update'
@@ -104,8 +102,8 @@ const UpdatePasswordDialog = (props: InnerDialogProps) => {
 }
 
 const PasswordDialog = (props: PasswordDialogProps) => {
-  const { setPassword, setIsInitialized, filePath } = useContext(FileContentContext)
-  const { isPasswordModalOpen, setIsPasswordModalOpen } = useContext(ModalContext)
+  const { setPassword, setIsInitialized, filePath } = useFileContentContext()
+  const { isPasswordModalOpen, setIsPasswordModalOpen } = useModalContext()
 
   const dialogTitle = () => {
     switch (props.variant) {

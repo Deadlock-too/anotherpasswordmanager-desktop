@@ -1,6 +1,6 @@
 import { TOTP } from 'otpauth'
-import { useContext, useEffect, useState } from 'react'
-import { ThemeContext } from '../../contexts'
+import { useEffect, useState } from 'react'
+import { useThemeContext } from '../../contexts'
 
 const RADIUS : number = 30
 const CIRCUMFERENCE : number = RADIUS * 2 * Math.PI
@@ -66,7 +66,7 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
     componentColor = 'text-error'
   }
 
-  const { isDark } = useContext(ThemeContext)
+  const { isDark } = useThemeContext()
 
   return (
     <div className='flex flex-row items-center cursor-pointer justify-center hide-on-small-window'

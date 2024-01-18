@@ -2,6 +2,7 @@
 import { ReactComponent as EyeIcon } from './svg/heroIcons/eye.svg'
 import { ReactComponent as EyeSlashIcon } from './svg/heroIcons/eye-slash.svg'
 
+/* Custom icons */
 import { ReactComponent as SaveIcon } from './svg/custom/save.svg'
 import { ReactComponent as DirectoryOpenIcon } from './svg/custom/directory-open.svg'
 
@@ -16,6 +17,8 @@ import { ReactComponent as SunIcon } from './svg/radix/sun.svg'
 import { ReactComponent as MoonIcon } from './svg/radix/moon.svg'
 import { ReactComponent as PlusIcon } from './svg/radix/plus.svg'
 import { ReactComponent as CloseIcon } from './svg/radix/cross-1.svg'
+import { ReactComponent as SettingsIcon } from './svg/radix/gear.svg'
+import { ReactComponent as TemporaryAppIcon } from './svg/radix/lock-closed.svg'
 
 export {
   LockIcon,
@@ -32,4 +35,6 @@ export {
   PencilIcon,
   CrossIcon,
   CheckIcon,
+  SettingsIcon,
+  TemporaryAppIcon
 }

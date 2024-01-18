@@ -1,20 +1,36 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import i18n from '../../i18n'
 import TitleBar from './components/titlebar'
 import Main from './scenes/main'
 import Intro from './scenes/intro'
-import { FileContentContext, ModalContext, ThemeContext } from './contexts'
-import PasswordDialog from './components/modal/password'
-import AddFolderDialog from './components/modal/addFolder'
-import FailedOpenDialog from './components/modal/failedOpen'
-import { FolderDeletionModal, EntryDeletionModal } from './components/modal/deletion'
+import { useFileContentContext, useModalContext, useThemeContext } from './contexts'
+import PasswordModal from './components/modal/password'
+import AddFolderModal from './components/modal/addFolder'
+import FailedOpenModal from './components/modal/failedOpen'
+import { EntryDeletionModal, FolderDeletionModal } from './components/modal/deletion'
+import SettingsModal from './components/modal/settings'
+
+const Modals = () => {
+  return (
+    <>
+      <PasswordModal variant={ 'open' }/>
+      <PasswordModal variant={ 'create' }/>
+      <PasswordModal variant={ 'update' }/>
+      <AddFolderModal/>
+      <FailedOpenModal/>
+      <FolderDeletionModal/>
+      <EntryDeletionModal/>
+      <SettingsModal/>
+    </>
+  )
+}
 
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
-  const { isInitialized, initialize, setFilePath } = useContext(FileContentContext)
-  const { setIsPasswordModalOpen, setIsFailedOpenModalOpen } = useContext(ModalContext)
-  const { setIsDark } = useContext(ThemeContext)
+  const { isInitialized, initialize, setFilePath } = useFileContentContext()
+  const { setIsPasswordModalOpen, setIsFailedOpenModalOpen } = useModalContext()
+  const { setIsDark } = useThemeContext()
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
@@ -52,13 +68,7 @@ const App = () => {
 
   return (
     <I18nextProvider i18n={ i18n.default }>
-      <PasswordDialog variant={ 'open' }/>
-      <PasswordDialog variant={ 'create' }/>
-      <PasswordDialog variant={ 'update' }/>
-      <AddFolderDialog />
-      <FailedOpenDialog />
-      <FolderDeletionModal />
-      <EntryDeletionModal />
+      <Modals />
       <TitleBar/>
       <div className="overflow-hidden">
         {

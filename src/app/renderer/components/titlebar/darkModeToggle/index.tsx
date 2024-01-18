@@ -1,10 +1,9 @@
 import { MoonIcon, SunIcon } from '../../../../../assets/icons'
-import { useContext } from 'react'
-import { ThemeContext } from '../../../contexts'
+import { useThemeContext } from '../../../contexts'
 
 
 const DarkModeToggle = () => {
-  const { toggleDarkMode } = useContext(ThemeContext)
+  const { toggleDarkMode } = useThemeContext()
 
   const toggle = () => {
     window.theming.darkMode.toggle()

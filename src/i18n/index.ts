@@ -2,7 +2,7 @@ import * as i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import translations from './translations'
 
-const DEFAULT_LANGUAGE = 'en'
+const DEFAULT_LANGUAGE = 'en' //TODO SET TO OS LANGUAGE
 
 i18n
   .use(initReactI18next)

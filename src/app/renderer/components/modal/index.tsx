@@ -1,8 +1,16 @@
 import { CloseIcon } from '../../../../assets/icons'
+import { ReactNode } from 'react'
 
-const Modal = ({ id, title, children, isModalVisible, handleReset }) => {
+const Modal = ({ id, title, children, isModalVisible, handleReset, style } : {
+  id: string,
+  title: string,
+  children: ReactNode,
+  isModalVisible: boolean,
+  handleReset: () => void,
+  style?: string
+}) => {
   return (
-    <dialog id={ id } className='modal'>
+    <dialog id={ id } className={ style ?? 'modal' }>
       <div className='modal-box'>
         <div className='flex justify-between items-center'>
           <h3 className='font-bold text-lg unselectable'>{ title }</h3>

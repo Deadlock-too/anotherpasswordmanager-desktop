@@ -1,7 +1,8 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react'
+import { createContext, useCallback, useEffect, useState } from 'react'
 import { Entry, File, Folder, uuid, UUID } from '../../types'
 import { encrypt } from '../../../main/utils/crypt'
 import pkg from '../../../../../package.json'
+import { Config } from '../../../../types'
 
 const CURRENT_APP_VERSION = pkg.version
 
@@ -51,15 +52,15 @@ interface FileContentContextState {
 
 export const FileContentContext = createContext<FileContentContextState>({} as FileContentContextState)
 
-export function FileContentContextProvider({ children }) {
-  const [ password, setPassword ] = React.useState<string | null>(null)
-  const [ contentVersion, setContentVersion ] = React.useState<string | null>(null)
-  const [ isInitialized, setIsInitialized ] = React.useState<boolean>(false)
-  const [ folders, setFolders ] = React.useState<Folder[]>([])
-  const [ entries, setEntries ] = React.useState<Entry[]>([])
-  const [ filePath, setFilePath ] = React.useState<string>('')
-  const [ fileContent, setFileContent ] = React.useState<File | null>(null)
-  const [ internalUpdateFileContentToggle, setInternalUpdateFileContentToggle ] = React.useState(false)
+export function FileContentContextProvider({ children, config }: { children: any, config: Config }) {
+  const [ password, setPassword ] = useState<string | null>(null)
+  const [ contentVersion, setContentVersion ] = useState<string | null>(null)
+  const [ isInitialized, setIsInitialized ] = useState<boolean>(false)
+  const [ folders, setFolders ] = useState<Folder[]>([])
+  const [ entries, setEntries ] = useState<Entry[]>([])
+  const [ filePath, setFilePath ] = useState<string>('')
+  const [ fileContent, setFileContent ] = useState<File | null>(null)
+  const [ internalUpdateFileContentToggle, setInternalUpdateFileContentToggle ] = useState(false)
 
   const updateFileContent = () => setInternalUpdateFileContentToggle((prevState) => !prevState)
 
@@ -75,7 +76,7 @@ export function FileContentContextProvider({ children }) {
 
   useEffect(() => {
     const fc = {
-      AppVersion: pkg.version,
+      AppVersion: CURRENT_APP_VERSION,
       Folders: folders
     }
     setFileContent(fc)
@@ -88,6 +89,14 @@ export function FileContentContextProvider({ children }) {
       }
     }
   }, [ internalUpdateFileContentToggle, filePath, password ])
+
+  //reload file content every n seconds
+  setInterval(() => {
+    if (isInitialized && filePath) {
+      //reload file content
+      //...
+    }
+  }, 1000 * 10)
 
   const reset = useCallback(() => {
     setFolders([])

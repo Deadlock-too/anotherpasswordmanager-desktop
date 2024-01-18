@@ -1,10 +1,9 @@
-import { useContext } from 'react'
-import { FileContentContext, ModalContext } from '../../../contexts'
 import Modal from '../index'
 import { Formik } from 'formik'
 import { Folder, uuid } from '../../../types'
 import i18n from '../../../../../i18n'
 import FormField from '../../formField'
+import { useFileContentContext, useModalContext } from '../../../contexts'
 
 const AddFolderDialog = () => {
   const {
@@ -12,9 +11,9 @@ const AddFolderDialog = () => {
     handleSelectFolder,
     selectedEntryId,
     selectedFolderId
-  } = useContext(FileContentContext)
+  } = useFileContentContext()
 
-  const { isAddFolderModalOpen, setIsAddFolderModalOpen } = useContext(ModalContext)
+  const { isAddFolderModalOpen, setIsAddFolderModalOpen } = useModalContext()
 
   return (
     <Formik
