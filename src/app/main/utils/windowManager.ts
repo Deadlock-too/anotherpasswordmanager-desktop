@@ -1,12 +1,14 @@
-import { BrowserWindow, dialog, ipcMain } from 'electron'
+import { BrowserWindow, dialog } from 'electron'
 import i18n from '../../../i18n'
 import * as fs from 'fs'
 import { decrypt } from './crypt'
 import IpcEventNames from '../ipc/ipcEventNames'
-import main from '../../renderer/scenes/main'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
+
+declare const SECONDARY_WINDOW_WEBPACK_ENTRY: string
+declare const SECONDARY_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 let mainWindow: BrowserWindow | null
 
@@ -25,6 +27,7 @@ async function createMainWindow() {
     minHeight: 300,
     minWidth: 550,
     titleBarStyle: 'hidden',
+    // icon: './assets/icon.png', //TODO ADD ICON
     /* TODO MAKE DYNAMIC BASED ON CURRENT SAVED THEME */
     /* TODO MANAGE OPENED DIALOG COLOR (if any dialog is opened set darker color) */
     titleBarOverlay: {
@@ -36,6 +39,48 @@ async function createMainWindow() {
 
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   mainWindow.on('closed', onClose)
+
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    let height = (mainWindow?.getSize()[1] ?? 600) - 100
+    let width = (mainWindow?.getSize()[0] ?? 800) - 100
+    let minHeight = 300
+    let minWidth = 550
+    let resizable = false
+
+    //use frameName to identify which window is being opened
+    if (details.frameName === 'settings') {
+      height = 600
+      width = 800
+      minHeight = 300
+      minWidth = 550
+      resizable = true
+    }
+
+    return {
+      action: 'allow',
+      outlivesOpener: false,
+      overrideBrowserWindowOptions: {
+        height: height,
+        width: width,
+        minHeight: minHeight,
+        minWidth: minWidth,
+        titleBarStyle: 'hidden', //re-enable when title bar overlay is finished
+        skipTaskbar: true,
+        minimizable: false,
+        maximizable: false,
+        resizable: resizable,
+        titleBarOverlay: false,
+        // icon: './assets/icon.png', //TODO ADD ICON
+        // x: (mainWindow?.getPosition()[0] ?? 0) + 25,
+        // y: (mainWindow?.getPosition()[1] ?? 0) + 25,
+        parent: mainWindow ?? undefined,
+        modal: true,
+        webPreferences: {
+          preload: SECONDARY_WINDOW_PRELOAD_WEBPACK_ENTRY
+        }
+      }
+    }
+  })
 
   mainWindow.webContents.openDevTools()
 }
@@ -70,7 +115,6 @@ export async function onWindowAllClosed(app: Electron.App) {
 }
 
 export async function openFileDialog() {
-  let content: string | undefined = undefined
   if (mainWindow) {
     await dialog.showOpenDialog(mainWindow, {
       title: i18n.t('OpenDialog.Title'),
@@ -82,31 +126,7 @@ export async function openFileDialog() {
       (result) => {
         if (!result.canceled && result.filePaths.length > 0 && mainWindow) {
           const path = result.filePaths[0]
-          // content = fs.readFileSync(path).toString()
-          //
-          // //Try to parse the file as JSON to check if it's not encrypted
-          // let output
-          // try {
-          //   output = JSON.parse(content)
-          // } catch (e) { /* File is not JSON, so it's encrypted */ }
-          //
-          // if (output && typeof output === 'object') {
-          //   mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, content)
-          // } else { //If it's not JSON, it's encrypted
-          //   const eventName = IpcEventNames.PASSWORD.RESULT
-          //   ipcMain.removeHandler(eventName)
-          //   ipcMain.handleOnce(eventName, (_, password) => {
-          //     const decryptedContent = decrypt(content!, password)
-          //     try {
-          //       output = JSON.parse(decryptedContent)
-          //       mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, decrypt(content!, password))
-          //     } catch (e) {
-          //       mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
-          //     }
-          //   })
-
-            mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, path)
-          // }
+          mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, path)
         }
       }).catch((err) => {
       console.error(`Error: ${ err }`)
@@ -114,9 +134,9 @@ export async function openFileDialog() {
   }
 }
 
-export async function openFileFromPath(path: string, password: string) : Promise<void> {
+export async function openFileFromPath(path: string, password: string): Promise<void> {
   const content = fs.readFileSync(path).toString()
-  let result
+  let result: string
   const tryParseContent = (content: string) => {
     try {
       const rs = JSON.parse(content)
@@ -133,12 +153,14 @@ export async function openFileFromPath(path: string, password: string) : Promise
     if (tryParseContent(decryptedContent)) {
       result = decryptedContent
     } else {
-      mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
+      mainWindow?.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
+      return
     }
   }
 
-  mainWindow!.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, result)
+  mainWindow?.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, result)
 }
+
 export async function saveFileDialog() {
   let path: string | undefined = undefined
   await dialog.showSaveDialog({
