@@ -29,7 +29,7 @@ async function createMainWindow() {
     titleBarStyle: 'hidden',
     // icon: './assets/icon.png', //TODO ADD ICON
     /* TODO MAKE DYNAMIC BASED ON CURRENT SAVED THEME */
-    /* TODO MANAGE OPENED DIALOG COLOR (if any dialog is opened set darker color) */
+    /* TODO MANAGE OPENED DIALOG OR SECONDARY MODAL WINDOW COLOR (if any dialog is opened set darker color, for an easier job compute all colors starting from the title bar color using HSL subtracting 5 to the last value and set a new field in the tailwind.config.js) */
     titleBarOverlay: {
       color: '#1d232a',
       symbolColor: '#ffffff',
@@ -41,6 +41,8 @@ async function createMainWindow() {
   mainWindow.on('closed', onClose)
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
+    //TODO: Use details.feature to get main window current positions and dimensions
+
     let height = (mainWindow?.getSize()[1] ?? 600) - 100
     let width = (mainWindow?.getSize()[0] ?? 800) - 100
     let minHeight = 300
@@ -64,15 +66,20 @@ async function createMainWindow() {
         width: width,
         minHeight: minHeight,
         minWidth: minWidth,
-        titleBarStyle: 'hidden', //re-enable when title bar overlay is finished
+        titleBarStyle: 'hidden',
         skipTaskbar: true,
         minimizable: false,
         maximizable: false,
         resizable: resizable,
         titleBarOverlay: false,
+        // titleBarOverlay: {
+        //   color: '#1d232a',
+        //   symbolColor: '#ffffff',
+        //   height: 30 /* TODO MANAGE DARWIN PLATFORM DYNAMIC TITLE BAR HEIGHT (Low priority as not testable without device with Darwin platform) */
+        // },
         // icon: './assets/icon.png', //TODO ADD ICON
-        // x: (mainWindow?.getPosition()[0] ?? 0) + 25,
-        // y: (mainWindow?.getPosition()[1] ?? 0) + 25,
+        x: (mainWindow?.getPosition()[0] ?? 0) + 25,
+        y: (mainWindow?.getPosition()[1] ?? 0) + 25,
         parent: mainWindow ?? undefined,
         modal: true,
         webPreferences: {
@@ -83,6 +90,8 @@ async function createMainWindow() {
   })
 
   mainWindow.webContents.openDevTools()
+
+  mainWindow.webContents.send(IpcEventNames.ELECTRON.SET_SECONDARY_WINDOW_ENTRY, SECONDARY_WINDOW_WEBPACK_ENTRY)
 }
 
 export async function changeTitleBarOverlayTheme(color: string, symbolColor: string) {

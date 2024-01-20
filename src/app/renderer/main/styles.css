@@ -5,12 +5,13 @@
 :root {
   --scroll-amount: 0;
   --scroll-time: 0s;
+  --titlebar-height: 30px;
 }
 
 @layer utilities {
   /* App content */
   .main-content {
-    height: calc(100vh - 30px);
+    height: calc(100vh - var(--titlebar-height));
   }
 
   .unselectable {
@@ -24,6 +25,11 @@
   /* Menu item */
   .selected {
     @apply bg-base-200;
+    border-radius: var(--rounded-btn, 0.5rem /* 8px */)
+  }
+
+  .selected-setting {
+    @apply bg-base-100;
     border-radius: var(--rounded-btn, 0.5rem /* 8px */)
   }
 

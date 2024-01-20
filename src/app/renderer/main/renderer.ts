@@ -1,5 +1,6 @@
 import './index'
 import './styles.css'
+import { Config } from '../../../types'
 
 declare global {
   interface Window {
@@ -42,6 +43,12 @@ declare global {
       sendPasswordResult: (password: string) => void
       setFileContent: (path: string, password: string) => void
       saveFile: (path: string, data: string) => Promise<void>
+      subscribeToSetSecondaryWindowEntry: (callback: unknown) => void
+      unsubscribeToSetSecondaryWindowEntry: () => void
+    },
+    settings: {
+      readConfig: () => Promise<Config>,
+      writeConfig: (config: Config) => Promise<void>
     }
   }
 }

@@ -14,12 +14,13 @@ const IpcEventNames = {
   },
   ELECTRON: {
     SAVE_FILE: 'electron:save-file',
+    SET_SECONDARY_WINDOW_ENTRY: 'electron:set-secondary-window-entry',
   },
   FILE_OPEN: {
     OPENED: 'file-opened',
     FAILED: 'failed-open-file',
     OPEN_FROM_PATH: 'open-file-from-path',
-    SET_FILE_CONTENT: 'set-file-content'
+    SET_FILE_CONTENT: 'set-file-content',
   },
   CONFIG: {
     GET: 'config:get',

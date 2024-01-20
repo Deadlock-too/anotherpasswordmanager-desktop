@@ -1,7 +1,7 @@
 import Modal from '../index'
 import i18n from '../../../../../../i18n'
 import { ReactNode } from 'react'
-import { useFileContentContext, useModalContext } from '../../../contexts'
+import { useFileContentContext, useModalContext } from '../../../../main/contexts'
 
 interface DeletionModalProps {
   modalId: string

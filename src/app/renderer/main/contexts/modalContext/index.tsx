@@ -11,11 +11,14 @@ interface ModalContextState {
   setIsDeletionModalOpen: (isOpen: boolean) => void
   isSettingsModalOpen: boolean
   setIsSettingsModalOpen: (isOpen: boolean) => void
+  secondaryWindowEntry: string | null
+  setSecondaryWindowEntry: (entry: string | null) => void
 }
 
 export const ModalContext = createContext<ModalContextState>({} as ModalContextState)
 
 export function ModalContextProvider({ children }) {
+  const [ secondaryWindowEntry, setSecondaryWindowEntry ] = useState<string | null>(null)
   const [ isAddFolderModalOpen, setIsAddFolderModalOpen ] = useState<boolean>(false)
   const [ isPasswordModalOpen, setIsPasswordModalOpen ] = useState<boolean>(false)
   const [ isFailedOpenModalOpen, setIsFailedOpenModalOpen ] = useState<boolean>(false)
@@ -32,7 +35,9 @@ export function ModalContextProvider({ children }) {
     isDeletionModalOpen,
     setIsDeletionModalOpen,
     isSettingsModalOpen,
-    setIsSettingsModalOpen
+    setIsSettingsModalOpen,
+    secondaryWindowEntry,
+    setSecondaryWindowEntry,
   }
 
   return (

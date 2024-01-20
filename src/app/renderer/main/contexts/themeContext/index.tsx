@@ -1,39 +1,48 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { Config, Theme } from '../../../../../types'
-
-const DEFAULT_LIGHT_THEME = Theme.light
-const DEFAULT_DARK_THEME = Theme.dark
+import { useConfigContext } from '../index'
 
 interface ThemeContextState {
   theme: Theme
   setTheme: (theme: Theme) => void
   isDark: boolean
   setIsDark: (isDark: boolean) => void
-  toggleDarkMode: () => void
-}
-
-function LoadFromConfig(config: Config) {
-  return config?.theme ?? Theme.system
 }
 
 export const ThemeContext = createContext<ThemeContextState>({} as ThemeContextState)
 
-export function ThemeContextProvider({ children, config }: { children: any, config: Config }) {
-  const configTheme = LoadFromConfig(config)
+export function ThemeContextProvider({ children }) {
+  const { config } = useConfigContext()
 
-  const [ theme, setTheme ] = useState<Theme>(Theme.system)
   const [ isDark, setIsDark ] = useState<boolean>(false)
+  const [ theme, setTheme ] = useState<Theme>(Theme.system)
 
-  const toggleDarkMode = () => {
-    setIsDark(!isDark)
+  const loadFromConfig = (config: Config) => {
+    const isDarkTheme = window.theming.darkMode.isDark()
+    setIsDark(isDarkTheme)
+    if (config.appearance.useSystemTheme) {
+      return isDark ? config.appearance.darkTheme : config.appearance.lightTheme
+    }
+    else {
+      return config.appearance.theme
+    }
   }
+
+  useEffect(() => {
+    if (config) {
+      setTheme(loadFromConfig(config))
+    }
+  }, [config])
+
+  useEffect(() => {
+    document.querySelector('html')?.setAttribute('data-theme', theme)
+  }, [theme])
 
   const context: ThemeContextState = {
     theme,
     setTheme,
     isDark,
-    setIsDark,
-    toggleDarkMode
+    setIsDark
   }
 
   return (

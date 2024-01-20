@@ -1,8 +1,8 @@
 import { Formik, FormikProps } from 'formik'
 import Modal from '../index'
 import i18n from '../../../../../../i18n'
-import FormField from '../../formField'
-import { useFileContentContext, useModalContext } from '../../../contexts'
+import { useFileContentContext, useModalContext } from '../../../../main/contexts'
+import FormField from '../../../../main/components/formField'
 
 interface PasswordDialogProps {
   variant: 'open' | 'create' | 'update'

@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import i18n from '../../i18n'
 import IpcEventNames from './ipc/ipcEventNames'
+import { Config } from '../../types'
 
 contextBridge.exposeInMainWorld('localization', {
   changeLanguage: (lang: string): Promise<void> => {
@@ -81,5 +82,20 @@ contextBridge.exposeInMainWorld('electron', {
   },
   saveFile: (path: string, data: string): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.ELECTRON.SAVE_FILE, path, data)
+  },
+  subscribeToSetSecondaryWindowEntry: (callback) => {
+    ipcRenderer.on(IpcEventNames.ELECTRON.SET_SECONDARY_WINDOW_ENTRY, (event, ...args) => callback(...args))
+  },
+  unsubscribeToSetSecondaryWindowEntry: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.ELECTRON.SET_SECONDARY_WINDOW_ENTRY)
+  },
+})
+
+contextBridge.exposeInMainWorld('settings', {
+  readConfig: async (): Promise<Config> => {
+    return ipcRenderer.invoke(IpcEventNames.CONFIG.GET)
+  },
+  writeConfig: (config: Config): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.CONFIG.SET, config)
   }
 })

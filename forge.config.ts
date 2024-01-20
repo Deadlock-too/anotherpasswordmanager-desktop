@@ -27,7 +27,7 @@ const config: ForgeConfig = {
             js: './src/app/renderer/main/renderer.ts',
             name: 'main_window',
             preload: {
-              js: './src/app/main/preload.ts',
+              js: './src/app/main/mainPreload.ts',
             },
           },
           {
@@ -35,7 +35,7 @@ const config: ForgeConfig = {
             js: './src/app/renderer/secondary/renderer.ts',
             name: 'secondary_window',
             preload: {
-              js: './src/app/main/preload.ts',
+              js: './src/app/main/secondaryPreload.ts',
             },
           }
         ],

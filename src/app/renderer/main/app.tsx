@@ -4,15 +4,14 @@ import i18n from '../../../i18n'
 import TitleBar from './components/titlebar'
 import Main from './scenes/main'
 import Intro from './scenes/intro'
-import { useFileContentContext, useModalContext, useThemeContext } from './contexts'
-import PasswordModal from './components/modal/password'
-import AddFolderModal from './components/modal/addFolder'
-import FailedOpenModal from './components/modal/failedOpen'
-import { EntryDeletionModal, FolderDeletionModal } from './components/modal/deletion'
-import SettingsModal from './components/modal/settings'
-import { openSecondaryWindow } from './utils/windowManager'
+import { useFileContentContext, useModalContext } from './contexts'
+import PasswordModal from '../secondary/components/modal/password'
+import AddFolderModal from '../secondary/components/modal/addFolder'
+import FailedOpenModal from '../secondary/components/modal/failedOpen'
+import { EntryDeletionModal, FolderDeletionModal } from '../secondary/components/modal/deletion'
 
 const Modals = () => {
+  // PORT EVERYTHING TO SECONDARY WINDOW
   return (
     <>
       <PasswordModal variant={ 'open' }/>
@@ -22,7 +21,6 @@ const Modals = () => {
       <FailedOpenModal/>
       <FolderDeletionModal/>
       <EntryDeletionModal/>
-      <SettingsModal/>
     </>
   )
 }
@@ -30,12 +28,10 @@ const Modals = () => {
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
   const { isInitialized, initialize, setFilePath } = useFileContentContext()
-  const { setIsPasswordModalOpen, setIsFailedOpenModalOpen } = useModalContext()
-  const { setIsDark } = useThemeContext()
+  const { setIsPasswordModalOpen, setIsFailedOpenModalOpen, setSecondaryWindowEntry } = useModalContext()
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
-    setIsDark(window.theming.darkMode.isDark())
 
     const fileOpenedHandler = (path, content) => initialize(path, content)
     window.electron.subscribeToFileOpened(fileOpenedHandler)
@@ -57,10 +53,16 @@ const App = () => {
     }
     window.electron.subscribeToOpenFileFromPath(openFileFromPathHandler)
 
+    const secondaryWindowEntryHandler = (entry) => {
+      setSecondaryWindowEntry(entry)
+    }
+    window.electron.subscribeToSetSecondaryWindowEntry(secondaryWindowEntryHandler)
+
     return () => {
       window.electron.unsubscribeToFileOpened()
       window.electron.unsubscribeToFailedOpenFile()
       window.electron.unsubscribeToOpenFileFromPath()
+      window.electron.unsubscribeToSetSecondaryWindowEntry()
     }
   }, [])
 
@@ -69,14 +71,12 @@ const App = () => {
 
   return (
     <I18nextProvider i18n={ i18n.default }>
-      <Modals />
-      <TitleBar/>
+      <Modals/>
+      <TitleBar variant='main'/>
       <div className="overflow-hidden">
         {
           (!isInitialized) ?
             <Intro onNewButtonClick={ () => {
-              openSecondaryWindow().then(r => console.log(r))
-
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               document.getElementById('createPasswordModal').showModal()

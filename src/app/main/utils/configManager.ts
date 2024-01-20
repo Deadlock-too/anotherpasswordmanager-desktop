@@ -5,27 +5,28 @@ import { Config, Theme } from '../../../types'
 import i18n from '../../../i18n'
 
 const configFileName = 'config.json'
+let configFilePath: string
 
 export async function loadConfig(app: App) {
-  const configFilePath = path.join(app.getPath('userData'), configFileName)
+  configFilePath = path.join(app.getPath('userData'), configFileName)
   console.log('Config file path: ' + configFilePath)
 
-  const config = await readConfig(configFilePath)
+  const config = await readConfigInternal()
   if (config) {
     console.log('Config loaded from file: ' + JSON.stringify(config))
     return config
   } else {
     console.log('Config not found, creating a new one')
-    const newConfig = await createConfig(configFilePath)
+    const newConfig = await createConfig()
     console.log('New config created: ' + JSON.stringify(newConfig))
     return newConfig
   }
 }
 
-export async function readConfig(path: string): Promise<Config | null> {
+async function readConfigInternal(): Promise<Config | null> {
   let configString: string
   try {
-    configString = fs.readFileSync(path, { encoding: 'utf-8' })
+    configString = fs.readFileSync(configFilePath, { encoding: 'utf-8' })
   } catch (err) {
     console.error('Error reading the configuration: ' + err)
     return null
@@ -40,11 +41,25 @@ export async function readConfig(path: string): Promise<Config | null> {
   return config
 }
 
-export async function createConfig(path: string): Promise<Config | null> {
+export async function readConfig(): Promise<Config> {
+  const config = await readConfigInternal()
+  if (config)
+    return config
+
+  throw new Error('Missing config') //TODO IMPROVE
+}
+
+export async function createConfig(): Promise<Config | null> {
   // TODO write default config in a json file to make it easier to edit and update
   const config: Config = {
     language: i18n.default.language,
-    theme: Theme.system,
+    appearance: {
+      theme: Theme.system,
+      darkTheme: Theme.dark,
+      lightTheme: Theme.light,
+      previousTheme: Theme.system,
+      useSystemTheme: true
+    },
     lastOpenedFiles: [],
     settings: {
       // security: {
@@ -62,12 +77,12 @@ export async function createConfig(path: string): Promise<Config | null> {
     }
   }
 
-  return await writeConfig(config, path)
+  return await writeConfig(config)
 }
 
-export async function writeConfig(config: Config, path: string): Promise<Config | null> {
+export async function writeConfig(config: Config): Promise<Config | null> {
   try {
-    fs.writeFileSync(path, JSON.stringify(config))
+    fs.writeFileSync(configFilePath, JSON.stringify(config))
     return config
   } catch (err) {
     console.error(err)

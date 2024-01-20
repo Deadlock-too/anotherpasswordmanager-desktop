@@ -1,17 +1,54 @@
 import { createRoot } from 'react-dom/client'
-import Settings from '../main/components/modal/settings'
+import SettingsInterface from './components/modal/settings'
 import TitleBar from '../main/components/titlebar'
+import { I18nextProvider } from 'react-i18next'
+import i18n from '../../../i18n'
+import { ContextProvider } from '../main/contexts/contextProvider'
+import { useConfigContext } from '../main/contexts'
 
-const rootDiv = document.getElementById('root2')
+const rootDiv = document.getElementById('secondary_root')
 if (!rootDiv)
   throw new Error('Root div not found')
 
+const variant = window.name
+
+const Settings = () => {
+  return (
+    <ContextProvider>
+      <InternalSettings/>
+    </ContextProvider>
+  )
+}
+
+const InternalSettings = () => {
+  const { config, isLoading } = useConfigContext()
+
+  return (<>
+      <TitleBar variant="secondary" title={ i18n.t('Settings') } onClose={ () => window.close() }/>
+      <div className="main-content p-2">
+        {
+          isLoading ?
+            null
+            :
+            <SettingsInterface key={JSON.stringify(config)} config={config}/>
+        }
+      </div>
+    </>
+  )
+}
+
+let component
+switch (variant) {
+  case 'settings':
+    component = <Settings/>
+    break
+  default:
+    component = <div>Unknown variant</div>
+}
+
 const root = createRoot(rootDiv)
 root.render(
-  <div>
-    <TitleBar/>
-    <div className="main-content flex flex-row justify-between p-2 items-center h-screen">
-      <Settings/>
-    </div>
-  </div>
+  <I18nextProvider i18n={ i18n.default }>
+    { component }
+  </I18nextProvider>
 )

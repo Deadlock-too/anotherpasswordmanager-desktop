@@ -99,18 +99,19 @@ export default class Main {
           Main.mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, Main.StartupUrl)
           Main.StartupUrl = null
         }
-        Main.mainWindow.on('close', (e) => {
-          // TODO DO NOT CLOSE ONLY IF MODIFIED AND ADD i18n
-          const choice = dialog.showMessageBoxSync(Main.mainWindow, {
-            type: 'question',
-            buttons: ['Yes', 'No'],
-            title: 'Confirm',
-            message: 'Are you sure you want to quit?'
-          })
-          if (choice === 1) {
-            e.preventDefault()
-          }
-        })
+
+        // TODO DO NOT CLOSE ONLY IF MODIFIED AND ADD i18n
+        // Main.mainWindow.on('close', (e) => {
+        //   const choice = dialog.showMessageBoxSync(Main.mainWindow, {
+        //     type: 'question',
+        //     buttons: ['Yes', 'No'],
+        //     title: 'Confirm',
+        //     message: 'Are you sure you want to quit?'
+        //   })
+        //   if (choice === 1) {
+        //     e.preventDefault()
+        //   }
+        // })
       })
       .catch((e) => {
         console.error(e)

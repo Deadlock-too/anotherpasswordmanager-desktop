@@ -4,6 +4,8 @@ import { daisyui } from '../../../../tailwind.config'
 import { Theme } from 'daisyui'
 import * as fs from 'fs'
 import IpcEventNames from './ipcEventNames'
+import { readConfig, writeConfig } from '../utils/configManager'
+import { Config } from '../../../types'
 
 /**
  * Ipc events
@@ -88,10 +90,10 @@ ipcMain.handle(IpcEventNames.ELECTRON.SAVE_FILE, async (_, path: string, data: s
   fs.writeFileSync(path, data, { encoding: 'utf-8' })
 })
 
-ipcMain.handle(IpcEventNames.CONFIG.GET, async (_, path: string): Promise<string> => {
-  return ''
+ipcMain.handle(IpcEventNames.CONFIG.GET, (): Promise<Config> => {
+  return readConfig()
 })
 
-ipcMain.handle(IpcEventNames.CONFIG.SET, async (_, path: string, data: string): Promise<void> => {
-
+ipcMain.handle(IpcEventNames.CONFIG.SET, async (_, data: Config): Promise<void> => {
+  await writeConfig(data)
 })

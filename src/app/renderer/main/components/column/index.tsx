@@ -59,7 +59,7 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
         </div>
         <div className="divider m-0"/>
         <div className="bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper">
-          <div className="scrollbar">
+          <div className="scrollbar"> { /* TODO add pr-2 but check if is overflowing otherwise it will leave a permanent padding even if there is no scrollbar */ }
             { this.children }
           </div>
         </div>
@@ -128,11 +128,13 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
 
     const textRefs = useRef<(HTMLDivElement | null)[]>([])
     const liRefs = useRef<(HTMLLIElement | null)[]>([])
+    const editBtnRefs = useRef<(HTMLButtonElement | null)[]>([])
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
       textRefs.current = textRefs.current.slice(0, this.elements.length)
       liRefs.current = liRefs.current.slice(0, this.elements.length)
+      editBtnRefs.current = editBtnRefs.current.slice(0, this.elements.length)
 
       this.elements.forEach((_, i) => {
         if (!textRefs.current[i]) {
@@ -141,12 +143,17 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
         if (!liRefs.current[i]) {
           liRefs.current[i] = null
         }
+        if (!editBtnRefs.current[i]) {
+          editBtnRefs.current[i] = null
+        }
       })
 
       this.elements.forEach((_, i) => {
         const textElement = textRefs.current[i]
         const liElement = liRefs.current[i]
-        if (textElement && liElement) {
+        const buttonElement = editBtnRefs.current[i]
+
+        if (textElement && liElement && buttonElement) {
           liElement.addEventListener('mouseenter', () => {
             let scrollAmount = (textElement.scrollWidth - textElement.offsetWidth)
             if (scrollAmount <= 0) return
@@ -162,6 +169,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
           })
 
           liElement.addEventListener('mouseleave', () => textElement.classList.remove('truncate-scroll'))
+          buttonElement.addEventListener('click', () => textElement.classList.remove('truncate-scroll'))
         }
       })
     })
@@ -301,6 +309,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                                   } }
                                   onMouseEnter={ () => setDisableElementSelection(true) }
                                   onMouseLeave={ () => setDisableElementSelection(false) }
+                                  ref={ el => editBtnRefs.current[i] = el }
                                 >
                                   <PencilIcon/>
                                 </button>

@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useState } from 'react'
 import { Entry, File, Folder, uuid, UUID } from '../../types'
 import { encrypt } from '../../../../main/utils/crypt'
 import pkg from '../../../../../../package.json'
-import { Config } from '../../../../../types'
+import { useConfigContext } from '../index'
 
 const CURRENT_APP_VERSION = pkg.version
 
@@ -52,7 +52,9 @@ interface FileContentContextState {
 
 export const FileContentContext = createContext<FileContentContextState>({} as FileContentContextState)
 
-export function FileContentContextProvider({ children, config }: { children: any, config: Config }) {
+export function FileContentContextProvider({ children }) {
+  // const { config } = useConfigContext()
+
   const [ password, setPassword ] = useState<string | null>(null)
   const [ contentVersion, setContentVersion ] = useState<string | null>(null)
   const [ isInitialized, setIsInitialized ] = useState<boolean>(false)

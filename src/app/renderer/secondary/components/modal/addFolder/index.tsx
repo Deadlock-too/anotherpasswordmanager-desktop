@@ -1,9 +1,9 @@
 import Modal from '../index'
 import { Formik } from 'formik'
-import { Folder, uuid } from '../../../types'
+import { Folder, uuid } from '../../../../main/types'
 import i18n from '../../../../../../i18n'
-import FormField from '../../formField'
-import { useFileContentContext, useModalContext } from '../../../contexts'
+import { useFileContentContext, useModalContext } from '../../../../main/contexts'
+import FormField from '../../../../main/components/formField'
 
 const AddFolderDialog = () => {
   const {

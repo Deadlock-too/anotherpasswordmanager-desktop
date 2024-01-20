@@ -1,6 +1,6 @@
 import Modal from '../index'
 import i18n from '../../../../../../i18n'
-import { useModalContext } from '../../../contexts'
+import { useModalContext } from '../../../../main/contexts'
 
 const FailedOpenDialog = () => {
   const { isFailedOpenModalOpen, setIsFailedOpenModalOpen } = useModalContext()

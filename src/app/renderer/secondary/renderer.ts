@@ -1,5 +1,6 @@
 import './index'
 import '../main/styles.css'
+import { Config } from '../../../types'
 
 declare global {
   interface Window {
@@ -18,12 +19,6 @@ declare global {
         system: () => void
       }
     },
-    dialog: {
-      fileManagement: {
-        open: () => Promise<string | undefined>,
-        save: () => Promise<string | undefined>
-      }
-    },
     localization: {
       getInitialI18nStore: () => Promise<any>,
       changeLanguage: (lang: string) => Promise<void>,
@@ -32,16 +27,9 @@ declare global {
       read: () => Promise<string>,
       write: (text: string) => Promise<void>
     },
-    electron: {
-      subscribeToFileOpened: (callback: unknown) => void
-      unsubscribeToFileOpened: () => void
-      subscribeToFailedOpenFile: (callback: unknown) => void
-      unsubscribeToFailedOpenFile: () => void
-      subscribeToOpenFileFromPath: (callback: unknown) => void
-      unsubscribeToOpenFileFromPath: () => void
-      sendPasswordResult: (password: string) => void
-      setFileContent: (path: string, password: string) => void
-      saveFile: (path: string, data: string) => Promise<void>
-    }
+    settings: {
+      readConfig: () => Promise<Config>,
+      writeConfig: (config: Config) => Promise<void>
+    },
   }
 }
