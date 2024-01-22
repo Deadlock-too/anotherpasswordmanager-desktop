@@ -95,3 +95,8 @@ export default App
 //TODO: ADD PASSWORD GENERATOR SETTINGS
 
 //TODO: If file already open, ask if use wants to open another
+
+//TODO: Check every 10 seconds if file has been changed
+//TODO: If file has been changed, ask if user wants to reload it
+
+//TODO: CHECK CODE FOR USELESS RE-RENDERS
