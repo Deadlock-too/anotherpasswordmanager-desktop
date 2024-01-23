@@ -78,13 +78,13 @@ const CloseButton = ({onClick}) => {
 
 const SettingsButton = () => {
   const { secondaryWindowEntry } = useModalContext()
-  const { theme } = useThemeContext()
+  const { currentTheme } = useThemeContext()
   return (
     <TitleBarButton
       icon={ <SettingsIcon/> }
       onClick={ async () => {
         // TODO REMOVE
-        await openSecondaryWindow(secondaryWindowEntry ?? 'http://localhost:3000/secondary_window', WindowVariant.Settings, theme)
+        await openSecondaryWindow(secondaryWindowEntry ?? 'http://localhost:3000/secondary_window', WindowVariant.Settings, currentTheme)
       } }
     />
   )
@@ -98,7 +98,6 @@ interface TitleBarProps {
 
 const TitleBar = (props: TitleBarProps) => {
   const { isInitialized } = useFileContentContext()
-
 
   return (
     <div className={
@@ -116,7 +115,7 @@ const TitleBar = (props: TitleBarProps) => {
           : null }
       </div>
       {/* TODO MANAGE TITLE-BAR */ }
-      <h1 className="truncate text-sm">{props.title}</h1>
+      <h1 className="truncate label-text text-sm">{props.title}</h1>
       {
         props.variant === 'main' ?
           <SettingsButton/>

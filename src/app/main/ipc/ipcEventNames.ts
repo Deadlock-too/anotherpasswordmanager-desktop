@@ -1,30 +1,33 @@
 const IpcEventNames = {
-  FILE_MANAGEMENT: {
-    OPEN: 'fileManagement:open',
-    SAVE: 'fileManagement:save',
+  FileManagement: {
+    Open: 'fileManagement:open',
+    Save: 'fileManagement:save',
   },
-  DARK_MODE: {
-    TOGGLE: 'darkMode:toggle',
-    IS_DARK: 'darkMode:isDark',
-    SYSTEM: 'darkMode:system',
+  Theming: {
+    GetStartupTheme: 'theming:getStartupTheme',
+    IsDark: 'theming:isDark',
+    UpdateIsDark: 'theming:updateIsDark',
+    SetTheme: 'theming:setTheme',
+    UpdateTheme: 'theming:updateTheme',
+    SetSystem: 'theming:setSystem',
   },
-  CLIPBOARD: {
-    READ: 'clipboard:read',
-    WRITE: 'clipboard:write',
+  Clipboard: {
+    Read: 'clipboard:read',
+    Write: 'clipboard:write',
   },
-  ELECTRON: {
-    SAVE_FILE: 'electron:save-file',
-    SET_SECONDARY_WINDOW_ENTRY: 'electron:set-secondary-window-entry',
+  Electron: {
+    SaveFile: 'electron:saveFile',
+    SetSecondaryWindowEntry: 'electron:setSecondaryWindowEntry',
   },
-  FILE_OPEN: {
-    OPENED: 'file-opened',
-    FAILED: 'failed-open-file',
-    OPEN_FROM_PATH: 'open-file-from-path',
-    SET_FILE_CONTENT: 'set-file-content',
+  FileOpen: {
+    Opened: 'fileOpen:fileOpened',
+    Failed: 'fileOpen:failedOpenFile',
+    OpenFromPath: 'fileOpen:openFileFromPath',
+    SetFileContent: 'fileOpen:setFileContent',
   },
-  CONFIG: {
-    GET: 'config:get',
-    SET: 'config:set',
+  Config: {
+    Get: 'config:get',
+    Set: 'config:set',
   },
   ROUTE: 'route',
 }

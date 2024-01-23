@@ -1,5 +1,7 @@
 import { Theme } from '../../../../types'
 
+let secondaryWindow: Window | null = null
+
 export enum WindowVariant {
   Settings = 'settings',
   PasswordOpen = 'passwordOpen',
@@ -13,9 +15,19 @@ export enum WindowVariant {
 
 
 export const openSecondaryWindow = async (secondaryWindowEntry: string, variant: WindowVariant, currentTheme: Theme) => {
-  const win = window.open(secondaryWindowEntry, variant)
-  if (win) {
-    win.name = variant
-    win.document.querySelector('html')?.setAttribute('data-theme', currentTheme)
+  secondaryWindow = window.open(secondaryWindowEntry, variant)
+  if (secondaryWindow) {
+    secondaryWindow.name = variant
+    secondaryWindow.document.querySelector('html')?.setAttribute('data-theme', currentTheme)
+  }
+}
+
+export const getSecondaryWindow = () => {
+  return secondaryWindow
+}
+
+export const updateSecondaryWindowTheme = (theme: Theme, secondaryWindow: Window) => {
+  if (secondaryWindow) {
+    secondaryWindow.document.querySelector('html')?.setAttribute('data-theme', theme)
   }
 }

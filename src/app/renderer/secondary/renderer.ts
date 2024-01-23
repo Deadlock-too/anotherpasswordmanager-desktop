@@ -1,6 +1,6 @@
 import './index'
 import '../main/styles.css'
-import { Config } from '../../../types'
+import { Config, Theme } from '../../../types'
 
 declare global {
   interface Window {
@@ -13,11 +13,10 @@ declare global {
       platform: () => NodeJS.Platform
     },
     theming: {
-      darkMode: {
-        isDark: () => boolean
-        toggle: () => boolean
-        system: () => void
-      }
+      startupTheme: Theme
+      isDark: () => Promise<boolean>
+      setTheme: (theme: string, setSystem: boolean) => boolean
+      setSystem: () => void
     },
     localization: {
       getInitialI18nStore: () => Promise<any>,

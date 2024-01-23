@@ -1,6 +1,6 @@
 import './index'
 import './styles.css'
-import { Config } from '../../../types'
+import { Config, Theme } from '../../../types'
 
 declare global {
   interface Window {
@@ -13,11 +13,10 @@ declare global {
       platform: () => NodeJS.Platform
     },
     theming: {
-      darkMode: {
-        isDark: () => boolean
-        toggle: () => boolean
-        system: () => void
-      }
+      startupTheme: Theme
+      isDark: () => Promise<boolean>
+      setTheme: (theme: string, setSystem: boolean) => boolean
+      setSystem: () => void
     },
     dialog: {
       fileManagement: {
@@ -40,6 +39,10 @@ declare global {
       unsubscribeToFailedOpenFile: () => void
       subscribeToOpenFileFromPath: (callback: unknown) => void
       unsubscribeToOpenFileFromPath: () => void
+      subscribeToUpdateTheme: (callback: unknown) => void
+      unsubscribeToUpdateTheme: () => void
+      subscribeToUpdateIsDark: (callback: unknown) => void
+      unsubscribeToUpdateIsDark: () => void
       sendPasswordResult: (password: string) => void
       setFileContent: (path: string, password: string) => void
       saveFile: (path: string, data: string) => Promise<void>

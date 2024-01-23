@@ -1,7 +1,6 @@
 export type Config = {
   appearance: {
-    theme: Theme
-    previousTheme: Theme
+    customTheme: Theme
     lightTheme: Theme
     darkTheme: Theme
     useSystemTheme: boolean

@@ -6,6 +6,10 @@ const rootDiv = document.getElementById('root')
 if (!rootDiv)
   throw new Error('Root div not found')
 
+const theme = window.theming.startupTheme
+console.log('theme', theme)
+document.querySelector('html')?.setAttribute('data-theme', theme)
+
 const root = createRoot(rootDiv)
 root.render(
   <ContextProvider>

@@ -3,6 +3,15 @@ import i18n from '../../i18n'
 import IpcEventNames from './ipc/ipcEventNames'
 import { Config } from '../../types'
 
+ipcRenderer.invoke(IpcEventNames.Theming.GetStartupTheme).then(theme => {
+  contextBridge.exposeInMainWorld('theming', {
+    startupTheme: theme,
+    isDark: () => ipcRenderer.invoke(IpcEventNames.Theming.IsDark),
+    setTheme: (theme: string, setSystem: boolean) => ipcRenderer.invoke(IpcEventNames.Theming.SetTheme, theme, setSystem),
+    setSystem: () => ipcRenderer.invoke(IpcEventNames.Theming.SetSystem)
+  })
+})
+
 contextBridge.exposeInMainWorld('localization', {
   changeLanguage: (lang: string): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -27,28 +36,29 @@ contextBridge.exposeInMainWorld('system', {
   platform: () => process.platform,
 })
 
-contextBridge.exposeInMainWorld('theming', {
-  darkMode: {
-    isDark: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.IS_DARK),
-    toggle: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.TOGGLE),
-    system: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.SYSTEM)
+contextBridge.exposeInMainWorld('clipboard', {
+  read: (): Promise<string> => {
+    return ipcRenderer.invoke(IpcEventNames.Clipboard.Read)
+  },
+  write: (text: string): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Clipboard.Write, text)
   }
 })
 
-contextBridge.exposeInMainWorld('clipboard', {
-  read: (): Promise<string> => {
-    return ipcRenderer.invoke(IpcEventNames.CLIPBOARD.READ)
+contextBridge.exposeInMainWorld('electron', {
+  subscribeToUpdateIsDark: (callback) => {
+    ipcRenderer.on(IpcEventNames.Theming.UpdateIsDark, (event, ...args) => callback(...args))
   },
-  write: (text: string): Promise<void> => {
-    return ipcRenderer.invoke(IpcEventNames.CLIPBOARD.WRITE, text)
-  }
+  unsubscribeToUpdateIsDark: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.Theming.UpdateIsDark)
+  },
 })
 
 contextBridge.exposeInMainWorld('settings', {
   readConfig: (): Promise<Config> => {
-    return ipcRenderer.invoke(IpcEventNames.CONFIG.GET)
+    return ipcRenderer.invoke(IpcEventNames.Config.Get)
   },
   writeConfig: (config: Config): Promise<void> => {
-    return ipcRenderer.invoke(IpcEventNames.CONFIG.SET, config)
+    return ipcRenderer.invoke(IpcEventNames.Config.Set, config)
   }
 })

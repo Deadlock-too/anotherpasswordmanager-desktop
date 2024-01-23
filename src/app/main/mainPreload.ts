@@ -3,6 +3,15 @@ import i18n from '../../i18n'
 import IpcEventNames from './ipc/ipcEventNames'
 import { Config } from '../../types'
 
+ipcRenderer.invoke(IpcEventNames.Theming.GetStartupTheme).then(theme => {
+  contextBridge.exposeInMainWorld('theming', {
+    startupTheme: theme,
+    isDark: () => ipcRenderer.invoke(IpcEventNames.Theming.IsDark),
+    setTheme: (theme: string, setSystem: boolean) => ipcRenderer.invoke(IpcEventNames.Theming.SetTheme, theme, setSystem),
+    setSystem: () => ipcRenderer.invoke(IpcEventNames.Theming.SetSystem)
+  })
+})
+
 contextBridge.exposeInMainWorld('localization', {
   changeLanguage: (lang: string): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -30,72 +39,76 @@ contextBridge.exposeInMainWorld('system', {
   platform: () => process.platform,
 })
 
-contextBridge.exposeInMainWorld('theming', {
-  darkMode: {
-    isDark: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.IS_DARK),
-    toggle: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.TOGGLE),
-    system: () => ipcRenderer.invoke(IpcEventNames.DARK_MODE.SYSTEM)
-  }
-})
-
 contextBridge.exposeInMainWorld('dialog', {
   fileManagement: {
     open: (): Promise<void> => {
-      return ipcRenderer.invoke(IpcEventNames.FILE_MANAGEMENT.OPEN)
+      return ipcRenderer.invoke(IpcEventNames.FileManagement.Open)
     },
     save: (): Promise<string | undefined> => {
-      return ipcRenderer.invoke(IpcEventNames.FILE_MANAGEMENT.SAVE)
+      return ipcRenderer.invoke(IpcEventNames.FileManagement.Save)
     }
   }
 })
 
 contextBridge.exposeInMainWorld('clipboard', {
   read: (): Promise<string> => {
-    return ipcRenderer.invoke(IpcEventNames.CLIPBOARD.READ)
+    return ipcRenderer.invoke(IpcEventNames.Clipboard.Read)
   },
   write: (text: string): Promise<void> => {
-    return ipcRenderer.invoke(IpcEventNames.CLIPBOARD.WRITE, text)
+    return ipcRenderer.invoke(IpcEventNames.Clipboard.Write, text)
   }
 })
 
 contextBridge.exposeInMainWorld('electron', {
   subscribeToFileOpened: (callback) => {
-    ipcRenderer.on(IpcEventNames.FILE_OPEN.OPENED, (event, ...args) => callback(...args))
+    ipcRenderer.on(IpcEventNames.FileOpen.Opened, (event, ...args) => callback(...args))
   },
   unsubscribeToFileOpened: () => {
-    ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.OPENED)
+    ipcRenderer.removeAllListeners(IpcEventNames.FileOpen.Opened)
   },
   subscribeToFailedOpenFile: (callback) => {
-    ipcRenderer.on(IpcEventNames.FILE_OPEN.FAILED, (event, ...args) => callback(...args))
+    ipcRenderer.on(IpcEventNames.FileOpen.Failed, (event, ...args) => callback(...args))
   },
   unsubscribeToFailedOpenFile: () => {
-    ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.FAILED)
+    ipcRenderer.removeAllListeners(IpcEventNames.FileOpen.Failed)
   },
   subscribeToOpenFileFromPath: (callback) => {
-    ipcRenderer.on(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, (event, ...args) => callback(...args))
+    ipcRenderer.on(IpcEventNames.FileOpen.OpenFromPath, (event, ...args) => callback(...args))
   },
   unsubscribeToOpenFileFromPath: () => {
-    ipcRenderer.removeAllListeners(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH)
+    ipcRenderer.removeAllListeners(IpcEventNames.FileOpen.OpenFromPath)
+  },
+  subscribeToUpdateTheme: (callback) => {
+    ipcRenderer.on(IpcEventNames.Theming.UpdateTheme, (event, ...args) => callback(...args))
+  },
+  unsubscribeToUpdateTheme: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.Theming.UpdateTheme)
+  },
+  subscribeToUpdateIsDark: (callback) => {
+    ipcRenderer.on(IpcEventNames.Theming.UpdateIsDark, (event, ...args) => callback(...args))
+  },
+  unsubscribeToUpdateIsDark: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.Theming.UpdateIsDark)
   },
   setFileContent: async (path: string, password: string) => {
-    return await ipcRenderer.invoke(IpcEventNames.FILE_OPEN.SET_FILE_CONTENT, path, password)
+    return await ipcRenderer.invoke(IpcEventNames.FileOpen.SetFileContent, path, password)
   },
   saveFile: (path: string, data: string): Promise<void> => {
-    return ipcRenderer.invoke(IpcEventNames.ELECTRON.SAVE_FILE, path, data)
+    return ipcRenderer.invoke(IpcEventNames.Electron.SaveFile, path, data)
   },
   subscribeToSetSecondaryWindowEntry: (callback) => {
-    ipcRenderer.on(IpcEventNames.ELECTRON.SET_SECONDARY_WINDOW_ENTRY, (event, ...args) => callback(...args))
+    ipcRenderer.on(IpcEventNames.Electron.SetSecondaryWindowEntry, (event, ...args) => callback(...args))
   },
   unsubscribeToSetSecondaryWindowEntry: () => {
-    ipcRenderer.removeAllListeners(IpcEventNames.ELECTRON.SET_SECONDARY_WINDOW_ENTRY)
+    ipcRenderer.removeAllListeners(IpcEventNames.Electron.SetSecondaryWindowEntry)
   },
 })
 
 contextBridge.exposeInMainWorld('settings', {
   readConfig: async (): Promise<Config> => {
-    return ipcRenderer.invoke(IpcEventNames.CONFIG.GET)
+    return ipcRenderer.invoke(IpcEventNames.Config.Get)
   },
   writeConfig: (config: Config): Promise<void> => {
-    return ipcRenderer.invoke(IpcEventNames.CONFIG.SET, config)
+    return ipcRenderer.invoke(IpcEventNames.Config.Set, config)
   }
 })

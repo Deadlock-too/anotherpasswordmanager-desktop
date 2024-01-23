@@ -4,11 +4,12 @@ import i18n from '../../../i18n'
 import TitleBar from './components/titlebar'
 import Main from './scenes/main'
 import Intro from './scenes/intro'
-import { useFileContentContext, useModalContext } from './contexts'
+import { useFileContentContext, useModalContext, useThemeContext } from './contexts'
 import PasswordModal from '../secondary/components/modal/password'
 import AddFolderModal from '../secondary/components/modal/addFolder'
 import FailedOpenModal from '../secondary/components/modal/failedOpen'
 import { EntryDeletionModal, FolderDeletionModal } from '../secondary/components/modal/deletion'
+import { getSecondaryWindow, updateSecondaryWindowTheme } from './utils/windowManager'
 
 const Modals = () => {
   // PORT EVERYTHING TO SECONDARY WINDOW
@@ -29,6 +30,7 @@ const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
   const { isInitialized, initialize, setFilePath } = useFileContentContext()
   const { setIsPasswordModalOpen, setIsFailedOpenModalOpen, setSecondaryWindowEntry } = useModalContext()
+  const { setIsDark } = useThemeContext()
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
@@ -58,11 +60,26 @@ const App = () => {
     }
     window.electron.subscribeToSetSecondaryWindowEntry(secondaryWindowEntryHandler)
 
+    const updateThemeHandler = (theme) => {
+      window.document.querySelector('html')?.setAttribute('data-theme', theme)
+      const secondaryWindow = getSecondaryWindow()
+      if (secondaryWindow)
+        updateSecondaryWindowTheme(theme, secondaryWindow)
+    }
+    window.electron.subscribeToUpdateTheme(updateThemeHandler)
+
+    const updateIsDarkHandler = (isDark) => {
+      setIsDark(isDark)
+    }
+    window.electron.subscribeToUpdateIsDark(updateIsDarkHandler)
+
     return () => {
       window.electron.unsubscribeToFileOpened()
       window.electron.unsubscribeToFailedOpenFile()
       window.electron.unsubscribeToOpenFileFromPath()
       window.electron.unsubscribeToSetSecondaryWindowEntry()
+      window.electron.unsubscribeToUpdateTheme()
+      window.electron.unsubscribeToUpdateIsDark()
     }
   }, [])
 

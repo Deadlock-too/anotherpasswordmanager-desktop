@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Theme } from '../../../../../../types'
 import { SettingsIcon } from '../../../../../../assets/icons'
 import { daisyui } from '../../../../../../../tailwind.config'
-import { useConfigContext } from '../../../../main/contexts'
+import { useThemeContext } from '../../../../main/contexts'
 
 enum Settings {
   General = 'General',
@@ -14,31 +14,21 @@ enum Settings {
   // Experimental = 'Experimental'
 }
 
-const AppearanceSettings = ({config}) => {
-  const [ theme, setTheme ] = useState<Theme>(config.appearance.theme)
-  const [ previousTheme, setPreviousTheme ] = useState<Theme>(config.appearance.previousTheme)
-  const [ lightTheme, setLightTheme ] = useState<Theme>(config.appearance.lightTheme)
-  const [ darkTheme, setDarkTheme ] = useState<Theme>(config.appearance.darkTheme)
-  const [ useSystemTheme, setUseSystemTheme ] = useState<boolean>(config.appearance.useSystemTheme)
-
-  //TODO: Fix this
-  const [ isDarkTheme, setIsDarkTheme ] = useState<boolean>(true)
-
-  /*
-  const { config } = useConfigContext()
-  if (config) {
-    setTheme(config.appearance.theme)
-    setPreviousTheme(config.appearance.previousTheme)
-    setLightTheme(config.appearance.lightTheme)
-    setDarkTheme(config.appearance.darkTheme)
-    setUseSystemTheme(config.appearance.useSystemTheme)
-    setIsDarkTheme(window.theming.darkMode.isDark())
-  }
-  */
+const AppearanceSettings = () => {
+  const {
+    currentTheme,
+    handleSetCustomTheme,
+    lightTheme,
+    setLightTheme,
+    darkTheme,
+    setDarkTheme,
+    useSystemTheme,
+    setUseSystemTheme
+  } = useThemeContext()
 
   const themes = Object.values(Theme).filter(thm => thm != Theme.system)
-  let lightThemes: Theme[] = []
-  let darkThemes: Theme[] = []
+  const lightThemes: Theme[] = []
+  const darkThemes: Theme[] = []
 
   for (const theme of themes) {
     const thm = daisyui.themes.find(thm => theme in thm)
@@ -63,21 +53,21 @@ const AppearanceSettings = ({config}) => {
             {
               useSystemTheme ?
                 <button tabIndex={ 0 } className="m-1 btn btn-sm btn-outline w-32" disabled={ true }>
-                  { window.theming.darkMode.isDark() ? darkTheme : lightTheme }
+                  { currentTheme }
                 </button>
                 :
                 <details className="dropdown" ref={ dropdownRef }>
                   <summary tabIndex={ 0 } className="m-1 btn btn-sm btn-outline w-32">
-                    { theme }
+                    { currentTheme }
                   </summary>
                   <ul tabIndex={ 0 } className="shadow menu z-[1] dropdown-content bg-base-100 rounded-md w-44">
                     <div className="bg-base-200 w-full flex-grow h-72 rounded p-2 scrollbar-wrapper">
                       <div className="scrollbar pr-2">
                         {
                           themes.map((thm) => (
-                            <li key={ thm } className={ theme === thm ? 'selected-setting' : '' }>
+                            <li key={ thm } className={ currentTheme === thm ? 'selected-setting' : '' }>
                               <a onClick={ () => {
-                                setTheme(thm)
+                                handleSetCustomTheme(thm)
                                 dropdownRef.current?.removeAttribute('open')
                               } }>{ thm }</a>
                             </li>
@@ -92,22 +82,31 @@ const AppearanceSettings = ({config}) => {
         </div>
         <div className="form-control w-52">
           <label className="label"
-                 /* TODO FIX (when clicking the label the value does not get toggled) */
+            /* TODO FIX (when clicking the label the value does not get toggled) */
                  onClick={ () => {
-                   setUseSystemTheme(prev => !prev)
+                   setUseSystemTheme(!useSystemTheme)
 
-                   setTheme(prevState => {
-                     if (prevState === Theme.system) {
-                       return previousTheme
-                     } else {
-                       setPreviousTheme(prevState)
-                       return Theme.system
-                     }
-                   })
+                   // setUseSystemTheme(!useSystemTheme)
+                   //
+                   // if (useSystemTheme) {
+                   //   setCurrentTheme(prevTheme)
+                   // } else {
+                   //   setPrevTheme(currentTheme)
+                   //   setCurrentTheme(isDark ? darkTheme : lightTheme)
+                   // }
+
+                   // setTheme(prevState => {
+                   //   if (prevState === Theme.system) {
+                   //     return prevTheme
+                   //   } else {
+                   //     setPrevTheme(prevState)
+                   //     return Theme.system
+                   //   }
+                   // })
                  } }
           >
             <span className="label-text">Sync with OS:</span>
-            <input type="checkbox" className="toggle toggle-sm" checked={ useSystemTheme }/>
+            <input type="checkbox" className="toggle toggle-sm" checked={ useSystemTheme } />
           </label>
         </div>
         {
@@ -168,7 +167,7 @@ const SecuritySettings = () => {
   )
 }
 
-const SettingsModal = ({config}) => {
+const SettingsModal = () => {
   const [ selectedSetting, setSelectedSetting ] = useState<Settings>(Settings.Appearance)
 
   const settings = Object.values(Settings)
@@ -194,12 +193,8 @@ const SettingsModal = ({config}) => {
       const liElement = liRefs.current[i]
       if (textElement && liElement) {
         liElement.addEventListener('mouseenter', () => {
-          let scrollAmount = (textElement.scrollWidth - textElement.offsetWidth)
+          const scrollAmount = (textElement.scrollWidth - textElement.offsetWidth)
           if (scrollAmount <= 0) return
-          /**
-           * Increase scroll amount to prevent text from being cut off by the buttons
-           * Increased by 24px (icon width) * 2 (number of icons)
-           **/
           const scrollTime = scrollAmount / 2
           textElement.style.setProperty('--scroll-amount', `-${ scrollAmount }px`)
           textElement.style.setProperty('--scroll-time', `${ scrollTime }s`)
@@ -217,7 +212,7 @@ const SettingsModal = ({config}) => {
       detailComponent = <GeneralSettings/>
       break
     case Settings.Appearance:
-      detailComponent = <AppearanceSettings config={config}/>
+      detailComponent = <AppearanceSettings/>
       break
     case Settings.Security:
       detailComponent = <SecuritySettings/>

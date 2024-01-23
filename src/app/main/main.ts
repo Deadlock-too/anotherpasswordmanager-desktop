@@ -43,7 +43,7 @@ export default class Main {
         const window = await openMainWindow()
         Main.setStartupUrl(argv)
         if (Main.StartupUrl) {
-          window.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, Main.StartupUrl)
+          window.webContents.send(IpcEventNames.FileOpen.OpenFromPath, Main.StartupUrl)
           Main.StartupUrl = null
         }
       })
@@ -96,7 +96,7 @@ export default class Main {
         }
         Main.mainWindow = await Main.onReady()
         if (Main.StartupUrl) {
-          Main.mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, Main.StartupUrl)
+          Main.mainWindow.webContents.send(IpcEventNames.FileOpen.OpenFromPath, Main.StartupUrl)
           Main.StartupUrl = null
         }
 

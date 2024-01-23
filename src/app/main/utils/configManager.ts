@@ -1,11 +1,31 @@
 import * as fs from 'fs'
-import { App } from 'electron'
+import { App, nativeTheme } from 'electron'
 import * as path from 'path'
 import { Config, Theme } from '../../../types'
 import i18n from '../../../i18n'
+import { daisyui } from '../../../../tailwind.config'
 
 const configFileName = 'config.json'
 let configFilePath: string
+let internalConfig: Config | null
+
+export async function getThemeFromConfig(): Promise<{ currentTheme: Theme, color: string, symbolColor: 'string' }> {
+  const config = internalConfig ?? await readConfig()
+
+  const currentTheme = config.appearance.useSystemTheme ?
+    (nativeTheme.shouldUseDarkColors ? config.appearance.darkTheme : config.appearance.lightTheme)
+    : config.appearance.customTheme
+
+  const theme = daisyui.themes.find(t => currentTheme in t)[currentTheme]
+  const isDark = theme['color-scheme'] === 'dark'
+  const color = theme['base-100']
+  const symbolColor = theme['base-content'] ?? (isDark ? '#ffffff' : '#000000')
+  return {
+    currentTheme,
+    color,
+    symbolColor
+  }
+}
 
 export async function loadConfig(app: App) {
   configFilePath = path.join(app.getPath('userData'), configFileName)
@@ -14,12 +34,20 @@ export async function loadConfig(app: App) {
   const config = await readConfigInternal()
   if (config) {
     console.log('Config loaded from file: ' + JSON.stringify(config))
+    internalConfig = config
     return config
   } else {
     console.log('Config not found, creating a new one')
     const newConfig = await createConfig()
-    console.log('New config created: ' + JSON.stringify(newConfig))
-    return newConfig
+    if (newConfig) {
+      console.log('New config created: ' + JSON.stringify(newConfig))
+      internalConfig = newConfig
+      return newConfig
+    }
+    else {
+      console.error('Error creating a new config')
+      return null
+    }
   }
 }
 
@@ -38,6 +66,7 @@ async function readConfigInternal(): Promise<Config | null> {
     console.error('Error parsing the configuration: ' + err)
     return null
   }
+  internalConfig = config
   return config
 }
 
@@ -54,10 +83,9 @@ export async function createConfig(): Promise<Config | null> {
   const config: Config = {
     language: i18n.default.language,
     appearance: {
-      theme: Theme.system,
+      customTheme: Theme.dark,
       darkTheme: Theme.dark,
       lightTheme: Theme.light,
-      previousTheme: Theme.system,
       useSystemTheme: true
     },
     lastOpenedFiles: [],

@@ -3,6 +3,7 @@ import i18n from '../../../i18n'
 import * as fs from 'fs'
 import { decrypt } from './crypt'
 import IpcEventNames from '../ipc/ipcEventNames'
+import { getThemeFromConfig } from './configManager'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -18,6 +19,7 @@ async function createMainWindow() {
     mainWindow = null
   }
 
+  const theme = await getThemeFromConfig()
   mainWindow = new BrowserWindow({
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
@@ -31,8 +33,8 @@ async function createMainWindow() {
     /* TODO MAKE DYNAMIC BASED ON CURRENT SAVED THEME */
     /* TODO MANAGE OPENED DIALOG OR SECONDARY MODAL WINDOW COLOR (if any dialog is opened set darker color, for an easier job compute all colors starting from the title bar color using HSL subtracting 5 to the last value and set a new field in the tailwind.config.js) */
     titleBarOverlay: {
-      color: '#1d232a',
-      symbolColor: '#ffffff',
+      color: theme.color,
+      symbolColor: theme.symbolColor,
       height: 30 /* TODO MANAGE DARWIN PLATFORM DYNAMIC TITLE BAR HEIGHT (Low priority as not testable without device with Darwin platform) */
     }
   })
@@ -91,15 +93,7 @@ async function createMainWindow() {
 
   mainWindow.webContents.openDevTools()
 
-  mainWindow.webContents.send(IpcEventNames.ELECTRON.SET_SECONDARY_WINDOW_ENTRY, SECONDARY_WINDOW_WEBPACK_ENTRY)
-}
-
-export async function changeTitleBarOverlayTheme(color: string, symbolColor: string) {
-  const window = BrowserWindow.getFocusedWindow()
-  window?.setTitleBarOverlay({
-    color: color,
-    symbolColor: symbolColor
-  })
+  mainWindow.webContents.send(IpcEventNames.Electron.SetSecondaryWindowEntry, SECONDARY_WINDOW_WEBPACK_ENTRY)
 }
 
 export async function openMainWindow(targetRoute: string | null = null): Promise<BrowserWindow> {
@@ -135,7 +129,7 @@ export async function openFileDialog() {
       (result) => {
         if (!result.canceled && result.filePaths.length > 0 && mainWindow) {
           const path = result.filePaths[0]
-          mainWindow.webContents.send(IpcEventNames.FILE_OPEN.OPEN_FROM_PATH, path)
+          mainWindow.webContents.send(IpcEventNames.FileOpen.OpenFromPath, path)
         }
       }).catch((err) => {
       console.error(`Error: ${ err }`)
@@ -162,12 +156,12 @@ export async function openFileFromPath(path: string, password: string): Promise<
     if (tryParseContent(decryptedContent)) {
       result = decryptedContent
     } else {
-      mainWindow?.webContents.send(IpcEventNames.FILE_OPEN.FAILED, path, content)
+      mainWindow?.webContents.send(IpcEventNames.FileOpen.Failed, path, content)
       return
     }
   }
 
-  mainWindow?.webContents.send(IpcEventNames.FILE_OPEN.OPENED, path, result)
+  mainWindow?.webContents.send(IpcEventNames.FileOpen.Opened, path, result)
 }
 
 export async function saveFileDialog() {

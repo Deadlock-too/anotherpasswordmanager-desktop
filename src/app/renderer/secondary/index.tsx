@@ -4,7 +4,8 @@ import TitleBar from '../main/components/titlebar'
 import { I18nextProvider } from 'react-i18next'
 import i18n from '../../../i18n'
 import { ContextProvider } from '../main/contexts/contextProvider'
-import { useConfigContext } from '../main/contexts'
+import { useConfigContext, useThemeContext } from '../main/contexts'
+import { useEffect } from 'react'
 
 const rootDiv = document.getElementById('secondary_root')
 if (!rootDiv)
@@ -22,6 +23,18 @@ const Settings = () => {
 
 const InternalSettings = () => {
   const { config, isLoading } = useConfigContext()
+  const { setIsDark } = useThemeContext()
+
+  useEffect(() => {
+    const updateIsDarkHandler = (isDark) => {
+      setIsDark(isDark)
+    }
+    window.electron.subscribeToUpdateIsDark(updateIsDarkHandler)
+
+    return () => {
+      window.electron.unsubscribeToUpdateIsDark()
+    }
+  }, [])
 
   return (<>
       <TitleBar variant="secondary" title={ i18n.t('Settings') } onClose={ () => window.close() }/>
@@ -30,7 +43,7 @@ const InternalSettings = () => {
           isLoading ?
             null
             :
-            <SettingsInterface key={JSON.stringify(config)} config={config}/>
+            <SettingsInterface key={JSON.stringify(config)}/>
         }
       </div>
     </>

@@ -21,12 +21,16 @@ export function ConfigContextProvider({ children }) {
     })
   }
 
-  //Refresh config every 10 seconds
   useEffect(() => {
     reloadConfig()
-    const intervalId = setInterval(reloadConfig, 1000 * 10)
-    return () => clearInterval(intervalId)
   }, [])
+
+  // //Refresh config every 10 seconds
+  // useEffect(() => {
+  //   reloadConfig()
+  //   const intervalId = setInterval(reloadConfig, 1000 * 10)
+  //   return () => clearInterval(intervalId)
+  // }, [])
 
   const context: ConfigContextState = {
     config,
