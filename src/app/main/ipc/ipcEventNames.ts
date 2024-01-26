@@ -6,6 +6,7 @@ const IpcEventNames = {
   Theming: {
     GetStartupTheme: 'theming:getStartupTheme',
     IsDark: 'theming:isDark',
+    IsSystem: 'theming:isSystem',
     UpdateIsDark: 'theming:updateIsDark',
     SetTheme: 'theming:setTheme',
     UpdateTheme: 'theming:updateTheme',

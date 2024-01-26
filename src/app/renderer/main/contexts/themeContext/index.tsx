@@ -2,13 +2,10 @@ import { createContext, useEffect, useState } from 'react'
 import { Theme } from '../../../../../types'
 import { useConfigContext } from '../index'
 
-//TODO MOVE TO A CONSTANTS FILE OR A CONFIG FILE
 interface ThemeContextState {
   currentTheme: Theme
-  handleSetCurrentTheme: (theme: Theme, manageDark: boolean) => void
   setCurrentTheme: (theme: Theme) => void
   customTheme: Theme
-  handleSetCustomTheme: (theme: Theme) => void
   isDark: boolean,
   setIsDark: (isDark: boolean) => void
   lightTheme: Theme
@@ -18,6 +15,9 @@ interface ThemeContextState {
   useSystemTheme: boolean
   handleToggleUseSystemTheme: () => void
   setUseSystemTheme: (useSystemTheme: boolean) => void
+  setTemporaryLightTheme: (theme: Theme | undefined) => void
+  setTemporaryDarkTheme: (theme: Theme | undefined) => void
+  setTemporaryUseSystemTheme: (useSystemTheme: boolean | undefined) => void
 }
 
 export const ThemeContext = createContext<ThemeContextState>({} as ThemeContextState)
@@ -25,70 +25,50 @@ export const ThemeContext = createContext<ThemeContextState>({} as ThemeContextS
 export function ThemeContextProvider({ children, initialDarkTheme }) {
   const { config } = useConfigContext()
 
-  const initialTheme = config.appearance.useSystemTheme ?
-    (initialDarkTheme ? config.appearance.darkTheme : config.appearance.lightTheme)
-    : config.appearance.customTheme
-  console.log('initialTheme', initialTheme)
+  const initialTheme = config.settings.appearance.useSystemTheme ?
+    (initialDarkTheme ? config.settings.appearance.darkTheme : config.settings.appearance.lightTheme)
+    : config.settings.appearance.customTheme
 
   const [ currentTheme, setCurrentTheme ] = useState<Theme>(initialTheme)
-  const [ customTheme, setCustomTheme ] = useState<Theme>(config.appearance.customTheme)
-  const [ lightTheme, setLightTheme ] = useState<Theme>(config.appearance.lightTheme)
-  const [ darkTheme, setDarkTheme ] = useState<Theme>(config.appearance.darkTheme)
-  const [ useSystemTheme, setUseSystemTheme ] = useState<boolean>(config.appearance.useSystemTheme)
+  const [ customTheme, setCustomTheme ] = useState<Theme>(config.settings.appearance.customTheme)
+  const [ lightTheme, setLightTheme ] = useState<Theme>(config.settings.appearance.lightTheme)
+  const [ darkTheme, setDarkTheme ] = useState<Theme>(config.settings.appearance.darkTheme)
+  const [ useSystemTheme, setUseSystemTheme ] = useState<boolean>(config.settings.appearance.useSystemTheme)
   const [ isDark, setIsDark ] = useState<boolean>(initialDarkTheme)
-  const [ isInitialized, setIsInitialized ] = useState<boolean>(false)
+  const [ temporaryUseSystemTheme, setTemporaryUseSystemTheme ] = useState<boolean | undefined>()
+  const [ temporaryLightTheme, setTemporaryLightTheme ] = useState<Theme | undefined>()
+  const [ temporaryDarkTheme, setTemporaryDarkTheme ] = useState<Theme | undefined>()
 
-  const refreshIsDark = () => {
-    window.theming.isDark().then(setIsDark)
-  }
-
-  const handleSetCurrentTheme = (theme: Theme, manageDark?: boolean) => {
-    const isDarkRes = window.theming.setTheme(theme, useSystemTheme)
+  const handleSetCurrentTheme = (theme: Theme, manageDark: boolean, setSystem: boolean) => {
+    const isDarkRes = window.theming.setTheme(theme, setSystem)
     if (manageDark)
       setIsDark(isDarkRes)
     setCurrentTheme(theme)
   }
 
+  //Handle config update
   useEffect(() => {
-    if (useSystemTheme) {
-      refreshIsDark()
-      if (isDark) {
-        handleSetCurrentTheme(darkTheme)
-      } else {
-        handleSetCurrentTheme(lightTheme)
-      }
-    }
-  }, [ lightTheme, darkTheme ])
+    setUseSystemTheme(config.settings.appearance.useSystemTheme)
+    setLightTheme(config.settings.appearance.lightTheme)
+    setDarkTheme(config.settings.appearance.darkTheme)
+    setCustomTheme(config.settings.appearance.customTheme)
 
-  useEffect(() => {
     if (useSystemTheme) {
-      refreshIsDark()
-      if (isDark) {
-        handleSetCurrentTheme(darkTheme)
-      } else {
-        handleSetCurrentTheme(lightTheme)
-      }
+      handleSetCurrentTheme(isDark ? darkTheme : lightTheme, false, true)
     } else {
-      handleSetCurrentTheme(customTheme)
+      handleSetCurrentTheme(customTheme, true, false)
     }
-  }, [ useSystemTheme ])
+  }, [config])
 
   useEffect(() => {
-    const runLogic = (!isInitialized && useSystemTheme) || (isInitialized && (currentTheme !== customTheme || useSystemTheme))
-    if (runLogic) {
+    if (temporaryUseSystemTheme ?? useSystemTheme) {
       if (isDark) {
-        handleSetCurrentTheme(darkTheme)
+        handleSetCurrentTheme(temporaryDarkTheme ?? darkTheme, false, true)
       } else {
-        handleSetCurrentTheme(lightTheme)
+        handleSetCurrentTheme(temporaryLightTheme ?? lightTheme, false, true)
       }
-      setIsInitialized(true)
     }
   }, [ isDark ])
-
-  const handleSetCustomTheme = (theme: Theme) => {
-    handleSetCurrentTheme(theme, true)
-    setCustomTheme(theme)
-  }
 
   const handleToggleUseSystemTheme = () => {
     setUseSystemTheme(prev => !prev)
@@ -96,10 +76,8 @@ export function ThemeContextProvider({ children, initialDarkTheme }) {
 
   const context: ThemeContextState = {
     currentTheme,
-    handleSetCurrentTheme,
     setCurrentTheme,
     customTheme,
-    handleSetCustomTheme,
     isDark,
     setIsDark,
     lightTheme,
@@ -108,7 +86,10 @@ export function ThemeContextProvider({ children, initialDarkTheme }) {
     setDarkTheme,
     useSystemTheme,
     handleToggleUseSystemTheme,
-    setUseSystemTheme
+    setUseSystemTheme,
+    setTemporaryLightTheme,
+    setTemporaryDarkTheme,
+    setTemporaryUseSystemTheme,
   }
 
   return (

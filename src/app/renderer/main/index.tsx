@@ -6,9 +6,14 @@ const rootDiv = document.getElementById('root')
 if (!rootDiv)
   throw new Error('Root div not found')
 
-const theme = window.theming.startupTheme
-console.log('theme', theme)
-document.querySelector('html')?.setAttribute('data-theme', theme)
+let initialized = false
+
+if (!initialized) {
+  //Used sync to prevent cases when would get an error because of the async
+  const theme = window.theming.startupThemeSync
+  document.querySelector('html')?.setAttribute('data-theme', theme)
+  initialized = true
+}
 
 const root = createRoot(rootDiv)
 root.render(

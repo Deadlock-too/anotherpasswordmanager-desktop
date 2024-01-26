@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from 'react'
 
 interface ConfigContextState {
   config: Config,
-  setConfig: (config: Config) => void
+  handleUpdateConfig: (config: Config) => Promise<void>,
   isLoading: boolean
 }
 
@@ -32,9 +32,18 @@ export function ConfigContextProvider({ children }) {
   //   return () => clearInterval(intervalId)
   // }, [])
 
+  const handleUpdateConfig = async (config: Config) => {
+    setIsLoading(true)
+    setConfig(config)
+    window.settings.writeConfig(config)
+      .then(() => {
+        setIsLoading(false)
+      })
+  }
+
   const context: ConfigContextState = {
     config,
-    setConfig,
+    handleUpdateConfig,
     isLoading
   }
 

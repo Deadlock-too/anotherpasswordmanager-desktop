@@ -13,10 +13,12 @@ declare global {
       platform: () => NodeJS.Platform
     },
     theming: {
-      startupTheme: Theme
+      startupThemeSync: Theme
+      startupThemeAsync: Promise<Theme>
       isDark: () => Promise<boolean>
+      isSystem: () => Promise<boolean>
       setTheme: (theme: string, setSystem: boolean) => boolean
-      setSystem: () => void
+      setSystem: () => Promise<void>
     },
     localization: {
       getInitialI18nStore: () => Promise<any>,

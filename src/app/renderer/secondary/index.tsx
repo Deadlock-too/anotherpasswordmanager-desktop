@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import SettingsInterface from './components/modal/settings'
+import SettingsInterface from './scenes/settings'
 import TitleBar from '../main/components/titlebar'
 import { I18nextProvider } from 'react-i18next'
 import i18n from '../../../i18n'
@@ -10,6 +10,15 @@ import { useEffect } from 'react'
 const rootDiv = document.getElementById('secondary_root')
 if (!rootDiv)
   throw new Error('Root div not found')
+
+let initialized = false
+window.theming.startupThemeAsync.then(theme => {
+  if (initialized)
+    return
+
+  document.querySelector('html')?.setAttribute('data-theme', theme)
+  initialized = true
+})
 
 const variant = window.name
 

@@ -1,25 +1,30 @@
 export type Config = {
-  appearance: {
-    customTheme: Theme
-    lightTheme: Theme
-    darkTheme: Theme
-    useSystemTheme: boolean
-  }
-  language: string
-  lastOpenedFiles: string[]
   settings: {
-    // security: {
-    //   autoLock: boolean
-    //   autoLockTime?: number
-    //   autoLockOnMinimize: boolean
-    //   autoCleanClipboard: boolean
-    //   autoCleanClipboardTime?: number
-    //   defaultNewPasswordExpire: boolean
-    //   defaultNewPasswordExpireTime?: number
-    // }
-    openAtStartup: boolean
-    autoSave: boolean
-    autoSaveTime?: number
+    general: {
+      language: string
+      openAtStartup: boolean
+      openMinimized: boolean
+      minimizeToTray: boolean
+      closeToTray: boolean
+      autoSave: boolean
+      autoSaveTime?: number
+    }
+    appearance: {
+      customTheme: Theme
+      lightTheme: Theme
+      darkTheme: Theme
+      useSystemTheme: boolean
+    }
+    security: {
+      autoLock: boolean
+      autoLockTime?: number
+      autoLockOnMinimize: boolean
+      autoLockOnSleep: boolean
+      autoCleanClipboard: boolean
+      autoCleanClipboardTime?: number
+      defaultNewEntryExpire: boolean
+      defaultNewEntryExpireTime?: number
+    }
   }
 }
 

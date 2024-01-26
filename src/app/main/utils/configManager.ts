@@ -12,9 +12,9 @@ let internalConfig: Config | null
 export async function getThemeFromConfig(): Promise<{ currentTheme: Theme, color: string, symbolColor: 'string' }> {
   const config = internalConfig ?? await readConfig()
 
-  const currentTheme = config.appearance.useSystemTheme ?
-    (nativeTheme.shouldUseDarkColors ? config.appearance.darkTheme : config.appearance.lightTheme)
-    : config.appearance.customTheme
+  const currentTheme = config.settings.appearance.useSystemTheme ?
+    (nativeTheme.shouldUseDarkColors ? config.settings.appearance.darkTheme : config.settings.appearance.lightTheme)
+    : config.settings.appearance.customTheme
 
   const theme = daisyui.themes.find(t => currentTheme in t)[currentTheme]
   const isDark = theme['color-scheme'] === 'dark'
@@ -81,27 +81,31 @@ export async function readConfig(): Promise<Config> {
 export async function createConfig(): Promise<Config | null> {
   // TODO write default config in a json file to make it easier to edit and update
   const config: Config = {
-    language: i18n.default.language,
-    appearance: {
-      customTheme: Theme.dark,
-      darkTheme: Theme.dark,
-      lightTheme: Theme.light,
-      useSystemTheme: true
-    },
-    lastOpenedFiles: [],
     settings: {
-      // security: {
-      //   autoLock: false,
-      //   autoLockTime: undefined,
-      //   autoLockOnMinimize: false,
-      //   autoCleanClipboard: false,
-      //   autoCleanClipboardTime: undefined,
-      //   defaultNewPasswordExpire: false,
-      //   defaultNewPasswordExpireTime: undefined
-      // },
-      openAtStartup: false,
-      autoSave: false,
-      autoSaveTime: undefined
+      general: {
+        language: i18n.default.language,
+        openAtStartup: false,
+        openMinimized: false,
+        minimizeToTray: false,
+        closeToTray: false,
+        autoSave: false,
+      },
+      appearance: {
+        customTheme: Theme.dark,
+        darkTheme: Theme.dark,
+        lightTheme: Theme.light,
+        useSystemTheme: true
+      },
+      security: {
+        autoLock: false,
+        autoLockTime: undefined,
+        autoLockOnMinimize: false,
+        autoLockOnSleep: false,
+        autoCleanClipboard: false,
+        autoCleanClipboardTime: undefined,
+        defaultNewEntryExpire: false,
+        defaultNewEntryExpireTime: undefined,
+      },
     }
   }
 

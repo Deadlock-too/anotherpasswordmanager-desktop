@@ -54,7 +54,6 @@
   .scrollbar {
     overflow: auto;
     height: 100%;
-    /*overflow-y: auto;*/
   }
 
   .scrollbar::-webkit-scrollbar {
@@ -69,6 +68,29 @@
   }
 
   .scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-base-100/80;
+    @apply hover:bg-base-100;
+    border-radius: 4px;
+  }
+
+  .scrollable {
+    overflow: auto;
+    height: 100%;
+    @apply pr-2;
+  }
+
+  .scrollable::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .scrollable::-webkit-scrollbar-track {
+    @apply bg-base-200;
+    border-radius: 4px;
+    @apply hover:bg-base-300;
+  }
+
+  .scrollable::-webkit-scrollbar-thumb {
     @apply bg-base-100/80;
     @apply hover:bg-base-100;
     border-radius: 4px;

@@ -1,28 +1,45 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import i18n from '../../i18n'
 import IpcEventNames from './ipc/ipcEventNames'
-import { Config } from '../../types'
+import { Config, Theme } from '../../types'
 
-ipcRenderer.invoke(IpcEventNames.Theming.GetStartupTheme).then(theme => {
-  contextBridge.exposeInMainWorld('theming', {
-    startupTheme: theme,
-    isDark: () => ipcRenderer.invoke(IpcEventNames.Theming.IsDark),
-    setTheme: (theme: string, setSystem: boolean) => ipcRenderer.invoke(IpcEventNames.Theming.SetTheme, theme, setSystem),
-    setSystem: () => ipcRenderer.invoke(IpcEventNames.Theming.SetSystem)
-  })
+contextBridge.exposeInMainWorld('theming', {
+  startupThemeSync: () => {
+    let theme: Theme = Theme.system
+    let isWaiting = true
+    ipcRenderer.invoke(IpcEventNames.Theming.GetStartupTheme)
+      .then((result) => {
+        theme = result
+      })
+      .finally(() => {
+        isWaiting = false
+      })
+    while (isWaiting) {
+      /* do nothing */
+    }
+    return theme
+  },
+  startupThemeAsync: ipcRenderer.invoke(IpcEventNames.Theming.GetStartupTheme),
+  isDark: () => ipcRenderer.invoke(IpcEventNames.Theming.IsDark),
+  isSystem: () => ipcRenderer.invoke(IpcEventNames.Theming.IsSystem),
+  setTheme: (theme: string, setSystem: boolean) => ipcRenderer.invoke(IpcEventNames.Theming.SetTheme, theme, setSystem),
+  setSystem: () => ipcRenderer.invoke(IpcEventNames.Theming.SetSystem)
 })
 
 contextBridge.exposeInMainWorld('localization', {
-  changeLanguage: (lang: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      i18n.changeLanguage(lang, (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
-    })
+  // changeLanguage: (lang: string): Promise<void> => {
+  //   return new Promise((resolve, reject) => {
+  //     i18n.changeLanguage(lang, (err) => {
+  //       if (err) {
+  //         reject(err)
+  //       } else {
+  //         resolve()
+  //       }
+  //     })
+  //   })
+  // },
+  changeLanguage: (lang: string) => {
+    i18n.changeLanguage(lang)
   },
   getInitialI18nStore: (): Promise<any> => {
     return Promise.resolve(i18n.default.store.data)

@@ -12,7 +12,7 @@ let currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
  * Ipc events
  */
 nativeTheme.on('updated', () => {
-  if (currentShouldUseDarkColors === nativeTheme.shouldUseDarkColors)
+  if (currentShouldUseDarkColors === nativeTheme.shouldUseDarkColors || nativeTheme.themeSource !== 'system')
     return
 
   BrowserWindow.getAllWindows().forEach((window) => {
@@ -74,6 +74,10 @@ ipcMain.handle(IpcEventNames.Theming.SetTheme, async (_, themeName, setSystem): 
 
 ipcMain.handle(IpcEventNames.Theming.IsDark, () => {
   return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle(IpcEventNames.Theming.IsSystem, () => {
+  return nativeTheme.themeSource === 'system'
 })
 
 ipcMain.handle(IpcEventNames.Theming.SetSystem, () => {

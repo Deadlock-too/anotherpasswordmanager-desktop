@@ -5,7 +5,7 @@ import {
   ThemeContextProvider,
   useConfigContext
 } from './index'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function ContextProvider({ children }) {
   return (
@@ -21,7 +21,9 @@ const InternalContextProvider = ({ children }) => {
   const { isLoading } = useConfigContext()
   const [ initialDarkTheme, setInitialDarkTheme ] = useState<boolean>(false)
 
-  window.theming.isDark().then(setInitialDarkTheme)
+  useEffect(() => {
+    window.theming.isDark().then(setInitialDarkTheme)
+  }, [])
 
   if (isLoading)
     return null

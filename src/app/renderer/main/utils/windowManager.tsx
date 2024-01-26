@@ -14,11 +14,10 @@ export enum WindowVariant {
 }
 
 
-export const openSecondaryWindow = async (secondaryWindowEntry: string, variant: WindowVariant, currentTheme: Theme) => {
+export const openSecondaryWindow = async (secondaryWindowEntry: string, variant: WindowVariant) => {
   secondaryWindow = window.open(secondaryWindowEntry, variant)
   if (secondaryWindow) {
     secondaryWindow.name = variant
-    secondaryWindow.document.querySelector('html')?.setAttribute('data-theme', currentTheme)
   }
 }
 
