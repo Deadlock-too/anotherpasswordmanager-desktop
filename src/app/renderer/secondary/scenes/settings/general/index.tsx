@@ -1,12 +1,9 @@
 import { Setting, SettingRow, SettingSection } from '../../../components/settings'
 import { FormikCheckbox, FormikDropdown } from '../../../../common/components'
+import { Language } from '../../../../../../types'
 
 const GeneralSettings = ({ formik }) => {
-  const languages = [
-    { label: 'English', value: 'en' },
-    { label: 'Italian', value: 'it' }
-  ]
-
+  const languages = Object.entries(Language).map(([ key, value ]) => ({ label: key, value }))
   return (
     <SettingSection title="General">
       <Setting title="Language">

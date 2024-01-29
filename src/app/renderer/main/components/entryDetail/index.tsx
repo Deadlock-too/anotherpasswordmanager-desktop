@@ -1,4 +1,4 @@
-import { Entry, uuid } from '../../types'
+import { Entry, uuid } from '../../../common/types'
 import { usePasswordToggle } from '../../hooks/passwordVisibility'
 import { Formik } from 'formik'
 import { EyeIcon, EyeSlashIcon } from '../../../../../assets/icons'

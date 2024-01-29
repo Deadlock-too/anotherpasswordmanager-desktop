@@ -1,5 +1,5 @@
 import { ColumnBase, ColumnContentBase } from '../index'
-import { Entry } from '../../../types'
+import { Entry } from '../../../../common/types'
 import i18n from '../../../../../../i18n'
 import { useFileContentContext } from '../../../contexts'
 

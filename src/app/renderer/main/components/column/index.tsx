@@ -1,4 +1,4 @@
-import { IdentifiableType, UUID } from '../../types'
+import { IdentifiableType, UUID } from '../../../common/types'
 import { Component, ReactNode, useEffect, useRef, useState } from 'react'
 import { CheckIcon, CrossIcon, PencilIcon, PlusIcon, TrashIcon } from '../../../../../assets/icons'
 import i18n from '../../../../../i18n'

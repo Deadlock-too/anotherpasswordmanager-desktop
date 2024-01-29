@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useState } from 'react'
-import { Entry, File, Folder, uuid, UUID } from '../../types'
+import { Entry, File, Folder, uuid, UUID } from '../../../common/types'
 import { encrypt } from '../../../../main/utils/crypt'
 import pkg from '../../../../../../package.json'
 import { useConfigContext } from '../index'

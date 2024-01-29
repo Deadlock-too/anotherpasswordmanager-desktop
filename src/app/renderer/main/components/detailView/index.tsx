@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import EntryDetail from '../entryDetail'
-import { Entry } from '../../types'
+import { Entry } from '../../../common/types'
 import i18n from '../../../../../i18n'
 import { useFileContentContext } from '../../contexts'
 

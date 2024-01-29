@@ -4,41 +4,13 @@ import { Formik } from 'formik'
 import AppearanceSettings from './appearance'
 import GeneralSettings from './general'
 import SecuritySettings from './security'
-import { Config } from '../../../../../types'
+import { configToInitialValues, valuesToConfig } from '../../../../../utils'
+import { Language, Theme } from '../../../../../types'
 
 enum SettingSections {
   General = 'General',
   Appearance = 'Appearance',
   Security = 'Security',
-}
-
-/* Move these three functions to a helper */
-function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function configToInitialValues(config: Config) {
-  const initialValues = {}
-
-  for (const section in config.settings) {
-    for (const setting in config.settings[section]) {
-      initialValues[section + capitalizeFirstLetter(setting)] = config.settings[section][setting]
-    }
-  }
-
-  return initialValues
-}
-
-function valuesToConfig(values: any, currentConfig: Config) {
-  const newConfig : Config = { ...currentConfig }
-
-  for (const section in currentConfig.settings) {
-    for (const setting in currentConfig.settings[section]) {
-      newConfig.settings[section][setting] = values[section + capitalizeFirstLetter(setting)]
-    }
-  }
-
-  return newConfig
 }
 
 const SettingsScene = () => {
@@ -85,67 +57,75 @@ const SettingsScene = () => {
 
   const initialValues = configToInitialValues(config)
 
+  const handleApplySettings = (values: {
+    useSystemTheme: boolean,
+    darkTheme: Theme,
+    lightTheme: Theme,
+    customTheme: Theme,
+    language: Language
+  }, setTemporaryValues: boolean) => {
+    //TODO APPLY OTHER SETTINGS TOO IF POSSIBLE
+    (async () => {
+      if (values.useSystemTheme) {
+        await window.theming.setSystem()
+      }
+      return await window.theming.isDark()
+    })()
+      .then(isDark => {
+        setTemporaryUseSystemTheme(setTemporaryValues ? values.useSystemTheme : undefined)
+        setTemporaryLightTheme(setTemporaryValues ? values.lightTheme : undefined)
+        setTemporaryDarkTheme(setTemporaryValues ? values.darkTheme : undefined)
+
+        if (values.useSystemTheme) {
+          if (isDark) {
+            window.theming.setTheme(values.darkTheme, true)
+          } else {
+            window.theming.setTheme(values.lightTheme, true)
+          }
+        } else {
+          window.theming.setTheme(values.customTheme, false)
+        }
+      }).then(() => window.localization.changeLanguage(values.language))
+  }
+
+  const handleSubmit = (values: any, { setSubmitting }) => {
+    setTimeout(() => {
+      const newValues = valuesToConfig(values, config)
+      handleUpdateConfig({
+        ...config,
+        settings: newValues.settings,
+      })
+        .then(() => handleApplySettings({
+          ...newValues.settings.appearance,
+          language: newValues.settings.general.language
+        }, false))
+        .then(() => setSubmitting(false))
+        .then(() => window.close())
+    }, 50)
+  }
+
+  const handleReset = () => {
+    //TODO RESET NOT ONLY THEME EDITS
+    (async () => {
+      handleApplySettings({
+        useSystemTheme: config.settings.appearance.useSystemTheme,
+        darkTheme: config.settings.appearance.darkTheme,
+        lightTheme: config.settings.appearance.lightTheme,
+        customTheme: config.settings.appearance.customTheme,
+        language: config.settings.general.language,
+      }, false)
+    })()
+      .then(() => window.close())
+  }
+
   return (
     <Formik
       initialValues={ initialValues }
       validate={ () => {
         /* TODO */
       } }
-      onSubmit={ async (values, { setSubmitting }) => {
-        setTimeout(() => {
-          const newValues = valuesToConfig(values, config)
-          handleUpdateConfig({
-            ...config,
-            settings: newValues.settings,
-          }).then(async () => {
-            if (newValues.settings.appearance.useSystemTheme) {
-              await window.theming.setSystem()
-            }
-            return await window.theming.isDark()
-          })
-            .then(isDark => {
-              if (newValues.settings.appearance.useSystemTheme) {
-                if (isDark) {
-                  window.theming.setTheme(newValues.settings.appearance.darkTheme, true)
-                } else {
-                  window.theming.setTheme(newValues.settings.appearance.lightTheme, true)
-                }
-              } else {
-                window.theming.setTheme(newValues.settings.appearance.customTheme, false)
-              }
-            })
-            .then(() => window.localization.changeLanguage(newValues.settings.general.language))
-            .then(() => setSubmitting(false))
-            .then(() => window.close())
-        }, 50)
-      } }
-      onReset={ () => {
-        //TODO RESET NOT ONLY THEME EDITS
-        (async () => {
-          if (config.settings.appearance.useSystemTheme) {
-            await window.theming.setSystem()
-          }
-          return await window.theming.isDark()
-        })()
-          .then(isDark => {
-            setTemporaryUseSystemTheme(undefined)
-            setTemporaryLightTheme(undefined)
-            setTemporaryDarkTheme(undefined)
-
-            if (config.settings.appearance.useSystemTheme) {
-              if (isDark) {
-                window.theming.setTheme(config.settings.appearance.darkTheme, true)
-              } else {
-                window.theming.setTheme(config.settings.appearance.lightTheme, true)
-              }
-            } else {
-              window.theming.setTheme(config.settings.appearance.customTheme, false)
-            }
-
-            window.localization.changeLanguage(config.settings.general.language)
-          })
-          .then(() => window.close())
-      } }
+      onSubmit={ handleSubmit }
+      onReset={ handleReset }
     >
       {
         (formik) => (
@@ -209,29 +189,13 @@ const SettingsScene = () => {
               <button type="submit" className="btn btn-primary btn-sm w-16">OK</button>
               <button type="reset" className="btn btn-neutral btn-sm w-16">Cancel</button>
               <button type="button" className="btn btn-neutral btn-sm w-16" onClick={ () => {
-                //TODO APPLY OTHER SETTINGS TOO IF POSSIBLE
-                (async () => {
-                  if (formik.values['appearanceUseSystemTheme']) {
-                    await window.theming.setSystem()
-                  }
-                  return await window.theming.isDark()
-                })()
-                  .then(isDark => {
-                    setTemporaryUseSystemTheme(formik.values['appearanceUseSystemTheme'])
-                    setTemporaryLightTheme(formik.values['appearanceLightTheme'])
-                    setTemporaryDarkTheme(formik.values['appearanceDarkTheme'])
-
-                    if (formik.values['appearanceUseSystemTheme']) {
-                      if (isDark) {
-                        window.theming.setTheme(formik.values['appearanceDarkTheme'], true)
-                      } else {
-                        window.theming.setTheme(formik.values['appearanceLightTheme'], true)
-                      }
-                    } else {
-                      window.theming.setTheme(formik.values['appearanceCustomTheme'], false)
-                    }
-                    window.localization.changeLanguage(formik.values['generalLanguage'])
-                  })
+                handleApplySettings({
+                  useSystemTheme: formik.values['appearanceUseSystemTheme'],
+                  darkTheme: formik.values['appearanceDarkTheme'],
+                  lightTheme: formik.values['appearanceLightTheme'],
+                  customTheme: formik.values['appearanceCustomTheme'],
+                  language: formik.values['generalLanguage'],
+                }, true)
               } }
               >Apply
               </button>

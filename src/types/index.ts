@@ -1,7 +1,7 @@
 export type Config = {
   settings: {
     general: {
-      language: string
+      language: Language
       openAtStartup: boolean
       openMinimized: boolean
       minimizeToTray: boolean
@@ -26,6 +26,11 @@ export type Config = {
       defaultNewEntryExpireTime?: number
     }
   }
+}
+
+export enum Language {
+  Italian = 'it',
+  English = 'en'
 }
 
 export enum Theme {

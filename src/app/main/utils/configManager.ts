@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import { App, nativeTheme } from 'electron'
 import * as path from 'path'
-import { Config, Theme } from '../../../types'
+import { Config, Theme, Language } from '../../../types'
 import i18n from '../../../i18n'
 import { daisyui } from '../../../../tailwind.config'
 
@@ -83,7 +83,8 @@ export async function createConfig(): Promise<Config | null> {
   const config: Config = {
     settings: {
       general: {
-        language: i18n.default.language,
+        // TODO CHECK LOGIC
+        language: Object.values(Language).find(l => l == i18n.default.language) ?? Language.English,
         openAtStartup: false,
         openMinimized: false,
         minimizeToTray: false,
