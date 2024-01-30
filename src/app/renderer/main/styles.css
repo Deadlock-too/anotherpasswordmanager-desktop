@@ -76,7 +76,6 @@
   .scrollable {
     overflow: auto;
     height: 100%;
-    @apply pr-2;
   }
 
   .scrollable::-webkit-scrollbar {

@@ -8,11 +8,12 @@ import { configToInitialValues, valuesToConfig } from '../../../../../utils'
 import { Language, Theme } from '../../../../../types'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../../../i18n'
+import { ScrollableDiv } from '../../../common/components'
 
 enum SettingSections {
   General = 'General',
   Appearance = 'Appearance',
-  Security = 'Security',
+  Security = 'Security'
 }
 
 const SettingsScene = () => {
@@ -134,57 +135,53 @@ const SettingsScene = () => {
         (formik) => (
           <form onSubmit={ formik.handleSubmit } onReset={ formik.handleReset }
                 className="flex flex-col h-full w-full gap-2">
-            <div className="flex flex-row h-full w-full gap-2">
+            <div className="flex flex-row h-full w-full gap-2 overflow-hidden">
               <div className="w-3/12 h-full flex flex-col unselectable">
-                <div className="bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper">
-                  <div className="scrollbar">
-                    <ul className="menu menu-md bg-base-300 w-full rounded-md gap-1">
-                      {
-                        settings.map((setting, i) => {
-                          const isSelected = selectedSetting === setting
-                          return (
-                            <li key={ setting } className={ isSelected ? 'selected' : '' }
-                                ref={ el => liRefs.current[i] = el }
-                            >
-                              <a key={ setting } onClick={ () => setSelectedSetting(setting) }
-                                 className="justify-between items-center">
-                                <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
-                                  { t(`SettingsDialog.${ setting }.Title`) }
-                                </div>
-                              </a>
-                            </li>
-                          )
-                        })
-                      }
-                    </ul>
-                  </div>
-                </div>
+                <ScrollableDiv height="max-h-full">
+                  <ul className="menu menu-md bg-base-300 w-full rounded-md gap-1">
+                    {
+                      settings.map((setting, i) => {
+                        const isSelected = selectedSetting === setting
+                        return (
+                          <li key={ setting } className={ isSelected ? 'selected' : '' }
+                              ref={ el => liRefs.current[i] = el }
+                          >
+                            <a key={ setting } onClick={ () => setSelectedSetting(setting) }
+                               className="justify-between items-center">
+                              <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
+                                { t(`SettingsDialog.${ setting }.Title`) }
+                              </div>
+                            </a>
+                          </li>
+                        )
+                      })
+                    }
+                  </ul>
+                </ScrollableDiv>
               </div>
               <div className="w-9/12 h-full flex flex-col unselectable">
-                <div className="bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper">
-                  <div className="scrollbar">
-                    {
-                      ((selectedSetting) => {
-                        let component: Element | ReactNode
-                        switch (selectedSetting) {
-                          case SettingSections.General:
-                            component = <GeneralSettings formik={ formik }/>
-                            break
-                          case SettingSections.Appearance:
-                            component = <AppearanceSettings formik={ formik }/>
-                            break
-                          case SettingSections.Security:
-                            component = <SecuritySettings formik={ formik }/>
-                            break
-                          default:
-                            component = <div>Unknown setting</div>
-                            break
-                        }
-                        return component
-                      })(selectedSetting)
-                    }
-                  </div>
-                </div>
+                <ScrollableDiv height="max-h-full">
+                  {
+                    ((selectedSetting) => {
+                      let component: Element | ReactNode
+                      switch (selectedSetting) {
+                        case SettingSections.General:
+                          component = <GeneralSettings formik={ formik }/>
+                          break
+                        case SettingSections.Appearance:
+                          component = <AppearanceSettings formik={ formik }/>
+                          break
+                        case SettingSections.Security:
+                          component = <SecuritySettings formik={ formik }/>
+                          break
+                        default:
+                          component = <div>Unknown setting</div>
+                          break
+                      }
+                      return component
+                    })(selectedSetting)
+                  }
+                </ScrollableDiv>
               </div>
             </div>
             <div className="divider -mt-2 -mb-2"/>
@@ -202,8 +199,8 @@ const SettingsScene = () => {
               <button
                 type="button"
                 className="btn btn-neutral btn-sm w-16"
-                onClick={ () => {
-                  handleApplySettings({
+                onClick={ async () => {
+                  await handleApplySettings({
                     useSystemTheme: formik.values['appearanceUseSystemTheme'],
                     darkTheme: formik.values['appearanceDarkTheme'],
                     lightTheme: formik.values['appearanceLightTheme'],
