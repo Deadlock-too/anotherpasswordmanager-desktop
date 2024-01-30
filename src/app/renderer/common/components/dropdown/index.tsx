@@ -37,7 +37,7 @@ const Dropdown = ({ name, label, options, disabled, value, setFieldValue }: IDro
                 { currentOption?.label }
               </summary>
               <ul tabIndex={ 0 } className="shadow menu z-[1] dropdown-content bg-base-100 rounded-md w-44">
-                <ScrollableDiv>
+                <ScrollableDiv height='max-h-52'>
                   {/* Made a second <ul> because using the scrollable div prevents the possibility to apply the gap style */}
                   <ul className='flex flex-col gap-1'>
                   {

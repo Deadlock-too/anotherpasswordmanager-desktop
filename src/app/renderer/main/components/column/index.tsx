@@ -39,6 +39,23 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
   }
 
   render() {
+    const divRef = useRef<HTMLDivElement>(null)
+    const [ isScrollable, setIsScrollable ] = useState(false)
+
+    useEffect(() => {
+      const div = divRef.current
+      if (div) {
+        const resizeObserver = new ResizeObserver(() => {
+          setIsScrollable(div.scrollHeight > div.clientHeight)
+        })
+        resizeObserver.observe(div)
+
+        return () => {
+          resizeObserver.unobserve(div)
+        }
+      }
+    }, [ this.children ])
+
     return (
       <div
         className={ `${ this.style.width } ${ this.style.margin } h-full flex flex-col ${ this.style.unselectableContent ? 'unselectable' : '' }` }>
@@ -59,7 +76,7 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
         </div>
         <div className="divider m-0"/>
         <div className="bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper">
-          <div className="scrollbar"> { /* TODO [!!!][!!!][!!!] add pr-2 but check if is overflowing otherwise it will leave a permanent padding even if there is no scrollbar */ }
+          <div ref={divRef} className={ isScrollable ? "scrollbar pr-2" : "scrollbar" }> { /* TODO [!!!][!!!][!!!] add pr-2 but check if is overflowing otherwise it will leave a permanent padding even if there is no scrollbar */ }
             { this.children }
           </div>
         </div>

@@ -59,7 +59,7 @@ const SettingsScene = () => {
 
   const initialValues = configToInitialValues(config)
 
-  const handleApplySettings = (values: {
+  const handleApplySettings = async (values: {
     useSystemTheme: boolean,
     darkTheme: Theme,
     lightTheme: Theme,
@@ -67,37 +67,37 @@ const SettingsScene = () => {
     language: Language
   }, setTemporaryValues: boolean) => {
     //TODO APPLY OTHER SETTINGS TOO IF POSSIBLE
-    (async () => {
+    await (async () => {
       await window.localization.changeLanguage(values.language)
 
       if (values.useSystemTheme) {
         await window.theming.setSystem()
       }
-      return await window.theming.isDark()
-    })()
-      .then(isDark => {
-        setTemporaryUseSystemTheme(setTemporaryValues ? values.useSystemTheme : undefined)
-        setTemporaryLightTheme(setTemporaryValues ? values.lightTheme : undefined)
-        setTemporaryDarkTheme(setTemporaryValues ? values.darkTheme : undefined)
 
-        if (values.useSystemTheme) {
-          if (isDark) {
-            window.theming.setTheme(values.darkTheme, true)
-          } else {
-            window.theming.setTheme(values.lightTheme, true)
-          }
+      const isDark = await window.theming.isDark()
+
+      setTemporaryUseSystemTheme(setTemporaryValues ? values.useSystemTheme : undefined)
+      setTemporaryLightTheme(setTemporaryValues ? values.lightTheme : undefined)
+      setTemporaryDarkTheme(setTemporaryValues ? values.darkTheme : undefined)
+
+      if (values.useSystemTheme) {
+        if (isDark) {
+          await window.theming.setTheme(values.darkTheme, true)
         } else {
-          window.theming.setTheme(values.customTheme, false)
+          await window.theming.setTheme(values.lightTheme, true)
         }
-      })
-      .then(() => i18n.changeLanguage(values.language))
+      } else {
+        await window.theming.setTheme(values.customTheme, false)
+      }
+    })()
+      .then(async () => await i18n.changeLanguage(values.language))
   }
 
   const handleSubmit = (values: any, { setSubmitting }) => {
     const newValues = valuesToConfig(values, config);
 
     (async () => {
-      handleApplySettings({
+      await handleApplySettings({
         ...newValues.settings.appearance,
         language: newValues.settings.general.language
       }, false)
@@ -113,7 +113,7 @@ const SettingsScene = () => {
   const handleReset = () => {
     //TODO RESET NOT ONLY THEME EDITS
     (async () => {
-      handleApplySettings({
+      await handleApplySettings({
         useSystemTheme: config.settings.appearance.useSystemTheme,
         darkTheme: config.settings.appearance.darkTheme,
         lightTheme: config.settings.appearance.lightTheme,

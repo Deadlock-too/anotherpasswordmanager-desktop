@@ -17,7 +17,7 @@ declare global {
       startupThemeAsync: Promise<Theme>
       isDark: () => Promise<boolean>
       isSystem: () => Promise<boolean>
-      setTheme: (theme: string, setSystem: boolean) => boolean
+      setTheme: (theme: string, setSystem: boolean) => Promise<boolean>
       setSystem: () => Promise<void>
     },
     dialog: {

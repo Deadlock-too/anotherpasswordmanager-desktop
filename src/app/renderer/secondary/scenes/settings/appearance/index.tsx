@@ -50,7 +50,7 @@ const AppearanceSettings = ({ formik }) => {
                   <SettingsIcon/>
                 </summary>
                 <ul tabIndex={ 0 } className="shadow menu z-[1] dropdown-content bg-base-100 rounded-md w-44">
-                  <ScrollableDiv>
+                  <ScrollableDiv height='max-h-52'>
                     <li className="menu-title font-extrabold">{ t('SettingsDialog.Appearance.Theme.Preferences') }</li>
                     <li className="menu-title">{ t('SettingsDialog.Appearance.Theme.Light') }</li>
                     {

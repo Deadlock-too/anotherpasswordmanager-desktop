@@ -40,9 +40,10 @@ export function ThemeContextProvider({ children, initialDarkTheme }) {
   const [ temporaryDarkTheme, setTemporaryDarkTheme ] = useState<Theme | undefined>()
 
   const handleSetCurrentTheme = (theme: Theme, manageDark: boolean, setSystem: boolean) => {
-    const isDarkRes = window.theming.setTheme(theme, setSystem)
-    if (manageDark)
-      setIsDark(isDarkRes)
+    window.theming.setTheme(theme, setSystem).then(isDarkRes => {
+      if (manageDark)
+        setIsDark(isDarkRes)
+    })
     setCurrentTheme(theme)
   }
 
