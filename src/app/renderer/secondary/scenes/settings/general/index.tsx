@@ -50,7 +50,7 @@ const GeneralSettings = ({ formik }) => {
           />
         </SettingRow>
       </Setting>
-      <Setting title="Auto-save">
+      <Setting title={ t('SettingsDialog.General.Auto-save.Title') }>
         <SettingRow>
           <FormikCheckbox
             field="generalAutoSave"
