@@ -21,7 +21,7 @@ const FoldersColumn = ({elements}) => {
 
   const column = new ColumnBase<Folder>({
     style: {
-      label: 'Folders',
+      label: t('Main.Folders'),
       width: 'w-3/12',
       margin: 'mr-1',
       unselectableContent: true,
