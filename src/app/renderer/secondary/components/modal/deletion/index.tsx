@@ -1,7 +1,7 @@
 import Modal from '../index'
-import i18n from '../../../../../../i18n'
 import { ReactNode } from 'react'
-import { useFileContentContext, useModalContext } from '../../../../main/contexts'
+import { useFileContentContext, useModalContext } from '../../../../common/contexts'
+import { useTranslation } from 'react-i18next'
 
 interface DeletionModalProps {
   modalId: string
@@ -13,15 +13,16 @@ interface DeletionModalProps {
 
 export const FolderDeletionModal = () => {
   const { handleDeleteFolder, deletingFolder, setDeletingFolder } = useFileContentContext()
+  const { t } = useTranslation()
   return (
     <DeletionModal
       modalId={ 'folderDeletionModal' }
-      title={ i18n.t('DeletionDialog.Folder.Title') }
+      title={ t('DeletionDialog.Folder.Title') }
       message={
         <>
-          { i18n.t('DeletionDialog.Folder.Message.Pt1') }
+          { t('DeletionDialog.Folder.Message.Pt1') }
           <a className="underline underline-offset-1 decoration-error decoration-2">{ deletingFolder?.Name }</a>
-          { i18n.t('DeletionDialog.Folder.Message.Pt2') }
+          { t('DeletionDialog.Folder.Message.Pt2') }
         </>
       }
       onSubmit={ () => {
@@ -37,15 +38,16 @@ export const FolderDeletionModal = () => {
 
 export const EntryDeletionModal = () => {
   const { handleDeleteEntry, deletingEntry, setDeletingEntry } = useFileContentContext()
+  const { t } = useTranslation()
   return (
     <DeletionModal
       modalId={ 'entryDeletionModal' }
-      title={ i18n.t('DeletionDialog.Entry.Title') }
+      title={ t('DeletionDialog.Entry.Title') }
       message={
         <>
-          { i18n.t('DeletionDialog.Entry.Message.Pt1') }
+          { t('DeletionDialog.Entry.Message.Pt1') }
           <a className="underline underline-offset-1 decoration-error decoration-2">{ deletingEntry?.Title }</a>
-          { i18n.t('DeletionDialog.Entry.Message.Pt2') }
+          { t('DeletionDialog.Entry.Message.Pt2') }
         </>
       }
       onSubmit={ () => {
@@ -61,6 +63,7 @@ export const EntryDeletionModal = () => {
 
 const DeletionModal = (props: DeletionModalProps) => {
   const { isDeletionModalOpen, setIsDeletionModalOpen } = useModalContext()
+  const { t } = useTranslation()
 
   return (
     <Modal
@@ -83,7 +86,7 @@ const DeletionModal = (props: DeletionModalProps) => {
             setIsDeletionModalOpen(false)
           } }
         >
-          { i18n.t('DeletionDialog.Cancel Button') }
+          { t('DeletionDialog.Cancel Button') }
         </button>
         <button
           className="btn btn-error"
@@ -95,7 +98,7 @@ const DeletionModal = (props: DeletionModalProps) => {
             setIsDeletionModalOpen(false)
           } }
         >
-          { i18n.t('DeletionDialog.Submit Button') }
+          { t('DeletionDialog.Submit Button') }
         </button>
       </div>
     </Modal>

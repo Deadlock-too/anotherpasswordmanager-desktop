@@ -18,15 +18,19 @@ export function ContextProvider({ children }) {
 }
 
 const InternalContextProvider = ({ children }) => {
-  const { isLoading } = useConfigContext()
+  const { isConfigLoading } = useConfigContext()
   const [ initialDarkTheme, setInitialDarkTheme ] = useState<boolean>(false)
 
   useEffect(() => {
     window.theming.isDark().then(setInitialDarkTheme)
   }, [])
 
-  if (isLoading)
-    return null
+  if (isConfigLoading)
+    return (
+      <div className="h-screen w-screen bg-base-100 flex justify-center items-center">
+        <div className="loading loading-spinner loading-lg"/>
+      </div>
+    )
 
   return (
     <ThemeContextProvider initialDarkTheme={initialDarkTheme}>

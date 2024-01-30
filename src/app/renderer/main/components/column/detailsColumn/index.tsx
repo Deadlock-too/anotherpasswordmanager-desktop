@@ -1,11 +1,12 @@
 import { ColumnBase } from '../index'
 import DetailView from '../../detailView'
-import i18n from '../../../../../../i18n'
+import { useTranslation } from 'react-i18next'
 
 const DetailsColumn = () => {
+  const { t } = useTranslation()
   const column = new ColumnBase({
     style: {
-      label: i18n.t('Main.Detail'),
+      label: t('Main.Detail'),
       width: 'w-6/12',
       margin: 'ml-1',
       unselectableContent: false

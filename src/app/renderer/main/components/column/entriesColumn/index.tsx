@@ -1,7 +1,7 @@
 import { ColumnBase, ColumnContentBase } from '../index'
 import { Entry } from '../../../../common/types'
-import i18n from '../../../../../../i18n'
-import { useFileContentContext } from '../../../contexts'
+import { useFileContentContext } from '../../../../common/contexts'
+import { useTranslation } from 'react-i18next'
 
 const EntriesColumn = ({elements}) => {
   const {
@@ -14,10 +14,11 @@ const EntriesColumn = ({elements}) => {
     handleUpdateEntry,
     handleSelectEntry
   } = useFileContentContext()
+  const { t } = useTranslation()
 
   const column = new ColumnBase<Entry>({
     style: {
-      label: i18n.t('Main.Entries'),
+      label: t('Main.Entries'),
       width: 'w-3/12',
       margin: 'mr-1 ml-1',
       unselectableContent: true,
@@ -56,8 +57,8 @@ const EntriesColumn = ({elements}) => {
       },
       elements: elements,
       i18n: {
-        missingElementsMessage: i18n.t('Main.No entries'),
-        addElementMessage: i18n.t('Main.Add entries')
+        missingElementsMessage: t('Main.No entries'),
+        addElementMessage: t('Main.Add entries')
       }
     }).render()
   })

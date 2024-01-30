@@ -1,46 +1,51 @@
 import { Setting, SettingRow, SettingSection } from '../../../components/settings'
 import { FormikCheckbox, FormikDropdown } from '../../../../common/components'
 import { Language } from '../../../../../../types'
+import { useTranslation } from 'react-i18next'
 
 const GeneralSettings = ({ formik }) => {
-  const languages = Object.entries(Language).map(([ key, value ]) => ({ label: key, value }))
+  const { t } = useTranslation()
+  const languages = Object.entries(Language).map(([ , value ]) => ({
+    label: t(`SettingsDialog.General.Language.Values.${ value }`),
+    value
+  }))
   return (
-    <SettingSection title="General">
-      <Setting title="Language">
+    <SettingSection title={ t('SettingsDialog.General.Title') }>
+      <Setting title={ t('SettingsDialog.General.Language.Title') }>
         <SettingRow>
           <FormikDropdown
             name="generalLanguage"
-            label="Language"
+            label={ t('SettingsDialog.General.Language.Label') }
             options={ languages }
             disabled={ false }
             formik={ formik }
           />
         </SettingRow>
       </Setting>
-      <Setting title="Open">
+      <Setting title={ t('SettingsDialog.General.Open.Title') }>
         <SettingRow>
           <FormikCheckbox
             field="generalOpenAtStartup"
-            label="Open at startup"
+            label={ t('SettingsDialog.General.Open.Open at startup') }
             formik={ formik }
           />
           <FormikCheckbox
             field="generalOpenMinimized"
-            label="Open minimized"
+            label={ t('SettingsDialog.General.Open.Open minimized') }
             formik={ formik }
           />
         </SettingRow>
       </Setting>
-      <Setting title="Tray">
+      <Setting title={ t('SettingsDialog.General.Tray.Title') }>
         <SettingRow>
           <FormikCheckbox
             field="generalMinimizeToTray"
-            label="Minimize to tray"
+            label={ t('SettingsDialog.General.Tray.Minimize to tray') }
             formik={ formik }
           />
           <FormikCheckbox
             field="generalCloseToTray"
-            label="Close to tray"
+            label={ t('SettingsDialog.General.Tray.Close to tray') }
             formik={ formik }
           />
         </SettingRow>
@@ -49,7 +54,7 @@ const GeneralSettings = ({ formik }) => {
         <SettingRow>
           <FormikCheckbox
             field="generalAutoSave"
-            label="Auto-save edits"
+            label={ t('SettingsDialog.General.Auto-save.Auto-save edits') }
             formik={ formik }
           />
         </SettingRow>

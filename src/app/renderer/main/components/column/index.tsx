@@ -1,8 +1,8 @@
 import { IdentifiableType, UUID } from '../../../common/types'
 import { Component, ReactNode, useEffect, useRef, useState } from 'react'
 import { CheckIcon, CrossIcon, PencilIcon, PlusIcon, TrashIcon } from '../../../../../assets/icons'
-import i18n from '../../../../../i18n'
 import { Formik } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 export interface BaseColumnProps<T extends IdentifiableType> {
   style: {
@@ -59,7 +59,7 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
         </div>
         <div className="divider m-0"/>
         <div className="bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper">
-          <div className="scrollbar"> { /* TODO add pr-2 but check if is overflowing otherwise it will leave a permanent padding even if there is no scrollbar */ }
+          <div className="scrollbar"> { /* TODO [!!!][!!!][!!!] add pr-2 but check if is overflowing otherwise it will leave a permanent padding even if there is no scrollbar */ }
             { this.children }
           </div>
         </div>
@@ -125,6 +125,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
 
   render() {
     const [ disableElementSelection, setDisableElementSelection ] = useState(false)
+    const { t } = useTranslation()
 
     const textRefs = useRef<(HTMLDivElement | null)[]>([])
     const liRefs = useRef<(HTMLLIElement | null)[]>([])
@@ -210,7 +211,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                       values => {
                         const errors: any = {}
                         if (!values.title) {
-                          errors.title = i18n.t('Common.Validations.Required field')
+                          errors.title = t('Common.Validations.Required field')
                         }
                         return errors
                       }

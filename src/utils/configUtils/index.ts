@@ -1,7 +1,7 @@
 import { Config } from '../../types'
 
 function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+  return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
 function configToInitialValues(config: Config) {

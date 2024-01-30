@@ -1,6 +1,6 @@
 import { TOTP } from 'otpauth'
 import { useEffect, useState } from 'react'
-import { useThemeContext } from '../../contexts'
+import { useThemeContext } from '../../../common/contexts'
 
 const RADIUS : number = 30
 const CIRCUMFERENCE : number = RADIUS * 2 * Math.PI

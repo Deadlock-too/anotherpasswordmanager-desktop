@@ -1,4 +1,4 @@
-import { useFileContentContext } from '../../contexts'
+import { useFileContentContext } from '../../../common/contexts'
 import FoldersColumn from '../../components/column/foldersColumn'
 import EntriesColumn from '../../components/column/entriesColumn'
 import DetailsColumn from '../../components/column/detailsColumn'

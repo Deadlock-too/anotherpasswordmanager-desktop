@@ -1,8 +1,8 @@
 import { Formik, FormikProps } from 'formik'
 import Modal from '../index'
-import i18n from '../../../../../../i18n'
-import { useFileContentContext, useModalContext } from '../../../../main/contexts'
+import { useFileContentContext, useModalContext } from '../../../../common/contexts'
 import FormField from '../../../../main/components/formField'
+import { useTranslation } from 'react-i18next'
 
 interface PasswordDialogProps {
   variant: 'open' | 'create' | 'update'
@@ -14,14 +14,15 @@ interface InnerDialogProps {
 }
 
 const OpenPasswordDialog = (props: InnerDialogProps) => {
+  const { t } = useTranslation()
   return (
     <form onSubmit={ props.formik.handleSubmit } className="justify-between">
       <FormField
         type='password'
         formik={ props.formik }
         field="password"
-        label={ i18n.t('PasswordDialog.Open.Password Label') }
-        placeholder={ i18n.t('PasswordDialog.Open.Password Placeholder') }
+        label={ t('PasswordDialog.Open.Password Label') }
+        placeholder={ t('PasswordDialog.Open.Password Placeholder') }
         unselectable={ !props.isPasswordModalOpen }
       />
       <button
@@ -31,29 +32,30 @@ const OpenPasswordDialog = (props: InnerDialogProps) => {
         aria-hidden={ !props.isPasswordModalOpen }
         tabIndex={ props.isPasswordModalOpen ? 1 : -1 }
       >
-        { i18n.t('PasswordDialog.Open.Submit Button') }
+        { t('PasswordDialog.Open.Submit Button') }
       </button>
     </form>
   )
 }
 
 const CreatePasswordDialog = (props: InnerDialogProps) => {
+  const { t } = useTranslation()
   return (
     <form onSubmit={ props.formik.handleSubmit } className="justify-between">
       <FormField
         type='password'
         formik={ props.formik }
         field="password"
-        label={ i18n.t('PasswordDialog.Create.Password Label') }
-        placeholder={ i18n.t('PasswordDialog.Create.Password Placeholder') }
+        label={ t('PasswordDialog.Create.Password Label') }
+        placeholder={ t('PasswordDialog.Create.Password Placeholder') }
         unselectable={ !props.isPasswordModalOpen }
       />
       <FormField
         type='password'
         formik={ props.formik }
         field="confirmPassword"
-        label={ i18n.t('PasswordDialog.Create.Confirm Label') }
-        placeholder={ i18n.t('PasswordDialog.Create.Confirm Placeholder') }
+        label={ t('PasswordDialog.Create.Confirm Label') }
+        placeholder={ t('PasswordDialog.Create.Confirm Placeholder') }
         unselectable={ !props.isPasswordModalOpen }
       />
       <button
@@ -63,29 +65,30 @@ const CreatePasswordDialog = (props: InnerDialogProps) => {
         aria-hidden={ !props.isPasswordModalOpen }
         tabIndex={ props.isPasswordModalOpen ? 1 : -1 }
       >
-        { i18n.t('PasswordDialog.Create.Submit Button') }
+        { t('PasswordDialog.Create.Submit Button') }
       </button>
     </form>
   )
 }
 
 const UpdatePasswordDialog = (props: InnerDialogProps) => {
+  const { t } = useTranslation()
   return (
     <form onSubmit={ props.formik.handleSubmit } className="justify-between">
       <FormField
         type='password'
         formik={ props.formik }
         field="password"
-        label={ i18n.t('PasswordDialog.Update.Password Label') }
-        placeholder={ i18n.t('PasswordDialog.Update.Password Placeholder') }
+        label={ t('PasswordDialog.Update.Password Label') }
+        placeholder={ t('PasswordDialog.Update.Password Placeholder') }
         unselectable={ !props.isPasswordModalOpen }
       />
       <FormField
         type='password'
         formik={ props.formik }
         field="confirmPassword"
-        label={ i18n.t('PasswordDialog.Update.Confirm Label') }
-        placeholder={ i18n.t('PasswordDialog.Update.Confirm Placeholder') }
+        label={ t('PasswordDialog.Update.Confirm Label') }
+        placeholder={ t('PasswordDialog.Update.Confirm Placeholder') }
         unselectable={ !props.isPasswordModalOpen }
       />
       <button
@@ -95,7 +98,7 @@ const UpdatePasswordDialog = (props: InnerDialogProps) => {
         aria-hidden={ !props.isPasswordModalOpen }
         tabIndex={ props.isPasswordModalOpen ? 1 : -1 }
       >
-        { i18n.t('PasswordDialog.Update.Submit Button') }
+        { t('PasswordDialog.Update.Submit Button') }
       </button>
     </form>
   )
@@ -104,15 +107,16 @@ const UpdatePasswordDialog = (props: InnerDialogProps) => {
 const PasswordDialog = (props: PasswordDialogProps) => {
   const { setPassword, setIsInitialized, filePath } = useFileContentContext()
   const { isPasswordModalOpen, setIsPasswordModalOpen } = useModalContext()
+  const { t } = useTranslation()
 
   const dialogTitle = () => {
     switch (props.variant) {
       case 'open':
-        return i18n.t('PasswordDialog.Open.Title')
+        return t('PasswordDialog.Open.Title')
       case 'create':
-        return i18n.t('PasswordDialog.Create.Title')
+        return t('PasswordDialog.Create.Title')
       case 'update':
-        return i18n.t('PasswordDialog.Update.Title')
+        return t('PasswordDialog.Update.Title')
     }
   }
 
@@ -135,7 +139,7 @@ const PasswordDialog = (props: PasswordDialogProps) => {
               const errors = {}
               if (props.variant === 'create' || props.variant === 'update') {
                 if (values.password !== values.confirmPassword){
-                  errors['confirmPassword'] = i18n.t('Common.Validations.ValuesMustMatch')
+                  errors['confirmPassword'] = t('Common.Validations.ValuesMustMatch')
                 }
               }
               return errors

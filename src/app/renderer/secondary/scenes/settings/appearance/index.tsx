@@ -1,11 +1,13 @@
-import { Setting, SettingRow, SettingSection } from "../../../components/settings"
+import { Setting, SettingRow, SettingSection } from '../../../components/settings'
 import { SettingsIcon } from '../../../../../../assets/icons'
 import { FormikDropdown, FormikToggle, ScrollableDiv } from '../../../../common/components'
 import { Theme } from '../../../../../../types'
 import { daisyui } from '../../../../../../../tailwind.config'
+import { useTranslation } from 'react-i18next'
 
 /* TODO MANAGE IMMEDIATE UPDATE OF THEME AND NOT ONLY ON APPLY OR SUBMIT */
 const AppearanceSettings = ({ formik }) => {
+  const { t } = useTranslation()
   const themes = Object.values(Theme).filter(thm => thm != Theme.system)
   const lightThemes: Theme[] = []
   const darkThemes: Theme[] = []
@@ -24,19 +26,19 @@ const AppearanceSettings = ({ formik }) => {
   const themeOptions = themes.map(theme => ({ label: theme, value: theme }))
 
   return (
-    <SettingSection title="Appearance">
-      <Setting title="Theme">
+    <SettingSection title={ t('SettingsDialog.Appearance.Title') }>
+      <Setting title={ t('SettingsDialog.Appearance.Theme.Title') }>
         <SettingRow>
           <FormikDropdown
             name="appearanceCustomTheme"
-            label="Theme"
+            label={ t('SettingsDialog.Appearance.Theme.Label') }
             options={ themeOptions }
             formik={ formik }
             disabled={ formik.values.appearanceUseSystemTheme }
           />
           <FormikToggle
             name="appearanceUseSystemTheme"
-            label="Sync with OS"
+            label={ t('SettingsDialog.Appearance.Theme.Sync with OS') }
             formik={ formik }
           />
           {
@@ -49,8 +51,8 @@ const AppearanceSettings = ({ formik }) => {
                 </summary>
                 <ul tabIndex={ 0 } className="shadow menu z-[1] dropdown-content bg-base-100 rounded-md w-44">
                   <ScrollableDiv>
-                    <li className="menu-title font-extrabold">Preferences</li>
-                    <li className="menu-title">Light</li>
+                    <li className="menu-title font-extrabold">{ t('SettingsDialog.Appearance.Theme.Preferences') }</li>
+                    <li className="menu-title">{ t('SettingsDialog.Appearance.Theme.Light') }</li>
                     {
                       lightThemes.map((thm) => (
                         <li key={ thm }
@@ -60,7 +62,7 @@ const AppearanceSettings = ({ formik }) => {
                       ))
                     }
                     <div className="divider"></div>
-                    <li className="menu-title">Dark</li>
+                    <li className="menu-title">{ t('SettingsDialog.Appearance.Theme.Dark') }</li>
                     {
                       darkThemes.map((thm) => (
                         <li key={ thm }

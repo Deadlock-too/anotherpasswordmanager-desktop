@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import i18n from '../../i18n'
+import { default as i18n } from '../../i18n'
 import IpcEventNames from './ipc/ipcEventNames'
 import { Config, Theme } from '../../types'
 
@@ -39,11 +39,21 @@ contextBridge.exposeInMainWorld('localization', {
   //   })
   // },
   changeLanguage: (lang: string) => {
-    i18n.changeLanguage(lang)
+    console.log('Changing language to: ' + lang)
+    console.log('Current language: ' + i18n.default.language)
+    i18n.default.changeLanguage(lang)
+      .then(() => {
+        console.log('Language changed to: ' + lang)
+        console.log('Current language: ' + i18n.default.language)
+      })
+      .catch((err) => {
+        console.error('Error changing language: ' + err)
+      })
   },
   getInitialI18nStore: (): Promise<any> => {
     return Promise.resolve(i18n.default.store.data)
-  }
+  },
+  startupLanguage: ipcRenderer.invoke(IpcEventNames.Localization.GetStartupLanguage)
 })
 
 contextBridge.exposeInMainWorld('versions', {
@@ -106,6 +116,12 @@ contextBridge.exposeInMainWorld('electron', {
   },
   unsubscribeToUpdateIsDark: () => {
     ipcRenderer.removeAllListeners(IpcEventNames.Theming.UpdateIsDark)
+  },
+  subscribeToChangeLanguage: (callback) => {
+    ipcRenderer.on(IpcEventNames.Localization.ChangeLanguage, (event, ...args) => callback(...args))
+  },
+  unsubscribeToChangeLanguage: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.Localization.ChangeLanguage)
   },
   setFileContent: async (path: string, password: string) => {
     return await ipcRenderer.invoke(IpcEventNames.FileOpen.SetFileContent, path, password)

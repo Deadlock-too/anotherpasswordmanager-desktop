@@ -1,6 +1,6 @@
 import { CloseIcon, SaveIcon, SettingsIcon, TemporaryAppIcon, UpdateIcon } from '../../../../../assets/icons'
 import { encrypt } from '../../../../main/utils/crypt'
-import { useFileContentContext, useModalContext, useThemeContext } from '../../contexts'
+import { useFileContentContext, useModalContext } from '../../../common/contexts'
 import { ReactNode } from 'react'
 import { openSecondaryWindow, WindowVariant } from '../../utils/windowManager'
 
@@ -114,7 +114,7 @@ const TitleBar = (props: TitleBarProps) => {
           </div>
           : null }
       </div>
-      {/* TODO MANAGE TITLE-BAR */ }
+      {/* TODO: [!!!] MANAGE TITLE-BAR */ }
       <h1 className="truncate label-text text-sm">{props.title}</h1>
       {
         props.variant === 'main' ?

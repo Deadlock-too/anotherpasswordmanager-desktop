@@ -1,11 +1,13 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import { useConfigContext, useThemeContext } from '../../../main/contexts'
+import { useConfigContext, useThemeContext } from '../../../common/contexts'
 import { Formik } from 'formik'
 import AppearanceSettings from './appearance'
 import GeneralSettings from './general'
 import SecuritySettings from './security'
 import { configToInitialValues, valuesToConfig } from '../../../../../utils'
 import { Language, Theme } from '../../../../../types'
+import { useTranslation } from 'react-i18next'
+import i18n from '../../../../../i18n'
 
 enum SettingSections {
   General = 'General',
@@ -15,7 +17,7 @@ enum SettingSections {
 
 const SettingsScene = () => {
   const [ selectedSetting, setSelectedSetting ] = useState<SettingSections>(SettingSections.General)
-
+  const { t } = useTranslation()
   const settings = Object.values(SettingSections)
 
   const textRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -66,6 +68,8 @@ const SettingsScene = () => {
   }, setTemporaryValues: boolean) => {
     //TODO APPLY OTHER SETTINGS TOO IF POSSIBLE
     (async () => {
+      await window.localization.changeLanguage(values.language)
+
       if (values.useSystemTheme) {
         await window.theming.setSystem()
       }
@@ -85,23 +89,25 @@ const SettingsScene = () => {
         } else {
           window.theming.setTheme(values.customTheme, false)
         }
-      }).then(() => window.localization.changeLanguage(values.language))
+      })
+      .then(() => i18n.changeLanguage(values.language))
   }
 
   const handleSubmit = (values: any, { setSubmitting }) => {
-    setTimeout(() => {
-      const newValues = valuesToConfig(values, config)
-      handleUpdateConfig({
+    const newValues = valuesToConfig(values, config);
+
+    (async () => {
+      handleApplySettings({
+        ...newValues.settings.appearance,
+        language: newValues.settings.general.language
+      }, false)
+    })()
+      .then(() => handleUpdateConfig({
         ...config,
         settings: newValues.settings,
-      })
-        .then(() => handleApplySettings({
-          ...newValues.settings.appearance,
-          language: newValues.settings.general.language
-        }, false))
-        .then(() => setSubmitting(false))
-        .then(() => window.close())
-    }, 50)
+      }))
+      .then(() => setSubmitting(false))
+      .then(() => window.close())
   }
 
   const handleReset = () => {
@@ -121,9 +127,6 @@ const SettingsScene = () => {
   return (
     <Formik
       initialValues={ initialValues }
-      validate={ () => {
-        /* TODO */
-      } }
       onSubmit={ handleSubmit }
       onReset={ handleReset }
     >
@@ -146,7 +149,7 @@ const SettingsScene = () => {
                               <a key={ setting } onClick={ () => setSelectedSetting(setting) }
                                  className="justify-between items-center">
                                 <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
-                                  { setting }
+                                  { t(`SettingsDialog.${ setting }.Title`) }
                                 </div>
                               </a>
                             </li>
@@ -186,18 +189,30 @@ const SettingsScene = () => {
             </div>
             <div className="divider -mt-2 -mb-2"/>
             <div className="flex flex-row justify-end items-center gap-2">
-              <button type="submit" className="btn btn-primary btn-sm w-16">OK</button>
-              <button type="reset" className="btn btn-neutral btn-sm w-16">Cancel</button>
-              <button type="button" className="btn btn-neutral btn-sm w-16" onClick={ () => {
-                handleApplySettings({
-                  useSystemTheme: formik.values['appearanceUseSystemTheme'],
-                  darkTheme: formik.values['appearanceDarkTheme'],
-                  lightTheme: formik.values['appearanceLightTheme'],
-                  customTheme: formik.values['appearanceCustomTheme'],
-                  language: formik.values['generalLanguage'],
-                }, true)
-              } }
-              >Apply
+              <button
+                type="submit"
+                className="btn btn-primary btn-sm w-16">
+                { t('SettingsDialog.Submit Button') }
+              </button>
+              <button
+                type="reset"
+                className="btn btn-neutral btn-sm w-16">
+                { t('SettingsDialog.Cancel Button') }
+              </button>
+              <button
+                type="button"
+                className="btn btn-neutral btn-sm w-16"
+                onClick={ () => {
+                  handleApplySettings({
+                    useSystemTheme: formik.values['appearanceUseSystemTheme'],
+                    darkTheme: formik.values['appearanceDarkTheme'],
+                    lightTheme: formik.values['appearanceLightTheme'],
+                    customTheme: formik.values['appearanceCustomTheme'],
+                    language: formik.values['generalLanguage'],
+                  }, true)
+                } }
+              >
+                { t('SettingsDialog.Apply Button') }
               </button>
             </div>
           </form>

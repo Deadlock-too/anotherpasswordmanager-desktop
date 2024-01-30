@@ -1,7 +1,7 @@
 import { ColumnBase, ColumnContentBase } from '../index'
 import { Folder } from '../../../../common/types'
-import i18n from '../../../../../../i18n'
-import { useFileContentContext, useModalContext } from '../../../contexts'
+import { useFileContentContext, useModalContext } from '../../../../common/contexts'
+import { useTranslation } from 'react-i18next'
 
 const FoldersColumn = ({elements}) => {
   const {
@@ -15,6 +15,7 @@ const FoldersColumn = ({elements}) => {
     handleUpdateFolder,
     handleSelectFolder
   } = useFileContentContext()
+  const { t } = useTranslation()
 
   const { setIsAddFolderModalOpen } = useModalContext()
 
@@ -59,8 +60,8 @@ const FoldersColumn = ({elements}) => {
       },
       elements: elements,
       i18n: {
-        missingElementsMessage: i18n.t('Main.No folders'),
-        addElementMessage: i18n.t('Main.Add folders')
+        missingElementsMessage: t('Main.No folders'),
+        addElementMessage: t('Main.Add folders')
       }
     }).render()
   })

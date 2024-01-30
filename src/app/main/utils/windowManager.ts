@@ -30,7 +30,6 @@ async function createMainWindow() {
     minWidth: 550,
     titleBarStyle: 'hidden',
     // icon: './assets/icon.png', //TODO ADD ICON
-    /* TODO MAKE DYNAMIC BASED ON CURRENT SAVED THEME */
     /* TODO MANAGE OPENED DIALOG OR SECONDARY MODAL WINDOW COLOR (if any dialog is opened set darker color, for an easier job compute all colors starting from the title bar color using HSL subtracting 5 to the last value and set a new field in the tailwind.config.js) */
     titleBarOverlay: {
       color: theme.color,
@@ -120,7 +119,7 @@ export async function onWindowAllClosed(app: Electron.App) {
 export async function openFileDialog() {
   if (mainWindow) {
     await dialog.showOpenDialog(mainWindow, {
-      title: i18n.t('OpenDialog.Title'),
+      title: i18n.default.t('OpenDialog.Title'),
       properties: [ 'openFile' ],
       filters: [
         { name: 'Apm files', extensions: [ 'apm' ] }
@@ -167,7 +166,7 @@ export async function openFileFromPath(path: string, password: string): Promise<
 export async function saveFileDialog() {
   let path: string | undefined = undefined
   await dialog.showSaveDialog({
-    'title': i18n.t('SaveDialog.Title'),
+    'title': i18n.default.t('SaveDialog.Title'),
     'defaultPath': 'passwords.apm', //TODO CHOOSE DEFAULT FILE NAME
     properties: [ 'showOverwriteConfirmation' ]
   }).then(

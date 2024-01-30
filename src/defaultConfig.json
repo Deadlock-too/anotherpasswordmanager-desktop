@@ -1,0 +1,28 @@
+{
+  "settings": {
+    "appearance": {
+      "customTheme": "dark",
+      "lightTheme": "light",
+      "darkTheme": "dark",
+      "useSystemTheme": true
+    },
+    "general": {
+      "language": "en",
+      "openAtStartup": false,
+      "openMinimized": false,
+      "minimizeToTray": false,
+      "closeToTray": false,
+      "autoSave": false
+    },
+    "security": {
+      "autoLock": false,
+      "autoLockTime": 600,
+      "autoLockOnMinimize": false,
+      "autoLockOnSleep": false,
+      "autoCleanClipboard": false,
+      "autoCleanClipboardTime": 30,
+      "defaultNewEntryExpire": false,
+      "defaultNewEntryExpireTime": 60
+    }
+  }
+}

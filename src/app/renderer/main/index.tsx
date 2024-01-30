@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import App from './app'
-import { ContextProvider } from './contexts/contextProvider'
+import { ContextProvider } from '../common/contexts/contextProvider'
 
 const rootDiv = document.getElementById('root')
 if (!rootDiv)

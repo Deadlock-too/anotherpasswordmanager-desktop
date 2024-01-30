@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import EntryDetail from '../entryDetail'
 import { Entry } from '../../../common/types'
-import i18n from '../../../../../i18n'
-import { useFileContentContext } from '../../contexts'
+import { useFileContentContext } from '../../../common/contexts'
+import { useTranslation } from 'react-i18next'
 
 const DetailView = () => {
   const {
@@ -14,6 +14,7 @@ const DetailView = () => {
     entries,
     refreshDetail
   } = useFileContentContext()
+  const { t } = useTranslation()
   const [ selectedEntry, setSelectedEntry ] = useState<Entry | undefined>(undefined)
 
   useEffect(() => {
@@ -40,8 +41,8 @@ const DetailView = () => {
       />
       :
       <div className='h-full justify-center flex flex-col unselectable'>
-        <h1 className='text-center font-bold'>{i18n.t('Main.No Entry Selected')}</h1>
-        <h2 className='text-center font-thin pr-5 pl-5'>{i18n.t('Main.Entry Detail')}</h2>
+        <h1 className='text-center font-bold'>{t('Main.No Entry Selected')}</h1>
+        <h2 className='text-center font-thin pr-5 pl-5'>{t('Main.Entry Detail')}</h2>
       </div>
   )
 }

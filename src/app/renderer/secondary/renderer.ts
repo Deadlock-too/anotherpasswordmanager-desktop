@@ -1,6 +1,6 @@
 import './index'
 import '../main/styles.css'
-import { Config, Theme } from '../../../types'
+import { Config, Language, Theme } from '../../../types'
 
 declare global {
   interface Window {
@@ -21,8 +21,9 @@ declare global {
       setSystem: () => Promise<void>
     },
     localization: {
-      getInitialI18nStore: () => Promise<any>,
-      changeLanguage: (lang: string) => Promise<void>,
+      getInitialI18nStore: () => Promise<any>
+      changeLanguage: (lang: string) => Promise<void>
+      startupLanguage: Promise<Language>
     },
     clipboard: {
       read: () => Promise<string>,

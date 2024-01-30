@@ -1,9 +1,9 @@
 import Modal from '../index'
 import { Formik } from 'formik'
 import { Folder, uuid } from '../../../../common/types'
-import i18n from '../../../../../../i18n'
-import { useFileContentContext, useModalContext } from '../../../../main/contexts'
+import { useFileContentContext, useModalContext } from '../../../../common/contexts'
 import FormField from '../../../../main/components/formField'
+import { useTranslation } from 'react-i18next'
 
 const AddFolderDialog = () => {
   const {
@@ -12,6 +12,7 @@ const AddFolderDialog = () => {
     selectedEntryId,
     selectedFolderId
   } = useFileContentContext()
+  const { t } = useTranslation()
 
   const { isAddFolderModalOpen, setIsAddFolderModalOpen } = useModalContext()
 
@@ -21,7 +22,7 @@ const AddFolderDialog = () => {
       validate={ (values) => {
         const errors = {}
         if (values.title === undefined || values.title === '') {
-          errors['title'] = i18n.t('Common.Validations.Required field')
+          errors['title'] = t('Common.Validations.Required field')
         }
         return errors
       } }
@@ -43,7 +44,7 @@ const AddFolderDialog = () => {
       { (formik) => (
         <Modal
           id="addFolderModal"
-          title={ i18n.t('AddFolderDialog.Title') }
+          title={ t('AddFolderDialog.Title') }
           handleReset={ () => {
             formik.handleReset()
             setIsAddFolderModalOpen(false)
@@ -54,8 +55,8 @@ const AddFolderDialog = () => {
             <FormField
               formik={ formik }
               field="title"
-              label={ i18n.t('AddFolderDialog.Field Label') }
-              placeholder={ i18n.t('AddFolderDialog.Field Placeholder') }
+              label={ t('AddFolderDialog.Field Label') }
+              placeholder={ t('AddFolderDialog.Field Placeholder') }
               unselectable={ !isAddFolderModalOpen }
             />
             <button
@@ -65,7 +66,7 @@ const AddFolderDialog = () => {
               aria-hidden={ !isAddFolderModalOpen }
               tabIndex={ isAddFolderModalOpen ? 0 : -1 }
             >
-              { i18n.t('AddFolderDialog.Submit Button') }
+              { t('AddFolderDialog.Submit Button') }
             </button>
           </form>
         </Modal>

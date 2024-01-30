@@ -4,6 +4,7 @@ import * as path from 'path'
 import { Config, Theme, Language } from '../../../types'
 import i18n from '../../../i18n'
 import { daisyui } from '../../../../tailwind.config'
+import defaultConfig from '../../../defaultConfig.json'
 
 const configFileName = 'config.json'
 let configFilePath: string
@@ -25,6 +26,11 @@ export async function getThemeFromConfig(): Promise<{ currentTheme: Theme, color
     color,
     symbolColor
   }
+}
+
+export async function getLanguageFromConfig(): Promise<Language> {
+  const config = await readConfig()
+  return config.settings.general.language
 }
 
 export async function loadConfig(app: App) {
@@ -79,34 +85,20 @@ export async function readConfig(): Promise<Config> {
 }
 
 export async function createConfig(): Promise<Config | null> {
-  // TODO write default config in a json file to make it easier to edit and update
   const config: Config = {
+    ...defaultConfig,
     settings: {
+      ...defaultConfig.settings,
       general: {
-        // TODO CHECK LOGIC
-        language: Object.values(Language).find(l => l == i18n.default.language) ?? Language.English,
-        openAtStartup: false,
-        openMinimized: false,
-        minimizeToTray: false,
-        closeToTray: false,
-        autoSave: false,
+        ...defaultConfig.settings.general,
+        language: defaultConfig.settings.general.language as Language
       },
       appearance: {
-        customTheme: Theme.dark,
-        darkTheme: Theme.dark,
-        lightTheme: Theme.light,
-        useSystemTheme: true
-      },
-      security: {
-        autoLock: false,
-        autoLockTime: undefined,
-        autoLockOnMinimize: false,
-        autoLockOnSleep: false,
-        autoCleanClipboard: false,
-        autoCleanClipboardTime: undefined,
-        defaultNewEntryExpire: false,
-        defaultNewEntryExpireTime: undefined,
-      },
+        ...defaultConfig.settings.appearance,
+        customTheme: defaultConfig.settings.appearance.customTheme as Theme,
+        lightTheme: defaultConfig.settings.appearance.lightTheme as Theme,
+        darkTheme: defaultConfig.settings.appearance.darkTheme as Theme
+      }
     }
   }
 

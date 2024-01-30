@@ -172,7 +172,70 @@
     "Cancel Button": "Cancel"
   },
   "SettingsDialog": {
-    "Title": "Settings"
+    "Title": "Settings",
+    "General": {
+      "Title": "General",
+      "Language": {
+        "Title": "Language",
+        "Label": "Language",
+        "Values": {
+          "System": "System default",
+          "en": "English",
+          "it": "Italian"
+        }
+      },
+      "Open": {
+        "Title": "Open",
+        "Open at startup": "Open at startup",
+        "Open minimized": "Open minimized"
+      },
+      "Tray": {
+        "Title": "Tray",
+        "Minimize to tray": "Minimize to tray",
+        "Close to tray": "Close to tray"
+      },
+      "Auto-save": {
+        "Title": "Auto-save",
+        "Auto-save edits": "Auto-save edits"
+      }
+    },
+    "Appearance": {
+      "Title": "Appearance",
+      "Theme": {
+        "Title": "Theme",
+        "Label": "Theme",
+        "Sync with OS": "Sync with OS",
+        "Preferences": "Preferences",
+        "Light": "Light",
+        "Dark": "Dark"
+      }
+    },
+    "Security": {
+      "Title": "Security",
+      "Auto lock": {
+        "Title": "Auto lock",
+        "Auto lock": "For inactivity",
+        "Auto lock after": "after",
+        "seconds": "seconds",
+        "On minimize": "On minimize",
+        "On sleep": "On sleep"
+      },
+      "Clipboard": {
+        "Title": "Clipboard",
+        "Auto clear clipboard": "Auto clear clipboard",
+        "Clear after": "Clear after",
+        "seconds": "seconds"
+      },
+      "Entry expire": {
+        "Title": "Entry expire",
+        "Default new entry expire": "Default new entry expire",
+        "New entries will expire after": "New entries will expire after",
+        "days": "days"
+      }
+    },
+    "Submit Button": "Save",
+    "Cancel Button": "Cancel",
+    "Apply Button": "Apply"
   },
   "Common": {
     "Validations": {

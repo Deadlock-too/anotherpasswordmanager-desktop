@@ -3,8 +3,8 @@ import { openFileDialog, openFileFromPath, saveFileDialog } from '../utils/windo
 import { daisyui } from '../../../../tailwind.config'
 import * as fs from 'fs'
 import IpcEventNames from './ipcEventNames'
-import { getThemeFromConfig, readConfig, writeConfig } from '../utils/configManager'
-import { Config } from '../../../types'
+import { getLanguageFromConfig, getThemeFromConfig, readConfig, writeConfig } from '../utils/configManager'
+import { Config, Language, Theme } from '../../../types'
 
 let currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
 
@@ -38,9 +38,13 @@ ipcMain.handle(IpcEventNames.FileOpen.SetFileContent, async (_, path: string, pa
   return await openFileFromPath(path, password)
 })
 
-ipcMain.handle(IpcEventNames.Theming.GetStartupTheme, async (): Promise<string> => {
+ipcMain.handle(IpcEventNames.Theming.GetStartupTheme, async (): Promise<Theme> => {
   const theme = await getThemeFromConfig()
   return theme.currentTheme
+})
+
+ipcMain.handle(IpcEventNames.Localization.GetStartupLanguage, async (): Promise<Language> => {
+  return await getLanguageFromConfig()
 })
 
 ipcMain.handle(IpcEventNames.Theming.SetTheme, async (_, themeName, setSystem): Promise<boolean> => {
@@ -102,4 +106,10 @@ ipcMain.handle(IpcEventNames.Config.Get, (): Promise<Config> => {
 
 ipcMain.handle(IpcEventNames.Config.Set, async (_, data: Config): Promise<void> => {
   await writeConfig(data)
+})
+
+ipcMain.handle(IpcEventNames.Localization.ChangeLanguage, async (_, lang: string): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.Localization.ChangeLanguage, lang)
+  })
 })

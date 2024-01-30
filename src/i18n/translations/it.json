@@ -171,7 +171,70 @@
     "Cancel Button": "Annulla"
   },
   "SettingsDialog": {
-    "Title": "Impostazioni"
+    "Title": "Impostazioni",
+    "General": {
+      "Title": "Generali",
+      "Language": {
+        "Title": "Lingua",
+        "Label": "Lingua",
+        "Values": {
+          "System Default": "Predefinita di sistema",
+          "en": "Inglese",
+          "it": "Italiano"
+        }
+      },
+      "Open": {
+        "Title": "Apri",
+        "Open at startup": "Apri all'avvio",
+        "Open minimized": "Apri minimizzato"
+      },
+      "Tray": {
+        "Title": "Area di notifica",
+        "Minimize to tray": "Minimizza in area di notifica",
+        "Close to tray": "Chiudi in area di notifica"
+      },
+      "Auto-save": {
+        "Title": "Salvataggio automatico",
+        "Auto-save edits": "Salva automaticamente le modifiche"
+      }
+    },
+    "Appearance": {
+      "Title": "Aspetto",
+      "Theme": {
+        "Title": "Tema",
+        "Label": "Tema",
+        "Sync with OS": "Sincronizza con il sistema operativo",
+        "Preferences": "Preferenze",
+        "Light": "Chiaro",
+        "Dark": "Scuro"
+      }
+    },
+    "Security": {
+      "Title": "Sicurezza",
+      "Auto lock": {
+        "Title": "Blocco automatico",
+        "Auto lock": "Per inattività",
+        "Auto lock after": "dopo",
+        "seconds": "secondi",
+        "On minimize": "Alla minimizzazione",
+        "On sleep": "Alla sospensione"
+      },
+      "Clipboard": {
+        "Title": "Appunti",
+        "Auto clear clipboard": "Svuota automaticamente gli appunti",
+        "Clear after": "Svuota dopo",
+        "seconds": "secondi"
+      },
+      "Entry expire": {
+        "Title": "Scadenza voce",
+        "Default new entry expire": "Scadenza predefinita per le nuove voci",
+        "New entries will expire after": "Le nuove voci scadranno dopo",
+        "days": "giorni"
+      }
+    },
+    "Submit Button": "Salva",
+    "Cancel Button": "Annulla",
+    "Apply Button": "Applica"
   },
   "Common": {
     "Validations": {

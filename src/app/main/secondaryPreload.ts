@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import i18n from '../../i18n'
 import IpcEventNames from './ipc/ipcEventNames'
 import { Config, Theme } from '../../types'
 
@@ -27,20 +26,10 @@ contextBridge.exposeInMainWorld('theming', {
 })
 
 contextBridge.exposeInMainWorld('localization', {
-  // changeLanguage: (lang: string): Promise<void> => {
-  //   return new Promise((resolve, reject) => {
-  //     i18n.changeLanguage(lang, (err) => {
-  //       if (err) {
-  //         reject(err)
-  //       } else {
-  //         resolve()
-  //       }
-  //     })
-  //   })
-  // }
   changeLanguage: (lang: string) => {
-    i18n.changeLanguage(lang)
+    return ipcRenderer.invoke(IpcEventNames.Localization.ChangeLanguage, lang)
   },
+  startupLanguage: ipcRenderer.invoke(IpcEventNames.Localization.GetStartupLanguage)
 })
 
 contextBridge.exposeInMainWorld('versions', {

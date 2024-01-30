@@ -1,5 +1,5 @@
 import { Menu, MenuItem } from 'electron'
-import i18n from '../../../i18n'
+import { useTranslation } from 'react-i18next'
 
 export default function setAppMenu() {
   const menu = new Menu()
@@ -9,7 +9,8 @@ export default function setAppMenu() {
 }
 
 function localizeAppMenu(menuKey: string, localizationKey: string) {
-  return i18n.t(`AppMenu.${menuKey}.${localizationKey}`)
+  const { t } = useTranslation();
+  return t(`AppMenu.${menuKey}.${localizationKey}`)
 }
 
 function setMenuEntries(menu: Menu) {

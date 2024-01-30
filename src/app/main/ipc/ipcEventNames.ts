@@ -30,6 +30,10 @@ const IpcEventNames = {
     Get: 'config:get',
     Set: 'config:set',
   },
+  Localization: {
+    ChangeLanguage: 'localization:changeLanguage',
+    GetStartupLanguage: 'localization:getStartupLanguage',
+  },
   ROUTE: 'route',
 }
 

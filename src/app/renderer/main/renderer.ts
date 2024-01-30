@@ -1,6 +1,6 @@
 import './index'
 import './styles.css'
-import { Config, Theme } from '../../../types'
+import { Config, Language, Theme } from '../../../types'
 
 declare global {
   interface Window {
@@ -27,8 +27,9 @@ declare global {
       }
     },
     localization: {
-      getInitialI18nStore: () => Promise<any>,
-      changeLanguage: (lang: string) => Promise<void>,
+      getInitialI18nStore: () => Promise<any>
+      changeLanguage: (lang: string) => Promise<void>
+      startupLanguage: Promise<Language>
     },
     clipboard: {
       read: () => Promise<string>,
@@ -45,6 +46,8 @@ declare global {
       unsubscribeToUpdateTheme: () => void
       subscribeToUpdateIsDark: (callback: unknown) => void
       unsubscribeToUpdateIsDark: () => void
+      subscribeToChangeLanguage: (callback: unknown) => void
+      unsubscribeToChangeLanguage: () => void
       sendPasswordResult: (password: string) => void
       setFileContent: (path: string, password: string) => void
       saveFile: (path: string, data: string) => Promise<void>

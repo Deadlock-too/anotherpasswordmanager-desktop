@@ -4,7 +4,7 @@ import i18n from '../../../i18n'
 import TitleBar from './components/titlebar'
 import Main from './scenes/main'
 import Intro from './scenes/intro'
-import { useFileContentContext, useModalContext, useThemeContext } from './contexts'
+import { useFileContentContext, useModalContext, useThemeContext } from '../common/contexts'
 import PasswordModal from '../secondary/components/modal/password'
 import AddFolderModal from '../secondary/components/modal/addFolder'
 import FailedOpenModal from '../secondary/components/modal/failedOpen'
@@ -34,6 +34,10 @@ const App = () => {
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
+
+    window.localization.startupLanguage.then(language => {
+      i18n.changeLanguage(language)
+    })
 
     const fileOpenedHandler = (path, content) => initialize(path, content)
     window.electron.subscribeToFileOpened(fileOpenedHandler)
@@ -73,6 +77,11 @@ const App = () => {
     }
     window.electron.subscribeToUpdateIsDark(updateIsDarkHandler)
 
+    const setLanguageHandler = (language) => {
+      i18n.changeLanguage(language)
+    }
+    window.electron.subscribeToChangeLanguage(setLanguageHandler)
+
     return () => {
       window.electron.unsubscribeToFileOpened()
       window.electron.unsubscribeToFailedOpenFile()
@@ -80,6 +89,7 @@ const App = () => {
       window.electron.unsubscribeToSetSecondaryWindowEntry()
       window.electron.unsubscribeToUpdateTheme()
       window.electron.unsubscribeToUpdateIsDark()
+      window.electron.unsubscribeToChangeLanguage()
     }
   }, [])
 
@@ -111,9 +121,9 @@ export default App
 //TODO: ADD PASSWORD GENERATOR
 //TODO: ADD PASSWORD GENERATOR SETTINGS
 
-//TODO: If file already open, ask if use wants to open another
+//TODO: [!!!] If file already open, ask if use wants to open another
 
 //TODO: Check every 10 seconds if file has been changed
 //TODO: If file has been changed, ask if user wants to reload it
 
-//TODO: CHECK CODE FOR USELESS RE-RENDERS
+//TODO: [!!!] CHECK CODE FOR USELESS RE-RENDERS

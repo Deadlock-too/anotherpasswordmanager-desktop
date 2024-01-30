@@ -9,6 +9,8 @@ interface ITextInputProps {
   value: string;
   placeholder?: string;
   disabled?: boolean;
+  min?: number;
+  max?: number;
 }
 
 interface IFormikTextInputProps {
@@ -18,9 +20,11 @@ interface IFormikTextInputProps {
   formik: FormikProps<any>;
   placeholder?: string;
   disabled?: boolean;
+  min?: number;
+  max?: number;
 }
 
-const NumberInput = ({ preLabel, afterLabel, field, handleChange, value, placeholder, disabled }: ITextInputProps) => {
+const NumberInput = ({ preLabel, afterLabel, field, handleChange, value, placeholder, disabled, min, max }: ITextInputProps) => {
   return (
     <div className="form-control w-52">
       <label className="label">
@@ -31,6 +35,8 @@ const NumberInput = ({ preLabel, afterLabel, field, handleChange, value, placeho
                value={ value }
                placeholder={ placeholder }
                disabled={ disabled }
+               min={ min }
+               max={ max }
         />
         { afterLabel ? <span className="label-text pl-2">{ afterLabel }</span> : null }
       </label>
@@ -38,7 +44,7 @@ const NumberInput = ({ preLabel, afterLabel, field, handleChange, value, placeho
   )
 }
 
-const FormikNumberInput = ({ formik, field, preLabel, afterLabel, placeholder, disabled }: IFormikTextInputProps) => {
+const FormikNumberInput = ({ formik, field, preLabel, afterLabel, placeholder, disabled, min, max }: IFormikTextInputProps) => {
   return (
     <NumberInput
       preLabel={ preLabel }
@@ -48,6 +54,8 @@ const FormikNumberInput = ({ formik, field, preLabel, afterLabel, placeholder, d
       value={ formik.values[field] }
       placeholder={ placeholder }
       disabled={ disabled }
+      min={ min }
+      max={ max }
     />
   )
 }

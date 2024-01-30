@@ -69,7 +69,6 @@ export default class Main {
     // }
   }
 
-  //TODO: Continue implementation (see example in this github repo: https://github.com/gary-archer/oauth.desktopsample.final/blob/master/src/main.ts#L127)
   private static manageOpenFile() {
     Main.setStartupUrl(process.argv)
 
