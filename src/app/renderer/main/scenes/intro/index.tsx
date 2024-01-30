@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 const Intro = ({ onNewButtonClick }) => {
   const { t } = useTranslation()
 
+  // TODO make it centered. If the text in the second button is too long the divider is not centered
   return (
     <div className="main-content flex flex-col justify-center items-center h-screen md:flex-row">
       <div className="flex flex-col md:flex-row w-2/3 h-2/3">
