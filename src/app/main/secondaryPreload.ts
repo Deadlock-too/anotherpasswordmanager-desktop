@@ -68,3 +68,9 @@ contextBridge.exposeInMainWorld('settings', {
     return ipcRenderer.invoke(IpcEventNames.Config.Set, config)
   }
 })
+
+contextBridge.exposeInMainWorld('config', {
+  update: (): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Config.Update)
+  }
+})

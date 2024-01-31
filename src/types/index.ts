@@ -22,6 +22,7 @@ export type Config = {
       autoLockOnSleep: boolean //TODO: implement
       autoCleanClipboard: boolean //TODO: implement
       autoCleanClipboardTime?: number //TODO: implement
+      copyFieldValuesToClipboardOnClick: boolean
       defaultNewEntryExpire: boolean //TODO: implement
       defaultNewEntryExpireTime?: number //TODO: implement
     }

@@ -123,6 +123,12 @@ contextBridge.exposeInMainWorld('electron', {
   unsubscribeToChangeLanguage: () => {
     ipcRenderer.removeAllListeners(IpcEventNames.Localization.ChangeLanguage)
   },
+  subscribeToUpdateConfig: (callback) => {
+    ipcRenderer.on(IpcEventNames.Config.Update, (event, ...args) => callback(...args))
+  },
+  unsubscribeToUpdateConfig: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.Config.Update)
+  },
   setFileContent: async (path: string, password: string) => {
     return await ipcRenderer.invoke(IpcEventNames.FileOpen.SetFileContent, path, password)
   },

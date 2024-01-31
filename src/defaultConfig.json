@@ -21,6 +21,7 @@
       "autoLockOnSleep": false,
       "autoCleanClipboard": false,
       "autoCleanClipboardTime": 30,
+      "copyFieldValuesToClipboardOnClick": false,
       "defaultNewEntryExpire": false,
       "defaultNewEntryExpireTime": 60
     }

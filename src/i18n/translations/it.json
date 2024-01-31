@@ -228,7 +228,8 @@
         "Title": "Appunti",
         "Auto clear clipboard": "Svuota automaticamente gli appunti",
         "Clear after": "Svuota dopo",
-        "seconds": "secondi"
+        "seconds": "secondi",
+        "Copy field values to clipboard on click": "Copia i valori dei campi negli appunti al click"
       },
       "Entry expire": {
         "Title": "Scadenza voce",

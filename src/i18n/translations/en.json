@@ -228,7 +228,8 @@
         "Title": "Clipboard",
         "Auto clear clipboard": "Auto clear clipboard",
         "Clear after": "Clear after",
-        "seconds": "seconds"
+        "seconds": "seconds",
+        "Copy field values to clipboard on click": "Copy field values to clipboard on click"
       },
       "Entry expire": {
         "Title": "Entry expire",

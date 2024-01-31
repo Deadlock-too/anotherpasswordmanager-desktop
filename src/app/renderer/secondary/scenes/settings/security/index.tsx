@@ -54,6 +54,13 @@ const SecuritySettings = ({ formik }) => {
             max={ 60 * 60 * 24 * 7 }
           />
         </SettingRow>
+        <SettingRow>
+          <FormikCheckbox
+            field="securityCopyFieldValuesToClipboardOnClick"
+            label={ t('SettingsDialog.Security.Clipboard.Copy field values to clipboard on click') }
+            formik={ formik }
+          />
+        </SettingRow>
       </Setting>
       <Setting title={ t('SettingsDialog.Security.Entry expire.Title') }>
         <SettingRow>

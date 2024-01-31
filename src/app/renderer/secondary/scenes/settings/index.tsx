@@ -108,6 +108,7 @@ const SettingsScene = ({formikRef}) => {
         settings: newValues.settings,
       }))
       .then(() => setSubmitting(false))
+      .then(window.config.update)
       .then(() => window.close())
   }
 

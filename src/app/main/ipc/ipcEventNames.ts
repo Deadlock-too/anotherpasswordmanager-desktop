@@ -29,6 +29,7 @@ const IpcEventNames = {
   Config: {
     Get: 'config:get',
     Set: 'config:set',
+    Update: 'config:update',
   },
   Localization: {
     ChangeLanguage: 'localization:changeLanguage',

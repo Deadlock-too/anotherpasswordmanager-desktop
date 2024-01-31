@@ -4,7 +4,7 @@ import i18n from '../../../i18n'
 import TitleBar from './components/titlebar'
 import Main from './scenes/main'
 import Intro from './scenes/intro'
-import { useFileContentContext, useModalContext, useThemeContext } from '../common/contexts'
+import { useConfigContext, useFileContentContext, useModalContext, useThemeContext } from '../common/contexts'
 import PasswordModal from '../secondary/components/modal/password'
 import AddFolderModal from '../secondary/components/modal/addFolder'
 import FailedOpenModal from '../secondary/components/modal/failedOpen'
@@ -31,6 +31,7 @@ const App = () => {
   const { isInitialized, initialize, setFilePath } = useFileContentContext()
   const { setIsPasswordModalOpen, setIsFailedOpenModalOpen, setSecondaryWindowEntry } = useModalContext()
   const { setIsDark } = useThemeContext()
+  const { reloadConfig } = useConfigContext()
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
@@ -77,6 +78,11 @@ const App = () => {
     }
     window.electron.subscribeToUpdateIsDark(updateIsDarkHandler)
 
+    const updateConfigHandler = () => {
+      reloadConfig()
+    }
+    window.electron.subscribeToUpdateConfig(updateConfigHandler)
+
     const setLanguageHandler = (language) => {
       i18n.changeLanguage(language)
     }
@@ -90,6 +96,7 @@ const App = () => {
       window.electron.unsubscribeToUpdateTheme()
       window.electron.unsubscribeToUpdateIsDark()
       window.electron.unsubscribeToChangeLanguage()
+      window.electron.unsubscribeToUpdateConfig()
     }
   }, [])
 

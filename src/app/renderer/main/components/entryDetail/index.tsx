@@ -2,7 +2,7 @@ import { Entry, uuid } from '../../../common/types'
 import { Formik } from 'formik'
 import { useState } from 'react'
 import OTP, { RegExpPattern } from '../otp'
-import { useFileContentContext } from '../../../common/contexts'
+import { useConfigContext, useFileContentContext } from '../../../common/contexts'
 import { useTranslation } from 'react-i18next'
 import { FormikPasswordInput, FormikTextInput } from '../../../common/components'
 
@@ -13,6 +13,9 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
   const toggleReadonly = () => {
     setReadonly(readonly => !readonly)
   }
+
+  const { config } = useConfigContext()
+  const copiableFields = config.settings.security.copyFieldValuesToClipboardOnClick
 
   return (
     <Formik
@@ -62,7 +65,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               formik={ formik }
               readonly={ readonly }
               disabled={ formik.isSubmitting }
-              copiableContent={ true }
+              copiableContent={ copiableFields }
               copyTooltipLabel={ t('Entry Detail.Title Copied') }
             />
             <FormikTextInput
@@ -72,7 +75,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               formik={ formik }
               readonly={ readonly }
               disabled={ formik.isSubmitting }
-              copiableContent={ true }
+              copiableContent={ copiableFields }
               copyTooltipLabel={ t('Entry Detail.Username Copied') }
             />
             <FormikPasswordInput
@@ -84,7 +87,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               disabled={ formik.isSubmitting }
               tooltipHiddenLabel={ t('Entry Detail.Show Password') }
               tooltipVisibleLabel={ t('Entry Detail.Hide Password') }
-              copiableContent={ true }
+              copiableContent={ copiableFields }
               copyTooltipLabel={ t('Entry Detail.Password Copied') }
             />
             {
@@ -114,55 +117,59 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
           <div className="flex flex-row w-full justify-between pt-12 pb-5">
             {
               readonly ?
-                <button type="button"
-                        className="btn btn-outline w-1/3"
-                        onClick={ (event) => {
-                          event.preventDefault()
-                          event.stopPropagation()
-                          toggleReadonly()
-                        } }
-                        disabled={ formik.isSubmitting }
+                <button
+                  type="button"
+                  className="btn btn-outline w-1/3"
+                  onClick={ (event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    toggleReadonly()
+                  } }
+                  disabled={ formik.isSubmitting }
                 >
                   { t('Entry Detail.Edit Button') }
                 </button>
                 :
-                <button type="submit"
-                        disabled={ formik.isSubmitting }
-                        className="btn btn-primary btn-outline w-1/3"
+                <button
+                  type="submit"
+                  disabled={ formik.isSubmitting }
+                  className="btn btn-primary btn-outline w-1/3"
                 >
                   { t('Entry Detail.Save Button') }
                 </button>
             }
             {
               readonly ?
-                <button type="button"
-                        disabled={ formik.isSubmitting }
-                        className="btn btn-error w-1/3"
-                        onClick={ () => {
-                          if (formik.values.id !== undefined) {
-                            setDeletingEntry(new Entry(formik.values.id, formik.values.title))
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore
-                            window.document.getElementById('entryDeletionModal').showModal()
-                            formik.handleReset()
-                          }
-                        } }
+                <button
+                  type="button"
+                  disabled={ formik.isSubmitting }
+                  className="btn btn-error w-1/3"
+                  onClick={ () => {
+                    if (formik.values.id !== undefined) {
+                      setDeletingEntry(new Entry(formik.values.id, formik.values.title))
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      window.document.getElementById('entryDeletionModal').showModal()
+                      formik.handleReset()
+                    }
+                  } }
                 >
                   { t('Entry Detail.Delete Button') }
                 </button>
                 :
-                <button type="reset"
-                        disabled={ formik.isSubmitting }
-                        className="btn btn-outline w-1/3"
-                        onClick={ () => {
-                          if (formik.values.id !== undefined) {
-                            formik.handleReset()
-                            toggleReadonly()
-                          } else {
-                            formik.handleReset()
-                            handleSelectEntry(null, false)
-                          }
-                        } }
+                <button
+                  type="reset"
+                  disabled={ formik.isSubmitting }
+                  className="btn btn-outline w-1/3"
+                  onClick={ () => {
+                    if (formik.values.id !== undefined) {
+                      formik.handleReset()
+                      toggleReadonly()
+                    } else {
+                      formik.handleReset()
+                      handleSelectEntry(null, false)
+                    }
+                  } }
                 >
                   { t('Entry Detail.Cancel Button') }
                 </button>

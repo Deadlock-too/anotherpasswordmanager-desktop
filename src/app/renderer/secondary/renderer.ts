@@ -33,5 +33,8 @@ declare global {
       readConfig: () => Promise<Config>,
       writeConfig: (config: Config) => Promise<void>
     },
+    config: {
+      update: () => Promise<void>
+    }
   }
 }

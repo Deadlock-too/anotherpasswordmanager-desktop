@@ -48,6 +48,8 @@ declare global {
       unsubscribeToUpdateIsDark: () => void
       subscribeToChangeLanguage: (callback: unknown) => void
       unsubscribeToChangeLanguage: () => void
+      subscribeToUpdateConfig: (callback: unknown) => void
+      unsubscribeToUpdateConfig: () => void
       sendPasswordResult: (password: string) => void
       setFileContent: (path: string, password: string) => void
       saveFile: (path: string, data: string) => Promise<void>

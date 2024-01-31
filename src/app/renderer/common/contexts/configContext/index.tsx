@@ -6,6 +6,7 @@ interface ConfigContextState {
   handleUpdateConfig: (config: Config) => Promise<void>,
   isConfigLoading: boolean,
   setIsConfigLoading: (isLoading: boolean) => void
+  reloadConfig: () => void
 }
 
 export const ConfigContext = createContext<ConfigContextState>({} as ConfigContextState)
@@ -17,7 +18,10 @@ export function ConfigContextProvider({ children }) {
   const reloadConfig = () => {
     setIsConfigLoading(true)
     window.settings.readConfig().then((config) => {
-      setConfig(config)
+      setConfig(prev => ({
+        ...prev,
+        ...config
+      }))
       setIsConfigLoading(false)
     })
   }
@@ -25,6 +29,10 @@ export function ConfigContextProvider({ children }) {
   useEffect(() => {
     reloadConfig()
   }, [])
+
+  useEffect(() => {
+    console.log(JSON.stringify(config))
+  }, [config])
 
   // //Refresh config every 10 seconds
   // useEffect(() => {
@@ -47,6 +55,7 @@ export function ConfigContextProvider({ children }) {
     handleUpdateConfig,
     isConfigLoading,
     setIsConfigLoading,
+    reloadConfig
   }
 
   return (

@@ -113,3 +113,9 @@ ipcMain.handle(IpcEventNames.Localization.ChangeLanguage, async (_, lang: string
     window.webContents.send(IpcEventNames.Localization.ChangeLanguage, lang)
   })
 })
+
+ipcMain.handle(IpcEventNames.Config.Update, () => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.Config.Update)
+  })
+})
