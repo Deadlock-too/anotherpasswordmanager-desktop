@@ -143,14 +143,14 @@ export const TooltipTrigger = forwardRef<
   }
 
   return (
-    <button
+    <div
       tabIndex={ -1 }
       ref={ ref }
       data-state={ context.open ? 'open' : 'closed' }
       {...context.getReferenceProps(props)}
     >
       { children }
-    </button>
+    </div>
   )
 })
 
