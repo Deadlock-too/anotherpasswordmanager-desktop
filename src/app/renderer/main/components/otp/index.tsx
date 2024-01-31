@@ -1,6 +1,5 @@
 import { TOTP } from 'otpauth'
 import { useEffect, useState } from 'react'
-import { useThemeContext } from '../../../common/contexts'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../../common/components'
 
 const RADIUS: number = 30
@@ -68,8 +67,6 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
     componentColor = 'text-error'
   }
 
-  const { isDark } = useThemeContext()
-
   return (
     <div className="flex flex-row items-center cursor-pointer justify-center hide-on-small-window"
          onClick={ () => {
@@ -83,7 +80,7 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
       >
         <svg className="w-full h-full absolute">
           <circle
-            className={ isDark ? 'text-neutral' : 'text-neutral-content' }
+            className='text-base-100'
             strokeWidth="7"
             stroke="currentColor"
             fill="transparent"
@@ -162,7 +159,7 @@ const OTPCode = (props: { value: string, size: number }) => {
         return (
           <input
             key={ index }
-            className="input input-xs input-bordered px-0 text-center w-6 unselectable"
+            className="input input-xs input-bordered px-0 text-center w-6 cursor-pointer unselectable"
             type="text"
             inputMode="numeric"
             autoComplete="one-time-code"
