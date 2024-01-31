@@ -6,6 +6,7 @@ import { useState } from 'react'
 import OTP, { RegExpPattern } from '../otp'
 import { useFileContentContext } from '../../../common/contexts'
 import { useTranslation } from 'react-i18next'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../common/components'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
   const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useFileContentContext()
@@ -143,22 +144,35 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   disabled={ isSubmitting }
                   readOnly={ readonly }
                 />
-                <button type="button"
-                  // className='tooltip tooltip-base-100 absolute top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info focus:tooltip-open' //TODO [!!!][!!!][!!!] MANAGE TOOLTIP OVERLAPPING PROBLEM
-                        className="relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info"
-                        disabled={ isSubmitting }
-                        title={ passwordVisibility ? t('Entry Detail.Show Password') : t('Entry Detail.Hide Password') }
-                  // data-tip={ passwordVisibility ? t('Entry Detail.Show Password') : t('Entry Detail.Hide Password') }
-                        onClick={ () => {
+                <Tooltip>
+                  <TooltipTrigger>
+                    <button
+                      type="button"
+                      className="relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info"
+                      disabled={ isSubmitting }
+                      onClick={ (e) => {
+                        e.preventDefault()
+                        handlePasswordVisibility()
+                      } }
+                      onKeyUp={ (event) => {
+                        if (event.key === ' ') {
+                          event.preventDefault()
                           handlePasswordVisibility()
-                        } }
-                >
-                  {
-                    passwordVisibility ?
-                      <EyeIcon/> :
-                      <EyeSlashIcon/>
-                  }
-                </button>
+                        }
+                      } }
+                    >
+                      {
+                        passwordVisibility ?
+                          <EyeIcon/> :
+                          <EyeSlashIcon/>
+                      }
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div className="tooltip tooltip-base-100 tooltip-open"
+                         data-tip={ passwordVisibility ? t('Entry Detail.Show Password') : t('Entry Detail.Hide Password') }/>
+                  </TooltipContent>
+                </Tooltip>
               </div>
               {
                 touched ?
