@@ -16,7 +16,7 @@ enum SettingSections {
   Security = 'Security'
 }
 
-const SettingsScene = () => {
+const SettingsScene = ({formikRef}) => {
   const [ selectedSetting, setSelectedSetting ] = useState<SettingSections>(SettingSections.General)
   const { t } = useTranslation()
   const settings = Object.values(SettingSections)
@@ -130,6 +130,7 @@ const SettingsScene = () => {
       initialValues={ initialValues }
       onSubmit={ handleSubmit }
       onReset={ handleReset }
+      innerRef={formikRef}
     >
       {
         (formik) => (

@@ -3,7 +3,7 @@ import { useState } from 'react'
 export const usePasswordToggle = () => {
   const [passwordVisibility, setPasswordVisibility] = useState(true)
   const [type, setType] = useState('password')
-  const handlePasswordVisibility = () => {
+  const togglePasswordVisibility = () => {
     if (type === 'password') {
       setType('text')
     } else if (type === 'text') {
@@ -11,5 +11,5 @@ export const usePasswordToggle = () => {
     }
     setPasswordVisibility(!passwordVisibility)
   }
-  return { type, passwordVisibility, handlePasswordVisibility }
+  return { type, passwordVisibility, togglePasswordVisibility }
 }

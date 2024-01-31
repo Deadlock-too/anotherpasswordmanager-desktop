@@ -1,16 +1,13 @@
 import { Entry, uuid } from '../../../common/types'
-import { usePasswordToggle } from '../../hooks/passwordVisibility'
 import { Formik } from 'formik'
-import { EyeIcon, EyeSlashIcon } from '../../../../../assets/icons'
 import { useState } from 'react'
 import OTP, { RegExpPattern } from '../otp'
 import { useFileContentContext } from '../../../common/contexts'
 import { useTranslation } from 'react-i18next'
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../../common/components'
+import { FormikPasswordInput, FormikTextInput } from '../../../common/components'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
   const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useFileContentContext()
-  const { type, passwordVisibility, handlePasswordVisibility } = usePasswordToggle()
   const [ readonly, setReadonly ] = useState(props.entry !== undefined)
   const { t } = useTranslation()
   const toggleReadonly = () => {
@@ -55,177 +52,63 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
         }, 400)
       } }
     >
-      { ({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        isSubmitting,
-        handleReset,
-      }) => (
-        <form onSubmit={ handleSubmit } className="flex flex-col justify-between h-full px-10 py-5">
-          <div className="flex flex-col">
-            <label className="form-control w-full" onClick={ () => {
-              if (readonly && values.title !== undefined)
-                window.clipboard.write(values.title)
-            } }>
-              <div className="label">
-                <span className="label-text font-bold">
-                  { t('Entry Detail.Title Label') }
-                </span>
-              </div>
-              <input
-                type="text"
-                name="title"
-                onChange={ handleChange }
-                onBlur={ handleBlur }
-                value={ values.title }
-                placeholder={ t('Entry Detail.Title Placeholder') }
-                className="input input-sm input-bordered w-full"
-                disabled={ isSubmitting }
-                readOnly={ readonly }
-              />
-              {
-                touched ?
-                  <div className="label">
-                    <span className="label-text-alt text-error">{ errors.title }</span>
-                  </div>
-                  : null
-              }
-            </label>
-            <label className="form-control w-full" onClick={ () => {
-              if (readonly && values.username !== undefined)
-                window.clipboard.write(values.username)
-            } }>
-              <div className="label">
-                <span className="label-text font-bold">
-                  { t('Entry Detail.Username Label') }
-                </span>
-              </div>
-              <input
-                type="text"
-                name="username"
-                onChange={ handleChange }
-                onBlur={ handleBlur }
-                value={ values.username }
-                placeholder={ t('Entry Detail.Username Placeholder') }
-                className="input input-sm input-bordered w-full"
-                disabled={ isSubmitting }
-                readOnly={ readonly }
-              />
-              {
-                touched ?
-                  <div className="label">
-                    <span className="label-text-alt text-error">{ errors.username }</span>
-                  </div>
-                  : null
-              }
-            </label>
-            <label className="form-control w-full" onClick={ () => {
-              if (readonly && values.password !== undefined)
-                window.clipboard.write(values.password)
-            } }>
-              <div className="label">
-                <span className="label-text font-bold">
-                  { t('Entry Detail.Password Label') }
-                </span>
-              </div>
-              <div className="join">
-                <input
-                  type={ type }
-                  name="password"
-                  onChange={ handleChange }
-                  onBlur={ handleBlur }
-                  value={ values.password }
-                  placeholder={ t('Entry Detail.Password Placeholder') }
-                  className="input input-sm input-bordered w-full pr-16 rounded-r-none"
-                  disabled={ isSubmitting }
-                  readOnly={ readonly }
-                />
-                <Tooltip>
-                  <TooltipTrigger>
-                    <button
-                      type="button"
-                      className="relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info"
-                      disabled={ isSubmitting }
-                      onClick={ (e) => {
-                        e.preventDefault()
-                        handlePasswordVisibility()
-                      } }
-                      onKeyUp={ (event) => {
-                        if (event.key === ' ') {
-                          event.preventDefault()
-                          handlePasswordVisibility()
-                        }
-                      } }
-                    >
-                      {
-                        passwordVisibility ?
-                          <EyeIcon/> :
-                          <EyeSlashIcon/>
-                      }
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <div className="tooltip tooltip-base-100 tooltip-open"
-                         data-tip={ passwordVisibility ? t('Entry Detail.Show Password') : t('Entry Detail.Hide Password') }/>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-              {
-                touched ?
-                  <div className="label">
-                    <span className="label-text-alt text-error">{ errors.password }</span>
-                  </div>
-                  : null
-              }
-            </label>
+      { (formik) => (
+        <form onSubmit={ formik.handleSubmit } className="flex flex-col justify-between h-full px-10 py-5">
+          <div className="flex flex-col gap-2">
+            <FormikTextInput
+              label={ t('Entry Detail.Title Label') }
+              field="title"
+              placeholder={ t('Entry Detail.Title Placeholder') }
+              formik={ formik }
+              readonly={ readonly }
+              disabled={ formik.isSubmitting }
+              copiableContent={ true }
+              copyTooltipLabel={ t('Entry Detail.Title Copied') }
+            />
+            <FormikTextInput
+              label={ t('Entry Detail.Username Label') }
+              field="username"
+              placeholder={ t('Entry Detail.Username Placeholder') }
+              formik={ formik }
+              readonly={ readonly }
+              disabled={ formik.isSubmitting }
+              copiableContent={ true }
+              copyTooltipLabel={ t('Entry Detail.Username Copied') }
+            />
+            <FormikPasswordInput
+              label={ t('Entry Detail.Password Label') }
+              field="password"
+              placeholder={ t('Entry Detail.Password Placeholder') }
+              formik={ formik }
+              readonly={ readonly }
+              disabled={ formik.isSubmitting }
+              tooltipHiddenLabel={ t('Entry Detail.Show Password') }
+              tooltipVisibleLabel={ t('Entry Detail.Hide Password') }
+              copiableContent={ true }
+              copyTooltipLabel={ t('Entry Detail.Password Copied') }
+            />
             {
-              //(readonly && !values.otpURI) ? null : //Uncomment to hide OTP field
-              <label className="form-control w-full">
-                <div className="label">
-                  <span className="label-text font-bold">
-                    { t('Entry Detail.OTP Label') }
-                  </span>
-                </div>
-                {
-                  (readonly) ?
-                    (
-                      (values.otpURI) ?
-                        <OTP otpURI={ values.otpURI }/>
-                        :
-                        <div className="h-full justify-center">
-                          <h1 className="text-center font-thin unselectable">
-                            { t('Entry Detail.URI not provided') }
-                          </h1>
-                        </div>
-                    ) :
-                    (
-                      <>
-                        <input
-                          type="text"
-                          name="otpURI"
-                          onChange={ handleChange }
-                          onBlur={ handleBlur }
-                          value={ values.otpURI }
-                          placeholder={ t('Entry Detail.OTP Placeholder') }
-                          className="input input-sm input-bordered w-full"
-                          disabled={ isSubmitting }
-                          readOnly={ readonly }
-                        />
-                        {
-                          touched ?
-                            <div className="label">
-                              <span className="label-text-alt text-error">{ errors.otpURI }</span>
-                            </div>
-                            : null
-                        }
-                      </>
-                    )
+              //(readonly && !formik.values.otpURI) ? null : //Uncomment to hide OTP field
+              <FormikTextInput
+                label={ t('Entry Detail.OTP Label') }
+                field="otpURI"
+                placeholder={ t('Entry Detail.OTP Placeholder') }
+                formik={ formik }
+                readonly={ readonly }
+                disabled={ formik.isSubmitting }
+                copiableContent={ false }
+                preventDefaultOnClick={ readonly }
+                customReadonlyComponent={
+                  (formik.values.otpURI) ?
+                    <OTP otpURI={ formik.values.otpURI }/>
+                    :
+                    <div className="h-full justify-center">
+                      <h1 className="text-center font-thin unselectable">
+                        { t('Entry Detail.URI not provided') }
+                      </h1>
+                    </div>
                 }
-              </label>
+              />
             }
           </div>
           <div className="flex flex-row w-full justify-between pt-12 pb-5">
@@ -238,13 +121,13 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                           event.stopPropagation()
                           toggleReadonly()
                         } }
-                        disabled={ isSubmitting }
+                        disabled={ formik.isSubmitting }
                 >
                   { t('Entry Detail.Edit Button') }
                 </button>
                 :
                 <button type="submit"
-                        disabled={ isSubmitting }
+                        disabled={ formik.isSubmitting }
                         className="btn btn-primary btn-outline w-1/3"
                 >
                   { t('Entry Detail.Save Button') }
@@ -253,15 +136,15 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
             {
               readonly ?
                 <button type="button"
-                        disabled={ isSubmitting }
+                        disabled={ formik.isSubmitting }
                         className="btn btn-error w-1/3"
                         onClick={ () => {
-                          if (values.id !== undefined) {
-                            setDeletingEntry(new Entry(values.id, values.title))
+                          if (formik.values.id !== undefined) {
+                            setDeletingEntry(new Entry(formik.values.id, formik.values.title))
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore
                             window.document.getElementById('entryDeletionModal').showModal()
-                            handleReset()
+                            formik.handleReset()
                           }
                         } }
                 >
@@ -269,14 +152,14 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                 </button>
                 :
                 <button type="reset"
-                        disabled={ isSubmitting }
+                        disabled={ formik.isSubmitting }
                         className="btn btn-outline w-1/3"
                         onClick={ () => {
-                          if (values.id !== undefined) {
-                            handleReset()
+                          if (formik.values.id !== undefined) {
+                            formik.handleReset()
                             toggleReadonly()
                           } else {
-                            handleReset()
+                            formik.handleReset()
                             handleSelectEntry(null, false)
                           }
                         } }

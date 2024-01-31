@@ -1,11 +1,12 @@
 import { createRoot } from 'react-dom/client'
-import SettingsInterface from './scenes/settings'
+import Settings from './scenes/settings'
 import TitleBar from '../main/components/titlebar'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import i18n from '../../../i18n'
 import { ContextProvider } from '../common/contexts/contextProvider'
 import { useConfigContext, useThemeContext } from '../common/contexts'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { FormikProps } from 'formik'
 
 const rootDiv = document.getElementById('secondary_root')
 if (!rootDiv)
@@ -22,7 +23,7 @@ window.theming.startupThemeAsync.then(theme => {
 
 const variant = window.name
 
-const Settings = () => {
+const SettingsWindow = () => {
   return (
     <ContextProvider>
       <InternalSettings/>
@@ -35,6 +36,7 @@ const InternalSettings = () => {
   const { setIsDark } = useThemeContext()
   const { t } = useTranslation()
   const [ isLanguageLoading, setIsLanguageLoading ] = useState<boolean>(true)
+  const formikRef = useRef<FormikProps<any>>(null);
 
   useEffect(() => {
     const updateIsDarkHandler = (isDark) => {
@@ -51,6 +53,10 @@ const InternalSettings = () => {
     }
   }, [])
 
+  const handleClose = () => {
+    formikRef.current?.resetForm()
+  }
+
   if (isConfigLoading || isLanguageLoading)
     return (
       <div className="h-screen w-screen bg-base-100 flex justify-center items-center">
@@ -59,9 +65,9 @@ const InternalSettings = () => {
     )
 
   return (<>
-      <TitleBar variant="secondary" title={ t('SettingsDialog.Title') } onClose={ () => window.close() }/>
+      <TitleBar variant="secondary" title={ t('SettingsDialog.Title') } onClose={ handleClose }/>
       <div className="main-content p-2">
-        <SettingsInterface key={ JSON.stringify(config) }/>
+        <Settings key={ JSON.stringify(config) } formikRef={formikRef} />
       </div>
     </>
   )
@@ -70,7 +76,7 @@ const InternalSettings = () => {
 let component
 switch (variant) {
   case 'settings':
-    component = <Settings/>
+    component = <SettingsWindow/>
     break
   default:
     component = <div>Unknown variant</div>

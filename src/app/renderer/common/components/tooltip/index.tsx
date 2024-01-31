@@ -176,3 +176,28 @@ export const TooltipContent = forwardRef<
     </FloatingPortal>
   )
 })
+
+export const useTimedTooltip = (time: number) => {
+  const [ isOpen, setIsOpen ] = useState(false)
+  const [ tooltipTimeout, setTooltipTimeout ] = useState<NodeJS.Timeout | null>(null)
+
+  const handleTooltipOpen = () => {
+    setIsOpen(true)
+    if (tooltipTimeout) {
+      clearTimeout(tooltipTimeout)
+    }
+    setTooltipTimeout(setTimeout(() => {
+      setIsOpen(false)
+    }, time))
+  }
+
+  const handleTooltipClose = () => {
+    if (tooltipTimeout) {
+      clearTimeout(tooltipTimeout)
+      setTooltipTimeout(null)
+    }
+    setIsOpen(false)
+  }
+
+  return { isOpen, handleTooltipOpen, handleTooltipClose }
+}

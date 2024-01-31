@@ -1,10 +1,11 @@
 import { TOTP } from 'otpauth'
 import { useEffect, useState } from 'react'
 import { useThemeContext } from '../../../common/contexts'
+import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../../common/components'
 
-const RADIUS : number = 30
-const CIRCUMFERENCE : number = RADIUS * 2 * Math.PI
-export const RegExpPattern : string = 'otpauth:\\/\\/(?<protocol>totp|hotp)\\/(?:(?<issuerInLabel>[a-zA-Z]+):)?(?<label>[a-zA-Z+.@]+)(?:\\?|(?:%3F))(?:secret)(?:(?:%3D)|=)(?<secret>[^&%\\r\\n]+)(?:(?:(?:%26)|&)issuer(?:(?:%3D)|=)(?<issuer>[^&\\r\\n]+))?(?:(?:(?:%26)|&)algorithm(?:(?:%3D)|=)(?<algorithm>[^&\\r\\n]+))?(?:(?:(?:%26)|&)digits(?:(?:%3D)|=)(?<digits>[0-9]+))?(?:(?:(?:%26)|&)period(?:(?:%3D)|=)(?<period>[0-9]+))?(?:(?:(?:%26)|&)counter(?:(?:%3D)|=)(?<counter>[0-9]+))?'
+const RADIUS: number = 30
+const CIRCUMFERENCE: number = RADIUS * 2 * Math.PI
+export const RegExpPattern: string = 'otpauth:\\/\\/(?<protocol>totp|hotp)\\/(?:(?<issuerInLabel>[a-zA-Z]+):)?(?<label>[a-zA-Z+.@]+)(?:\\?|(?:%3F))(?:secret)(?:(?:%3D)|=)(?<secret>[^&%\\r\\n]+)(?:(?:(?:%26)|&)issuer(?:(?:%3D)|=)(?<issuer>[^&\\r\\n]+))?(?:(?:(?:%26)|&)algorithm(?:(?:%3D)|=)(?<algorithm>[^&\\r\\n]+))?(?:(?:(?:%26)|&)digits(?:(?:%3D)|=)(?<digits>[0-9]+))?(?:(?:(?:%26)|&)period(?:(?:%3D)|=)(?<period>[0-9]+))?(?:(?:(?:%26)|&)counter(?:(?:%3D)|=)(?<counter>[0-9]+))?'
 
 const copyOTP = ({ props, key, altKey, metaKey, shiftKey, ctrlKey }) => {
   if (key === 'Enter') {
@@ -24,17 +25,18 @@ const SmallOTPComponent = (props: {
   period: number
 }) => {
   return (
-    <div className='flex flex-col items-center cursor-pointer justify-center hide-on-large-window'
-         onClick={ () => {
+    <div className="flex flex-col items-center cursor-pointer justify-center hide-on-large-window"
+         onClick={ (event) => {
+           event.preventDefault()
            window.clipboard.write(props.otp)
          } }
          tabIndex={ 0 }
          onKeyUp={ (event) => copyOTP({ props, ...event }) }
     >
-      <div className='text-center text-xl px-5'>
+      <div className="text-center text-xl px-5">
         <OTPCode value={ props.otp } size={ props.otp.length }/>
         <progress
-          className='progress progress-info'
+          className="progress progress-info"
           value={ String(props.timer.time) }
           max={ props.period }
         />
@@ -45,11 +47,11 @@ const SmallOTPComponent = (props: {
 
 const SmallOTPComponentError = () => {
   return (
-    <div className='flex flex-col items-center cursor-pointer justify-center hide-on-large-window'>
-      <div className='text-center text-xl px-5'>
+    <div className="flex flex-col items-center cursor-pointer justify-center hide-on-large-window">
+      <div className="text-center text-xl px-5">
         Invalid URI
         <progress
-          className='progress progress-error'
+          className="progress progress-error"
           value={ 100 }
           max={ 100 }
         />
@@ -69,43 +71,43 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
   const { isDark } = useThemeContext()
 
   return (
-    <div className='flex flex-row items-center cursor-pointer justify-center hide-on-small-window'
+    <div className="flex flex-row items-center cursor-pointer justify-center hide-on-small-window"
          onClick={ () => {
            window.clipboard.write(props.otp)
          } }
          tabIndex={ 0 }
          onKeyUp={ (event) => copyOTP({ props, ...event }) }
     >
-      <div className='inline-flex items-center justify-center overflow-hidden rounded-full relative'
-           style={{ width: '5rem', height: '5rem' }}
+      <div className="inline-flex items-center justify-center overflow-hidden rounded-full relative"
+           style={ { width: '5rem', height: '5rem' } }
       >
-        <svg className='w-full h-full absolute'>
+        <svg className="w-full h-full absolute">
           <circle
-            className={isDark ? 'text-neutral' : 'text-neutral-content'}
-            strokeWidth='7'
-            stroke='currentColor'
-            fill='transparent'
+            className={ isDark ? 'text-neutral' : 'text-neutral-content' }
+            strokeWidth="7"
+            stroke="currentColor"
+            fill="transparent"
             r={ RADIUS }
-            cx='50%'
-            cy='50%'
+            cx="50%"
+            cy="50%"
           />
           <circle
             className={ componentColor }
-            strokeWidth='4'
+            strokeWidth="4"
             strokeDasharray={ CIRCUMFERENCE }
             strokeDashoffset={ (CIRCUMFERENCE - (props.timer.percentage / 100) * CIRCUMFERENCE) }
-            strokeLinecap='round'
-            stroke='currentColor'
-            fill='transparent'
+            strokeLinecap="round"
+            stroke="currentColor"
+            fill="transparent"
             r={ RADIUS }
-            cx='50%'
-            cy='50%'
-            transform='rotate(-90 40 40)'
+            cx="50%"
+            cy="50%"
+            transform="rotate(-90 40 40)"
           />
         </svg>
-        <span className={'absolute text-xl unselectable ' + componentColor}>{ props.timer.time } s</span>
+        <span className={ 'absolute text-xl unselectable ' + componentColor }>{ props.timer.time } s</span>
       </div>
-      <div className='text-center text-xl px-5'>
+      <div className="text-center text-xl px-5">
         <OTPCode value={ props.otp } size={ props.otp.length }/>
       </div>
     </div>
@@ -114,37 +116,37 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
 
 const LargeOTPComponentError = () => {
   return (
-    <div className='flex flex-row items-center cursor-pointer justify-center hide-on-small-window'>
-      <div className='flex items-center justify-center overflow-hidden rounded-full relative'
-           style={{ width: '5rem', height: '5rem' }}
-        >
-        <svg className='w-full h-full absolute'>
+    <div className="flex flex-row items-center cursor-pointer justify-center hide-on-small-window">
+      <div className="flex items-center justify-center overflow-hidden rounded-full relative"
+           style={ { width: '5rem', height: '5rem' } }
+      >
+        <svg className="w-full h-full absolute">
           <circle
-            className='text-neutral'
-            strokeWidth='7'
-            stroke='currentColor'
-            fill='transparent'
+            className="text-neutral"
+            strokeWidth="7"
+            stroke="currentColor"
+            fill="transparent"
             r={ 30 }
-            cx='50%'
-            cy='50%'
+            cx="50%"
+            cy="50%"
           />
           <circle
-            className='text-error'
-            strokeWidth='4'
+            className="text-error"
+            strokeWidth="4"
             strokeDasharray={ CIRCUMFERENCE }
             strokeDashoffset={ 0 }
-            strokeLinecap='round'
-            stroke='currentColor'
-            fill='transparent'
+            strokeLinecap="round"
+            stroke="currentColor"
+            fill="transparent"
             r={ RADIUS }
-            cx='50%'
-            cy='50%'
-            transform='rotate(-90 40 40)'
+            cx="50%"
+            cy="50%"
+            transform="rotate(-90 40 40)"
           />
         </svg>
-        <span className='absolute text-error text-4xl unselectable'>!</span>
+        <span className="absolute text-error text-4xl unselectable">!</span>
       </div>
-      <div className='text-center text-xl px-5'>
+      <div className="text-center text-xl px-5">
         Invalid URI
       </div>
     </div>
@@ -155,21 +157,24 @@ const LargeOTPComponentError = () => {
 const OTPCode = (props: { value: string, size: number }) => {
   const arr = new Array(props.size).fill('-')
   return (
-    <div className='flex gap-0.5'>
+    <div className="flex gap-0.5">
       { arr.map((_, index) => {
         return (
           <input
             key={ index }
-            className='input input-xs input-bordered px-0 text-center w-6'
-            type='text'
-            inputMode='numeric'
-            autoComplete='one-time-code'
-            pattern='[0-9]*'
+            className="input input-xs input-bordered px-0 text-center w-6 unselectable"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            pattern="[0-9]*"
             maxLength={ props.size }
             value={ props.value.at(index) ?? '' }
             readOnly={ true }
             tabIndex={ -1 }
             aria-hidden={ true }
+            onMouseDown={ (event) => {
+              event.preventDefault()
+            } }
           />
         )
       }) }
@@ -213,16 +218,26 @@ const OTPError = () => {
 }
 
 const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, percentage: number } }) => {
+  const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
   return (
-    <>
-      <SmallOTPComponent otp={ props.otp } timer={ props.timer } period={ props.totp.period }/>
-      <LargeOTPComponent otp={ props.otp } timer={ props.timer }/>
-    </>
+    <Tooltip open={ isOpen } onOpenChange={ handleTooltipClose }>
+      <TooltipTrigger className="w-full" onClick={ (e) => {
+        e.preventDefault()
+        handleTooltipOpen()
+      } }>
+        <SmallOTPComponent otp={ props.otp } timer={ props.timer } period={ props.totp.period }/>
+        <LargeOTPComponent otp={ props.otp } timer={ props.timer }/>
+      </TooltipTrigger>
+      <TooltipContent>
+        <div className="tooltip tooltip-base-100 tooltip-open"
+             data-tip={ 'Copied!' }/>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
 const OTP = (props: { otpURI: string }) => {
-  const [ otp, setOTP ] = useState('')
+  const [ otp, setOTP ] = useState('000000')
 
   let totp: TOTP
   try {
@@ -308,7 +323,7 @@ const OTP = (props: { otpURI: string }) => {
   }, [])
 
   return (
-    <OTPInterface otp={ otp } timer={ timer } totp={ totp }/>
+    <OTPInterface otp={ otp } timer={ timer } totp={ totp } />
   )
 }
 
