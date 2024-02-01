@@ -1,6 +1,7 @@
 import { TOTP } from 'otpauth'
 import { useEffect, useState } from 'react'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../../common/components'
+import { useTranslation } from 'react-i18next'
 
 const RADIUS: number = 30
 const CIRCUMFERENCE: number = RADIUS * 2 * Math.PI
@@ -80,7 +81,7 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
       >
         <svg className="w-full h-full absolute">
           <circle
-            className='text-base-100'
+            className="text-base-100"
             strokeWidth="7"
             stroke="currentColor"
             fill="transparent"
@@ -216,6 +217,8 @@ const OTPError = () => {
 
 const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, percentage: number } }) => {
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
+  const { t } = useTranslation()
+
   return (
     <Tooltip open={ isOpen } onOpenChange={ handleTooltipClose }>
       <TooltipTrigger className="w-full" onClick={ (e) => {
@@ -226,8 +229,10 @@ const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, p
         <LargeOTPComponent otp={ props.otp } timer={ props.timer }/>
       </TooltipTrigger>
       <TooltipContent>
-        <div className="tooltip tooltip-base-100 tooltip-open"
-             data-tip={ 'Copied!' }/>
+        <div
+          className="tooltip tooltip-base-100 tooltip-open"
+          data-tip={ t('Entry Detail.OTP Copied') }
+        />
       </TooltipContent>
     </Tooltip>
   )
@@ -320,7 +325,7 @@ const OTP = (props: { otpURI: string }) => {
   }, [])
 
   return (
-    <OTPInterface otp={ otp } timer={ timer } totp={ totp } />
+    <OTPInterface otp={ otp } timer={ timer } totp={ totp }/>
   )
 }
 

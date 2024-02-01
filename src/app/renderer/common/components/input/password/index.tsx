@@ -70,15 +70,17 @@ const PasswordInput = ({
   if (copiableContent && readonly) {
     inputComponent = (
       <Tooltip open={ isOpen } onOpenChange={ handleTooltipClose }>
-        <TooltipTrigger className='w-full' onClick={ (e) => {
+        <TooltipTrigger className="w-full" onClick={ (e) => {
           e.preventDefault()
           handleTooltipOpen()
         } }>
           { inputComponent }
         </TooltipTrigger>
         <TooltipContent>
-          <div className="tooltip tooltip-base-100 tooltip-open"
-               data-tip={ copyTooltipLabel }/>
+          <div
+            className="tooltip tooltip-base-100 tooltip-open"
+            data-tip={ copyTooltipLabel }
+          />
         </TooltipContent>
       </Tooltip>
     )
@@ -123,8 +125,10 @@ const PasswordInput = ({
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <div className="tooltip tooltip-base-100 tooltip-open"
-                 data-tip={ passwordVisibility ? tooltipHiddenLabel : tooltipVisibleLabel }/>
+            <div
+              className="tooltip tooltip-base-100 tooltip-open"
+              data-tip={ passwordVisibility ? tooltipHiddenLabel : tooltipVisibleLabel }
+            />
           </TooltipContent>
         </Tooltip>
       </div>

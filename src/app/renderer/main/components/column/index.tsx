@@ -3,6 +3,7 @@ import { Component, ReactNode, useEffect, useRef, useState } from 'react'
 import { CheckIcon, CrossIcon, PencilIcon, PlusIcon, TrashIcon } from '../../../../../assets/icons'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
+import { useScrollContext } from '../../../common/contexts'
 
 export interface BaseColumnProps<T extends IdentifiableType> {
   style: {
@@ -41,6 +42,8 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
   render() {
     const divRef = useRef<HTMLDivElement>(null)
     const [ isScrollable, setIsScrollable ] = useState(false)
+    const { setIsScrolling } = useScrollContext()
+    let scrollTimeout: NodeJS.Timeout | undefined = undefined
 
     useEffect(() => {
       const div = divRef.current
@@ -50,8 +53,27 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
         })
         resizeObserver.observe(div)
 
+        const onScroll = () => {
+          // Clear the timeout if it's already been set
+          if (scrollTimeout) {
+            clearTimeout(scrollTimeout)
+          }
+
+          setIsScrolling(true)
+
+          scrollTimeout = setTimeout(() => {
+            setIsScrolling(false)
+            scrollTimeout = undefined
+          }, 100)
+        }
+
+        if (setIsScrolling !== undefined) {
+          div.addEventListener('scroll', onScroll)
+        }
+
         return () => {
           resizeObserver.unobserve(div)
+          div.removeEventListener('scroll', onScroll)
         }
       }
     }, [ this.children ])
@@ -76,7 +98,7 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
         </div>
         <div className="divider m-0"/>
         <div className="bg-base-200 w-full flex-grow h-full rounded p-2 scrollbar-wrapper">
-          <div ref={divRef} className={ isScrollable ? "scrollbar pr-2" : "scrollbar" }>
+          <div ref={ divRef } className={ isScrollable ? 'scrollbar pr-2' : 'scrollbar' }>
             { this.children }
           </div>
         </div>
