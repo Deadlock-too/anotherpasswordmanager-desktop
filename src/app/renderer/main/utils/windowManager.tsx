@@ -14,8 +14,8 @@ export enum WindowVariant {
 }
 
 
-export const openSecondaryWindow = async (secondaryWindowEntry: string, variant: WindowVariant) => {
-  secondaryWindow = window.open(secondaryWindowEntry, variant)
+export const openSecondaryWindow = async (variant: WindowVariant, secondaryWindowEntry?: string) => {
+  secondaryWindow = window.open(secondaryWindowEntry, variant, `{"width":${window.outerWidth},"height":${window.outerHeight},"x":${window.screenX},"y":${window.screenY}}`)
   if (secondaryWindow) {
     secondaryWindow.name = variant
   }

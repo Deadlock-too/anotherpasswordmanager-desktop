@@ -42,10 +42,11 @@ async function createMainWindow() {
   mainWindow.on('closed', onClose)
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    //TODO: Use details.feature to get main window current positions and dimensions
 
-    let height = (mainWindow?.getSize()[1] ?? 600) - 100
-    let width = (mainWindow?.getSize()[0] ?? 800) - 100
+    let mainWindowState = JSON.parse(details.features)
+
+    let height = mainWindowState.height - 100
+    let width = mainWindowState.width - 100
     let minHeight = 300
     let minWidth = 550
     let resizable = false
@@ -57,7 +58,15 @@ async function createMainWindow() {
       minHeight = 300
       minWidth = 550
       resizable = true
+    } else if (details.frameName === 'addFolder') {
+      height = 250
+      width = 450
+      minHeight = 1
+      minWidth = 1
     }
+
+    const x = Math.round((mainWindowState ? mainWindowState.x : 0) + (mainWindowState ? mainWindowState.width / 2 : 0) - width / 2)
+    const y = Math.round((mainWindowState ? mainWindowState.y : 0) + (mainWindowState ? mainWindowState.height / 2 : 0) - height / 2)
 
     return {
       action: 'allow',
@@ -79,8 +88,8 @@ async function createMainWindow() {
         //   height: 30 /* TODO MANAGE DARWIN PLATFORM DYNAMIC TITLE BAR HEIGHT (Low priority as not testable without device with Darwin platform) */
         // },
         // icon: './assets/icon.png', //TODO ADD ICON
-        x: (mainWindow?.getPosition()[0] ?? 0) + 25,
-        y: (mainWindow?.getPosition()[1] ?? 0) + 25,
+        x: x,
+        y: y,
         parent: mainWindow ?? undefined,
         modal: true,
         webPreferences: {

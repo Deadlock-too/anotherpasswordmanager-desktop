@@ -84,7 +84,7 @@ const SettingsButton = () => {
       icon={ <SettingsIcon/> }
       onClick={ async () => {
         // TODO FIX AND REMOVE 'http://localhost:3000/secondary_window'
-        await openSecondaryWindow(secondaryWindowEntry ?? 'http://localhost:3000/secondary_window', WindowVariant.Settings)
+        await openSecondaryWindow(WindowVariant.Settings, secondaryWindowEntry ?? 'http://localhost:3000/secondary_window')
       } }
     />
   )
