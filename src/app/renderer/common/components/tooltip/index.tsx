@@ -24,7 +24,7 @@ import {
   useMemo,
   useState
 } from 'react'
-import { useScrollContext } from '../../contexts'
+import { useLocalContext, useWindowContext } from '../../contexts'
 
 interface TooltipOptions {
   initialOpen?: boolean
@@ -118,7 +118,7 @@ export const Tooltip = ({
   ...options
 }: { children: ReactNode } & TooltipOptions) => {
   const tooltip = useTooltip(options)
-  const { isScrolling } = useScrollContext()
+  const { isLocallyScrolling } = useLocalContext()
 
   const closeTooltip = () => {
     tooltip.setOpen(false)
@@ -132,10 +132,9 @@ export const Tooltip = ({
   }, [])
 
   useEffect(() => {
-    console.log('Scrolling inside tooltip', isScrolling)
-    if (isScrolling)
+    if (isLocallyScrolling)
       closeTooltip()
-  }, [isScrolling])
+  }, [ isLocallyScrolling ])
 
   return (
     <TooltipContext.Provider value={ tooltip }>
@@ -159,7 +158,7 @@ export const TooltipTrigger = forwardRef<
         ref,
         ...props,
         ...children.props,
-        "data-state": context.open ? 'open' : 'closed'
+        'data-state': context.open ? 'open' : 'closed'
       })
     )
   }
@@ -169,7 +168,7 @@ export const TooltipTrigger = forwardRef<
       tabIndex={ -1 }
       ref={ ref }
       data-state={ context.open ? 'open' : 'closed' }
-      {...context.getReferenceProps(props)}
+      { ...context.getReferenceProps(props) }
     >
       { children }
     </div>
@@ -179,10 +178,12 @@ export const TooltipTrigger = forwardRef<
 export const TooltipContent = forwardRef<
   HTMLDivElement,
   HTMLProps<HTMLDivElement>
->(function TooltipContent({style, ...props}, propRef) {
+>(function TooltipContent({ style, ...props }, propRef) {
   const context = useTooltipContext()
-  const ref = useMergeRefs([context.refs.setFloating, propRef])
-  const [shouldRender, setShouldRender] = useState(context.open)
+  const ref = useMergeRefs([ context.refs.setFloating, propRef ])
+  const [ shouldRender, setShouldRender ] = useState(context.open)
+  const { isLocallyScrolling, isLocallyResizing } = useLocalContext()
+  const { isScrolling, isResizing } = useWindowContext()
 
   // This is needed to prevent the tooltip from being not rendered when it is closing, preventing the animation to be played
   useEffect(() => {
@@ -190,14 +191,18 @@ export const TooltipContent = forwardRef<
     if (context.open) {
       setShouldRender(true)
     } else {
-      timeoutId = setTimeout(() => {
+      if (isScrolling || isLocallyScrolling || isResizing || isLocallyResizing) {
         setShouldRender(false)
-      }, 250)
+      } else {
+        timeoutId = setTimeout(() => {
+          setShouldRender(false)
+        }, 250)
+      }
     }
     return () => {
       clearTimeout(timeoutId)
     }
-  }, [context.open])
+  }, [ context.open, isScrolling, isLocallyScrolling, isResizing, isLocallyResizing ])
 
   if (!shouldRender) return null
 
@@ -205,14 +210,14 @@ export const TooltipContent = forwardRef<
     <FloatingPortal>
       <div
         ref={ ref }
-        style={{
+        style={ {
           ...style,
           ...context.transitionStyles,
           ...context.floatingStyles,
           //Needed to prevent the tooltip animation to not be played when the tooltip is opened
           transform: `${ context.floatingStyles.transform } ${ context.transitionStyles.transform }`
-        }}
-        {...context.getFloatingProps(props)}
+        } }
+        { ...context.getFloatingProps(props) }
       />
     </FloatingPortal>
   )

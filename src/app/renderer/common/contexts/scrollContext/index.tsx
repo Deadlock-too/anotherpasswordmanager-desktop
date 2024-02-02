@@ -1,27 +1,28 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useState } from 'react'
 
 interface ScrollContextState {
-  isScrolling: boolean;
-  setIsScrolling: (isScrolling: boolean) => void;
+  isLocallyScrolling: boolean;
+  setIsLocallyScrolling: (isLocallyScrolling: boolean) => void;
+  isLocallyResizing: boolean;
+  setIsLocallyResizing: (isLocallyResizing: boolean) => void;
 }
 
-export const ScrollContext = createContext<ScrollContextState>({} as ScrollContextState)
+export const LocalContext = createContext<ScrollContextState>({} as ScrollContextState)
 
-export function ScrollContextProvider({ children }) {
-  const [ isScrolling, setIsScrolling ] = useState(false)
+export function LocalContextProvider({ children }) {
+  const [ isLocallyScrolling, setIsLocallyScrolling ] = useState(false)
+  const [ isLocallyResizing, setIsLocallyResizing ] = useState(false)
 
   const context : ScrollContextState = {
-    isScrolling,
-    setIsScrolling
+    isLocallyScrolling,
+    setIsLocallyScrolling,
+    isLocallyResizing,
+    setIsLocallyResizing
   }
 
-  useEffect(() => {
-    console.log('scrolling', isScrolling)
-  }, [isScrolling])
-
   return (
-    <ScrollContext.Provider value={ context }>
+    <LocalContext.Provider value={ context }>
       { children }
-    </ScrollContext.Provider>
+    </LocalContext.Provider>
   )
 }

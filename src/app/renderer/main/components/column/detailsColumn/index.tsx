@@ -1,7 +1,7 @@
 import { ColumnBase } from '../index'
 import DetailView from '../../detailView'
 import { useTranslation } from 'react-i18next'
-import { ScrollContextProvider } from '../../../../common/contexts'
+import { LocalContextProvider } from '../../../../common/contexts'
 
 const InternalDetailsColumn = () => {
   const { t } = useTranslation()
@@ -22,9 +22,9 @@ const InternalDetailsColumn = () => {
 
 const DetailsColumn = () => {
   return (
-    <ScrollContextProvider>
+    <LocalContextProvider>
       <InternalDetailsColumn/>
-    </ScrollContextProvider>
+    </LocalContextProvider>
   )
 }
 

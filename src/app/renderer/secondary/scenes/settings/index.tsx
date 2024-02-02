@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useConfigContext, useThemeContext } from '../../../common/contexts'
-import { Formik } from 'formik'
+import { Formik, FormikProps } from 'formik'
 import AppearanceSettings from './appearance'
 import GeneralSettings from './general'
 import SecuritySettings from './security'
@@ -9,6 +9,8 @@ import { Language, Theme } from '../../../../../types'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../../../i18n'
 import { ScrollableDiv } from '../../../common/components'
+import TitleBar from '../../../main/components/titlebar'
+import { ContextProvider } from '../../../common/contexts/contextProvider'
 
 enum SettingSections {
   General = 'General',
@@ -221,4 +223,56 @@ const SettingsScene = ({formikRef}) => {
   )
 }
 
-export default SettingsScene
+const InternalSettings = () => {
+  const { config, isConfigLoading } = useConfigContext()
+  const { setIsDark } = useThemeContext()
+  const { t } = useTranslation()
+  const [ isLanguageLoading, setIsLanguageLoading ] = useState<boolean>(true)
+  const formikRef = useRef<FormikProps<any>>(null);
+
+  useEffect(() => {
+    const updateIsDarkHandler = (isDark) => {
+      setIsDark(isDark)
+    }
+    window.electron.subscribeToUpdateIsDark(updateIsDarkHandler)
+
+    window.localization.startupLanguage
+      .then((lang) => i18n.changeLanguage(lang))
+      .then(() => setIsLanguageLoading(false))
+
+    return () => {
+      window.electron.unsubscribeToUpdateIsDark()
+    }
+  }, [])
+
+  const handleClose = () => {
+    formikRef.current?.resetForm()
+  }
+
+  if (isConfigLoading || isLanguageLoading)
+    return (
+      <div className="h-screen w-screen bg-base-100 flex justify-center items-center">
+        <div className="loading loading-spinner loading-lg"/>
+      </div>
+    )
+
+  return (<>
+      <TitleBar variant="secondary" title={ t('SettingsDialog.Title') } onClose={ handleClose }/>
+      <div className="main-content p-2">
+        <SettingsScene key={ JSON.stringify(config) } formikRef={formikRef} />
+      </div>
+    </>
+  )
+}
+
+const SettingsWindow = () => {
+  return (
+    <ContextProvider>
+      <InternalSettings/>
+    </ContextProvider>
+  )
+}
+
+
+
+export default SettingsWindow

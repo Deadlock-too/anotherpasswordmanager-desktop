@@ -4,7 +4,13 @@ import i18n from '../../../i18n'
 import TitleBar from './components/titlebar'
 import Main from './scenes/main'
 import Intro from './scenes/intro'
-import { useConfigContext, useFileContentContext, useModalContext, useThemeContext } from '../common/contexts'
+import {
+  useConfigContext,
+  useFileContentContext,
+  useModalContext,
+  useThemeContext,
+  useWindowContext
+} from '../common/contexts'
 import PasswordModal from '../secondary/components/modal/password'
 import AddFolderModal from '../secondary/components/modal/addFolder'
 import FailedOpenModal from '../secondary/components/modal/failedOpen'
@@ -32,9 +38,37 @@ const App = () => {
   const { setIsPasswordModalOpen, setIsFailedOpenModalOpen, setSecondaryWindowEntry } = useModalContext()
   const { setIsDark } = useThemeContext()
   const { reloadConfig } = useConfigContext()
+  const { setIsResizing, setIsScrolling } = useWindowContext()
+
+  let resizeTimeout: NodeJS.Timeout | undefined = undefined
+  let scrollTimeout: NodeJS.Timeout | undefined = undefined
+  const onResize = () => {
+    if (resizeTimeout) {
+      clearTimeout(resizeTimeout)
+    }
+    setIsResizing(true)
+    resizeTimeout = setTimeout(() => {
+      setIsResizing(false)
+      resizeTimeout = undefined
+    }, 100)
+  }
+  const onScroll = () => {
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout)
+    }
+    setIsScrolling(true)
+    scrollTimeout = setTimeout(() => {
+      setIsScrolling(false)
+      scrollTimeout = undefined
+    }, 100)
+  }
+
 
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
+
+    window.addEventListener('resize', onResize)
+    window.addEventListener('scroll', onScroll)
 
     window.localization.startupLanguage.then(language => {
       i18n.changeLanguage(language)
@@ -97,6 +131,8 @@ const App = () => {
       window.electron.unsubscribeToUpdateIsDark()
       window.electron.unsubscribeToChangeLanguage()
       window.electron.unsubscribeToUpdateConfig()
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('scroll', onScroll)
     }
   }, [])
 
