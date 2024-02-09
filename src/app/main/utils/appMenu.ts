@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next'
 
 export default function setAppMenu() {
   const menu = new Menu()
-  // TODO MANAGE NEW MENU
+  //TODO ID-12
+
   // setMenuEntries(menu)
   // Menu.setApplicationMenu(menu)
 }

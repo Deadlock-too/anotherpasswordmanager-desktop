@@ -2,12 +2,12 @@ export type Config = {
   settings: {
     general: {
       language: Language
-      openAtStartup: boolean //TODO: implement
-      openMinimized: boolean //TODO: implement
-      minimizeToTray: boolean //TODO: implement
-      closeToTray: boolean //TODO: implement
-      autoSave: boolean //TODO: implement
-      autoSaveTime?: number //TODO: implement
+      openAtStartup: boolean //TODO ID-0
+      openMinimized: boolean //TODO ID-0
+      minimizeToTray: boolean //TODO ID-0
+      closeToTray: boolean //TODO ID-0
+      autoSave: boolean //TODO ID-0
+      autoSaveTime?: number //TODO ID-0
     }
     appearance: {
       customTheme: Theme
@@ -16,15 +16,15 @@ export type Config = {
       useSystemTheme: boolean
     }
     security: {
-      autoLock: boolean //TODO: implement
-      autoLockTime?: number //TODO: implement
-      autoLockOnMinimize: boolean //TODO: implement
-      autoLockOnSleep: boolean //TODO: implement
-      autoCleanClipboard: boolean //TODO: implement
-      autoCleanClipboardTime?: number //TODO: implement
+      autoLock: boolean //TODO ID-0
+      autoLockTime?: number //TODO ID-0
+      autoLockOnMinimize: boolean //TODO ID-0
+      autoLockOnSleep: boolean //TODO ID-0
+      autoCleanClipboard: boolean //TODO ID-0
+      autoCleanClipboardTime?: number //TODO ID-0
       copyFieldValuesToClipboardOnClick: boolean
-      defaultNewEntryExpire: boolean //TODO: implement
-      defaultNewEntryExpireTime?: number //TODO: implement
+      defaultNewEntryExpire: boolean //TODO ID-0
+      defaultNewEntryExpireTime?: number //TODO ID-0
     }
   }
 }

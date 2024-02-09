@@ -3,7 +3,7 @@ import { Component, ReactNode, useEffect, useRef, useState } from 'react'
 import { CheckIcon, CrossIcon, PencilIcon, PlusIcon, TrashIcon } from '../../../../../assets/icons'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useScrollContext } from '../../../common/contexts'
+import { useLocalContext } from '../../../common/contexts'
 
 export interface BaseColumnProps<T extends IdentifiableType> {
   style: {
@@ -42,7 +42,7 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
   render() {
     const divRef = useRef<HTMLDivElement>(null)
     const [ isScrollable, setIsScrollable ] = useState(false)
-    const { setIsScrolling } = useScrollContext()
+    const { setIsLocallyScrolling } = useLocalContext()
     let scrollTimeout: NodeJS.Timeout | undefined = undefined
 
     useEffect(() => {
@@ -59,15 +59,15 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
             clearTimeout(scrollTimeout)
           }
 
-          setIsScrolling(true)
+          setIsLocallyScrolling(true)
 
           scrollTimeout = setTimeout(() => {
-            setIsScrolling(false)
+            setIsLocallyScrolling(false)
             scrollTimeout = undefined
           }, 100)
         }
 
-        if (setIsScrolling !== undefined) {
+        if (setIsLocallyScrolling !== undefined) {
           div.addEventListener('scroll', onScroll)
         }
 
@@ -115,7 +115,7 @@ export interface ColumnContentProps<T extends IdentifiableType> {
     setEditingId: (id: UUID | null) => void
     handleUpdate: (element: T) => void
     setElementName: (element: T, name: string) => void
-    showDeletionModal: () => void
+    showDeletionWindow: () => void
     handleSelection: (element: T) => void
   },
   contextData: {
@@ -139,7 +139,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
     setEditingId: (id: UUID | null) => void
     handleUpdate: (element: T) => void
     setElementName: (element: T, name: string) => void
-    showDeletionModal: () => void
+    showDeletionWindow: () => void
     handleSelection: (element: T) => void
   }
   contextData: {
@@ -245,6 +245,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                   ref={ el => liRefs.current[i] = el }
                 >
                   <Formik
+                    //TODO ID-14
                     initialValues={ { title: this.contextData.getElementName(child) } }
                     validate={
                       values => {
@@ -310,6 +311,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                             (
                               <div className="flex gap-1 -mr-2.5 -mt-1 -mb-1">
                                 <button
+                                  type='submit'
                                   className="btn btn-xs btn-square btn-neutral justify-center items-center"
                                   onClick={ () => {
                                     handleSubmit()
@@ -321,6 +323,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                                   <CheckIcon/>
                                 </button>
                                 <button
+                                  type='reset'
                                   className="btn btn-xs btn-square btn-neutral justify-center items-center"
                                   onClick={ () => {
                                     this.actions.setEditingId(null)
@@ -360,7 +363,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                                   }
                                   onClick={ () => {
                                     this.actions.setDeleting(child)
-                                    this.actions.showDeletionModal()
+                                    this.actions.showDeletionWindow()
                                   } }
                                   onMouseEnter={ () => setDisableElementSelection(true) }
                                   onMouseLeave={ () => setDisableElementSelection(false) }

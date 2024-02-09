@@ -1,6 +1,6 @@
 import { FormikProps } from 'formik'
 import { useRef } from 'react'
-import { ScrollableDiv } from '../' //TODO create alias for @components
+import { ScrollableDiv } from '../' //TODO ID-9
 
 interface IDropdownProps {
   label: string;

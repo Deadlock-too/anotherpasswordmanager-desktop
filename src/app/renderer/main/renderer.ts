@@ -1,6 +1,7 @@
 import './index'
 import './styles.css'
 import { Config, Language, Theme } from '../../../types'
+import { NamedIdentifiableType } from '../common/types'
 
 declare global {
   interface Window {
@@ -50,6 +51,25 @@ declare global {
       unsubscribeToChangeLanguage: () => void
       subscribeToUpdateConfig: (callback: unknown) => void
       unsubscribeToUpdateConfig: () => void
+      subscribeToAddFolder: (callback: unknown) => void
+      unsubscribeToAddFolder: () => void
+      subscribeToDeleteEntry: (callback: unknown) => void
+      unsubscribeToDeleteEntry: () => void
+      subscribeToCancelDeleteEntry: (callback: unknown) => void
+      unsubscribeToCancelDeleteEntry: () => void
+      subscribeToDeleteFolder: (callback: unknown) => void
+      unsubscribeToDeleteFolder: () => void
+      subscribeToCancelDeleteFolder: (callback: unknown) => void
+      unsubscribeToCancelDeleteFolder: () => void
+      subscribeToSetPassword: (callback: unknown) => void
+      unsubscribeToSetPassword: () => void
+      subscribeToSetFileContent: (callback: unknown) => void
+      unsubscribeToSetFileContent: () => void
+      subscribeToSetInitialized: (callback: unknown) => void
+      unsubscribeToSetInitialized: () => void
+      subscribeToGetDeletingRecordInfo: (callback: unknown) => void
+      unsubscribeToGetDeletingRecordInfo: () => void
+      sendGetDeletingRecordInfoResult: (result: NamedIdentifiableType) => void
       sendPasswordResult: (password: string) => void
       setFileContent: (path: string, password: string) => void
       saveFile: (path: string, data: string) => Promise<void>

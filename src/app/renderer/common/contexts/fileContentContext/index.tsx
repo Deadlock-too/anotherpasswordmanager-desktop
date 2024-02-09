@@ -70,7 +70,7 @@ export function FileContentContextProvider({ children }) {
     const fc: File = JSON.parse(fileContent)
     setFolders(fc.Folders)
 
-    setContentVersion(fc.AppVersion) //TODO: Check if version is compatible with current version
+    setContentVersion(fc.AppVersion) //TODO ID-11
 
     setIsInitialized(true)
     setFilePath(path)

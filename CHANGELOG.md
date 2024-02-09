@@ -1,6 +1,6 @@
-# Desktop app library changelog
+# Desktop app changelog
 
-## v0.1.0
+## v0.0.1
 _2023-12-05_
 
-* Initial release
+* Started development

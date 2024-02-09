@@ -9,13 +9,13 @@ export enum WindowVariant {
   PasswordCreate = 'passwordCreate',
   PasswordUpdate = 'passwordUpdate',
   AddFolder = 'addFolder',
-  FolderDeletionModal = 'folderDeletionModal',
-  EntryDeletionModal = 'entryDeletionModal'
+  FolderDeletion = 'folderDeletion',
+  EntryDeletion = 'entryDeletion'
 }
 
 
 export const openSecondaryWindow = async (variant: WindowVariant, secondaryWindowEntry?: string) => {
-  secondaryWindow = window.open(secondaryWindowEntry, variant, `{"width":${window.outerWidth},"height":${window.outerHeight},"x":${window.screenX},"y":${window.screenY}}`)
+  secondaryWindow = window.open(secondaryWindowEntry ?? 'http://localhost:3000/secondary_window', variant, `{"width":${window.outerWidth},"height":${window.outerHeight},"x":${window.screenX},"y":${window.screenY}}`)
   if (secondaryWindow) {
     secondaryWindow.name = variant
   }

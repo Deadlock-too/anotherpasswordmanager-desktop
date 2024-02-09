@@ -5,7 +5,7 @@ import { Theme } from '../../../../../../types'
 import { daisyui } from '../../../../../../../tailwind.config'
 import { useTranslation } from 'react-i18next'
 
-/* TODO MANAGE IMMEDIATE UPDATE OF THEME AND NOT ONLY ON APPLY OR SUBMIT */
+//TODO ID-19
 const AppearanceSettings = ({ formik }) => {
   const { t } = useTranslation()
   const themes = Object.values(Theme).filter(thm => thm != Theme.system)
@@ -42,7 +42,6 @@ const AppearanceSettings = ({ formik }) => {
             formik={ formik }
           />
           {
-            //TODO CREATE COMPONENT
             formik.values.appearanceUseSystemTheme ?
               <details className="dropdown dropdown-bottom dropdown-end">
                 <summary tabIndex={ formik.values.appearanceUseSystemTheme ? 0 : -1 }

@@ -2,12 +2,14 @@ import { Entry, uuid } from '../../../common/types'
 import { Formik } from 'formik'
 import { useState } from 'react'
 import OTP, { RegExpPattern } from '../otp'
-import { useConfigContext, useFileContentContext } from '../../../common/contexts'
+import { useConfigContext, useFileContentContext, useModalContext } from '../../../common/contexts'
 import { useTranslation } from 'react-i18next'
 import { FormikPasswordInput, FormikTextInput } from '../../../common/components'
+import { openSecondaryWindow, WindowVariant } from '../../utils/rendererWindowManager'
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
   const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useFileContentContext()
+  const { secondaryWindowEntry } = useModalContext()
   const [ readonly, setReadonly ] = useState(props.entry !== undefined)
   const { t } = useTranslation()
   const toggleReadonly = () => {
@@ -22,7 +24,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
       initialValues={
         {
           id: props.entry?.Id,
-          title: props.entry?.Title ?? '',
+          title: props.entry?.Name ?? '',
           username: props.entry?.Username ?? '',
           password: props.entry?.Password ?? '',
           otpURI: props.entry?.OTPUri ?? ''
@@ -59,6 +61,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
         <form onSubmit={ formik.handleSubmit } className="flex flex-col justify-between h-full px-10 py-5">
           <div className="flex flex-col gap-2">
             <FormikTextInput
+              type={ 'text' }
               label={ t('Entry Detail.Title Label') }
               field="title"
               placeholder={ t('Entry Detail.Title Placeholder') }
@@ -69,6 +72,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
               copyTooltipLabel={ t('Entry Detail.Title Copied') }
             />
             <FormikTextInput
+              type={ 'text' }
               label={ t('Entry Detail.Username Label') }
               field="username"
               placeholder={ t('Entry Detail.Username Placeholder') }
@@ -93,6 +97,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
             {
               //(readonly && !formik.values.otpURI) ? null : //Uncomment to hide OTP field
               <FormikTextInput
+                type={ 'text' }
                 label={ t('Entry Detail.OTP Label') }
                 field="otpURI"
                 placeholder={ t('Entry Detail.OTP Placeholder') }
@@ -144,12 +149,10 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   type="button"
                   disabled={ formik.isSubmitting }
                   className="btn btn-error w-1/3"
-                  onClick={ () => {
+                  onClick={ async () => {
                     if (formik.values.id !== undefined) {
                       setDeletingEntry(new Entry(formik.values.id, formik.values.title))
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore
-                      window.document.getElementById('entryDeletionModal').showModal()
+                      await openSecondaryWindow(WindowVariant.EntryDeletion, secondaryWindowEntry)
                       formik.handleReset()
                     }
                   } }

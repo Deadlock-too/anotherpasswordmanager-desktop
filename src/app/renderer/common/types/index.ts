@@ -16,7 +16,11 @@ export type IdentifiableType = {
   Id: UUID
 }
 
-export class Folder implements IdentifiableType {
+export type NamedIdentifiableType = IdentifiableType & {
+  Name: string
+}
+
+export class Folder implements NamedIdentifiableType {
   Id: UUID
   Name: string
   Entries: Entry[]
@@ -28,20 +32,25 @@ export class Folder implements IdentifiableType {
   }
 }
 
-export class Entry implements IdentifiableType {
+export class Entry implements NamedIdentifiableType {
   Id: UUID
-  Title: string
+  Name: string
   Username?: string
   Password?: string
   OTPUri?: string
 
   constructor(id: UUID, title: string, username?: string, password?: string, otpUri?: string) {
     this.Id = id
-    this.Title = title
+    this.Name = title
     this.Username = username
     this.Password = password
     this.OTPUri = otpUri
   }
+}
+
+export enum RecordType {
+  Folder = 'Folder',
+  Entry = 'Entry'
 }
 
 export type UUID = string

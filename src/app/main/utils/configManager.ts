@@ -81,7 +81,7 @@ export async function readConfig(): Promise<Config> {
   if (config)
     return config
 
-  throw new Error('Missing config') //TODO IMPROVE
+  throw new Error('Missing config') //TODO ID-10
 }
 
 export async function createConfig(): Promise<Config | null> {

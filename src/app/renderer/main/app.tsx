@@ -11,31 +11,18 @@ import {
   useThemeContext,
   useWindowContext
 } from '../common/contexts'
-import PasswordModal from '../secondary/components/modal/password'
-import AddFolderModal from '../secondary/components/modal/addFolder'
-import FailedOpenModal from '../secondary/components/modal/failedOpen'
-import { EntryDeletionModal, FolderDeletionModal } from '../secondary/components/modal/deletion'
-import { getSecondaryWindow, updateSecondaryWindowTheme } from './utils/windowManager'
-
-const Modals = () => {
-  // PORT EVERYTHING TO SECONDARY WINDOW
-  return (
-    <>
-      <PasswordModal variant={ 'open' }/>
-      <PasswordModal variant={ 'create' }/>
-      <PasswordModal variant={ 'update' }/>
-      <AddFolderModal/>
-      <FailedOpenModal/>
-      <FolderDeletionModal/>
-      <EntryDeletionModal/>
-    </>
-  )
-}
+import {
+  getSecondaryWindow,
+  openSecondaryWindow,
+  updateSecondaryWindowTheme,
+  WindowVariant
+} from './utils/rendererWindowManager'
+import { RecordType } from '../common/types'
 
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
-  const { isInitialized, initialize, setFilePath } = useFileContentContext()
-  const { setIsPasswordModalOpen, setIsFailedOpenModalOpen, setSecondaryWindowEntry } = useModalContext()
+  const { isInitialized, initialize, setFilePath, handleAddFolder, handleSelectFolder, selectedEntryId, selectedFolderId, handleDeleteEntry, handleDeleteFolder, setDeletingEntry, setDeletingFolder, deletingFolder, deletingEntry, filePath, setIsInitialized, setPassword } = useFileContentContext()
+  const { setIsPasswordModalOpen, setSecondaryWindowEntry, secondaryWindowEntry } = useModalContext()
   const { setIsDark } = useThemeContext()
   const { reloadConfig } = useConfigContext()
   const { setIsResizing, setIsScrolling } = useWindowContext()
@@ -63,7 +50,7 @@ const App = () => {
     }, 100)
   }
 
-
+  //TODO ID-7
   useEffect(() => {
     window.localization.getInitialI18nStore().then(setInitialI18nStore)
 
@@ -77,20 +64,14 @@ const App = () => {
     const fileOpenedHandler = (path, content) => initialize(path, content)
     window.electron.subscribeToFileOpened(fileOpenedHandler)
 
-    const fileOpenFailedHandler = () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      document.getElementById('failedOpenModal').showModal()
-      setIsFailedOpenModalOpen(true)
+    const fileOpenFailedHandler = async () => {
+      await openSecondaryWindow(WindowVariant.FailedOpen, secondaryWindowEntry)
     }
     window.electron.subscribeToFailedOpenFile(fileOpenFailedHandler)
 
-    const openFileFromPathHandler = (path) => {
+    const openFileFromPathHandler = async (path) => {
       setFilePath(path)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      document.getElementById('openPasswordModal').showModal()
-      setIsPasswordModalOpen(true)
+      await openSecondaryWindow(WindowVariant.PasswordOpen, secondaryWindowEntry)
     }
     window.electron.subscribeToOpenFileFromPath(openFileFromPathHandler)
 
@@ -122,6 +103,42 @@ const App = () => {
     }
     window.electron.subscribeToChangeLanguage(setLanguageHandler)
 
+    const addFolderHandler = (folder) => {
+      handleAddFolder(folder)
+      handleSelectFolder(folder, selectedEntryId, selectedFolderId)
+    }
+    window.electron.subscribeToAddFolder(addFolderHandler)
+
+    const deleteEntryHandler = (entryId) => {
+      handleDeleteEntry(entryId)
+    }
+    window.electron.subscribeToDeleteEntry(deleteEntryHandler)
+
+    const cancelDeleteEntryHandler = () => {
+      setDeletingEntry(null)
+    }
+    window.electron.subscribeToCancelDeleteEntry(cancelDeleteEntryHandler)
+
+    const deleteFolderHandler = (folderId) => {
+      handleDeleteFolder(folderId)
+    }
+    window.electron.subscribeToDeleteFolder(deleteFolderHandler)
+
+    const cancelDeleteFolderHandler = () => {
+      setDeletingFolder(null)
+    }
+    window.electron.subscribeToCancelDeleteFolder(cancelDeleteFolderHandler)
+
+    const setPasswordHandler = (password) => {
+      setPassword(password)
+    }
+    window.electron.subscribeToSetPassword(setPasswordHandler)
+
+    const setIsInitializedHandler = () => {
+      setIsInitialized(true)
+    }
+    window.electron.subscribeToSetInitialized(setIsInitializedHandler)
+
     return () => {
       window.electron.unsubscribeToFileOpened()
       window.electron.unsubscribeToFailedOpenFile()
@@ -131,26 +148,58 @@ const App = () => {
       window.electron.unsubscribeToUpdateIsDark()
       window.electron.unsubscribeToChangeLanguage()
       window.electron.unsubscribeToUpdateConfig()
+      window.electron.unsubscribeToAddFolder()
+      window.electron.unsubscribeToDeleteEntry()
+      window.electron.unsubscribeToCancelDeleteEntry()
+      window.electron.unsubscribeToDeleteFolder()
+      window.electron.unsubscribeToCancelDeleteFolder()
+      window.electron.unsubscribeToSetInitialized()
       window.removeEventListener('resize', onResize)
       window.removeEventListener('scroll', onScroll)
     }
   }, [])
+
+  useEffect(() => {
+    window.electron.subscribeToGetDeletingRecordInfo((recordType: RecordType) => {
+      switch (recordType) {
+        case RecordType.Entry:
+          if (deletingEntry)
+            window.electron.sendGetDeletingRecordInfoResult(deletingEntry)
+          break
+        case RecordType.Folder:
+          if (deletingFolder)
+            window.electron.sendGetDeletingRecordInfoResult(deletingFolder)
+          break
+      }
+    })
+
+    return () => {
+      window.electron.unsubscribeToGetDeletingRecordInfo()
+    }
+  }, [deletingEntry, deletingFolder])
+
+  useEffect(() => {
+    const setFileContentHandler = (password) => {
+      window.electron.setFileContent(filePath, password)
+    }
+    window.electron.subscribeToSetFileContent(setFileContentHandler)
+
+    return () => {
+      window.electron.unsubscribeToSetFileContent()
+    }
+  }, [filePath])
 
   if (!initialI18nStore)
     return null
 
   return (
     <I18nextProvider i18n={ i18n.default }>
-      <Modals/>
       <TitleBar variant='main'/>
       <div className="overflow-hidden">
         {
           (!isInitialized) ?
-            <Intro onNewButtonClick={ () => {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              document.getElementById('createPasswordModal').showModal()
-              setIsPasswordModalOpen(true)
+            <Intro onNewButtonClick={ async () => {
+              await openSecondaryWindow(WindowVariant.PasswordCreate, secondaryWindowEntry)
             } }/> :
             <Main/>
         }
@@ -159,14 +208,3 @@ const App = () => {
   )
 }
 export default App
-
-//TODO: ADD PASSWORD STRENGTH METER
-//TODO: ADD PASSWORD GENERATOR
-//TODO: ADD PASSWORD GENERATOR SETTINGS
-
-//TODO: [!!!] If file already open, ask if use wants to open another
-
-//TODO: Check every 10 seconds if file has been changed
-//TODO: If file has been changed, ask if user wants to reload it
-
-//TODO: [!!!] CHECK CODE FOR USELESS RE-RENDERS

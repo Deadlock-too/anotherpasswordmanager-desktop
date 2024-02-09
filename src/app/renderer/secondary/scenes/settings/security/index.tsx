@@ -2,7 +2,7 @@ import { Setting, SettingRow, SettingSection } from '../../../components/setting
 import { FormikCheckbox, FormikNumberInput } from '../../../../common/components'
 import { useTranslation } from 'react-i18next'
 
-//TODO move min and max values to a consts file
+//TODO ID-20
 const SecuritySettings = ({ formik }) => {
   const { t } = useTranslation()
   return (

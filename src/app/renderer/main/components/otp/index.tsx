@@ -184,15 +184,15 @@ const ParseURI = (props: { uri: string }): TOTP => {
   const regex = new RegExp(RegExpPattern)
   const isMatch = regex.test(props.uri)
   if (!isMatch)
-    throw new Error('Invalid URI') //TODO Missing i18n
+    throw new Error('Invalid URI')
 
   const match = props.uri.match(regex)
   if (!match || !match.groups)
-    throw new Error('Invalid URI') //TODO Missing i18n
+    throw new Error('Invalid URI')
 
   // CURRENTLY ONLY SUPPORTS TOTP
   if (match.groups.protocol === 'hotp')
-    throw new Error('HOTP is not supported') //TODO Missing i18n
+    throw new Error('HOTP not supported')
 
   return new TOTP({
     issuerInLabel: (match.groups.issuerInLabel === undefined) ?? false,

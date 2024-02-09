@@ -16,7 +16,6 @@ export function ConfigContextProvider({ children }) {
   const [ isConfigLoading, setIsConfigLoading ] = useState<boolean>(true)
 
   const reloadConfig = () => {
-    setIsConfigLoading(true)
     window.settings.readConfig().then((config) => {
       setConfig(prev => ({
         ...prev,
@@ -42,7 +41,6 @@ export function ConfigContextProvider({ children }) {
   // }, [])
 
   const handleUpdateConfig = async (config: Config) => {
-    setIsConfigLoading(true)
     setConfig(config)
     window.settings.writeConfig(config)
       .then(() => {

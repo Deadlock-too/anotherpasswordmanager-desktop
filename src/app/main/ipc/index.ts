@@ -5,6 +5,7 @@ import * as fs from 'fs'
 import IpcEventNames from './ipcEventNames'
 import { getLanguageFromConfig, getThemeFromConfig, readConfig, writeConfig } from '../utils/configManager'
 import { Config, Language, Theme } from '../../../types'
+import { Folder, UUID } from '../../renderer/common/types'
 
 let currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
 
@@ -68,8 +69,9 @@ ipcMain.handle(IpcEventNames.Theming.SetTheme, async (_, themeName, setSystem): 
         symbolColor: content
       })
     } catch (e) {
-      // TODO IMPROVE THIS
-      // Ignore error, there is no way to check if the window has a title bar so for the moment just ignore the error
+      //TODO ID-10
+
+      //Ignore error, there is no way to check if the window has a title bar so for the moment just ignore the error
     }
   })
 
@@ -119,3 +121,91 @@ ipcMain.handle(IpcEventNames.Config.Update, () => {
     window.webContents.send(IpcEventNames.Config.Update)
   })
 })
+
+ipcMain.handle(IpcEventNames.DialogManagement.AddFolder, async (_, folder: Folder): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.AddFolder, folder)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.GetDeletingRecordInfo, async (_, recordType): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.GetDeletingRecordInfo, recordType)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.GetDeletingRecordInfoResult, async (_, result): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.GetDeletingRecordInfoResult, result)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.DeleteEntry, async (_, id: UUID): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.DeleteEntry, id)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.CancelDeleteEntry, async (): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.CancelDeleteEntry)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.DeleteFolder, async (_, id: UUID): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.DeleteFolder, id)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.CancelDeleteFolder, async (): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.CancelDeleteFolder)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.SetPassword, async (_, password: string): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.SetPassword, password)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.SetFileContent, async (_, password: string): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.SetFileContent, password)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.SetInitialized, async (): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.SetInitialized)
+  })
+})
+
+/**
+  * Logging events handlers (usable from renderer process, mainly for secondary windows that could not open dev tools)
+ */
+ipcMain.handle(IpcEventNames.Log.Log, (_, ...args): void => {
+  const label = 'Log'
+  console.log(`${label}-${getCurrentTimestamp()}:`, ...args)
+})
+ipcMain.handle(IpcEventNames.Log.Info, (_, ...args): void => {
+  const label = 'Info'
+  console.info(`${label}-${getCurrentTimestamp()}:`, ...args)
+})
+ipcMain.handle(IpcEventNames.Log.Warn, (_, ...args): void => {
+  const label = 'Warn'
+  console.warn(`${label}-${getCurrentTimestamp()}:`, ...args)
+})
+ipcMain.handle(IpcEventNames.Log.Error, (_, ...args): void => {
+  const label = 'Error'
+  console.error(`${label}-${getCurrentTimestamp()}:`, ...args)
+})
+
+/**
+ * Helper functions
+ */
+const getCurrentTimestamp = () : string => {
+  const currentTime = new Date(Date.now())
+  return `${currentTime.getHours().toString().padStart(2, '0')}:${currentTime.getMinutes().toString().padStart(2, '0')}:${currentTime.getSeconds().toString().padStart(2, '0')}.${currentTime.getMilliseconds().toString().padEnd(3, '0')}`
+}

@@ -2,7 +2,7 @@ import { CloseIcon, SaveIcon, SettingsIcon, TemporaryAppIcon, UpdateIcon } from 
 import { encrypt } from '../../../../main/utils/crypt'
 import { useFileContentContext, useModalContext } from '../../../common/contexts'
 import { ReactNode } from 'react'
-import { openSecondaryWindow, WindowVariant } from '../../utils/windowManager'
+import { openSecondaryWindow, WindowVariant } from '../../utils/rendererWindowManager'
 
 const TitleBarButton = ({ icon, onClick }: { icon: ReactNode, onClick: () => void }) => {
   return (
@@ -53,15 +53,12 @@ const SaveButton = () => {
 }
 
 const ChangeMasterKeyButton = () => {
-  const { setIsPasswordModalOpen } = useModalContext()
+  const { secondaryWindowEntry } = useModalContext()
   return (
     <TitleBarButton
       icon={ <UpdateIcon/> }
-      onClick={ () => {
-        /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-        // @ts-ignore
-        document.getElementById('updatePasswordModal').showModal()
-        setIsPasswordModalOpen(true)
+      onClick={ async () => {
+        await openSecondaryWindow(WindowVariant.PasswordUpdate, secondaryWindowEntry)
       } }
     />
   )
@@ -83,8 +80,7 @@ const SettingsButton = () => {
     <TitleBarButton
       icon={ <SettingsIcon/> }
       onClick={ async () => {
-        // TODO FIX AND REMOVE 'http://localhost:3000/secondary_window'
-        await openSecondaryWindow(WindowVariant.Settings, secondaryWindowEntry ?? 'http://localhost:3000/secondary_window')
+        await openSecondaryWindow(WindowVariant.Settings, secondaryWindowEntry)
       } }
     />
   )
@@ -114,7 +110,6 @@ const TitleBar = (props: TitleBarProps) => {
           </div>
           : null }
       </div>
-      {/* TODO: [!!!] MANAGE TITLE-BAR */ }
       <h1 className="truncate label-text text-sm">{props.title}</h1>
       {
         props.variant === 'main' ?

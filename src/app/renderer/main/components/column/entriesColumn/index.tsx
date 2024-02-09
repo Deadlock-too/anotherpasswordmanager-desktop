@@ -1,7 +1,8 @@
 import { ColumnBase, ColumnContentBase } from '../index'
 import { Entry } from '../../../../common/types'
-import { useFileContentContext } from '../../../../common/contexts'
+import { useFileContentContext, useModalContext } from '../../../../common/contexts'
 import { useTranslation } from 'react-i18next'
+import { openSecondaryWindow, WindowVariant } from '../../../utils/rendererWindowManager'
 
 const EntriesColumn = ({elements}) => {
   const {
@@ -14,6 +15,7 @@ const EntriesColumn = ({elements}) => {
     handleUpdateEntry,
     handleSelectEntry
   } = useFileContentContext()
+  const { secondaryWindowEntry } = useModalContext()
   const { t } = useTranslation()
 
   const column = new ColumnBase<Entry>({
@@ -33,11 +35,9 @@ const EntriesColumn = ({elements}) => {
         setDeleting: setDeletingEntry,
         setEditingId: setEditingEntryId,
         handleUpdate: handleUpdateEntry,
-        setElementName: (element, name) => element.Title = name,
-        showDeletionModal: () => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          document.getElementById('entryDeletionModal').showModal()
+        setElementName: (element, name) => element.Name = name,
+        showDeletionWindow: async () => {
+          await openSecondaryWindow(WindowVariant.EntryDeletion, secondaryWindowEntry)
         },
         handleSelection: (entry) => {
           handleSelectEntry(entry, false)
@@ -47,12 +47,12 @@ const EntriesColumn = ({elements}) => {
         selectedId: selectedEntryId,
         hoveringId: hoveringEntryId,
         editingId: editingEntryId,
-        getElementName: (entry: Entry) => entry.Title,
+        getElementName: (entry: Entry) => entry.Name,
         getUniqueElementName: (element, elements) => {
-          if (elements.filter(e => e.Id !== element.Id && e.Title === element.Title).length > 0) {
-            return element.Title + ' (' + element.Username + ')'
+          if (elements.filter(e => e.Id !== element.Id && e.Name === element.Name).length > 0) {
+            return element.Name + ' (' + element.Username + ')'
           }
-          return element.Title
+          return element.Name
         }
       },
       elements: elements,

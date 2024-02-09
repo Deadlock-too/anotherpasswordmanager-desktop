@@ -1,6 +1,8 @@
 import './index'
 import '../main/styles.css'
 import { Config, Language, Theme } from '../../../types'
+import { Folder, RecordType, UUID } from '../common/types'
+
 
 declare global {
   interface Window {
@@ -35,6 +37,25 @@ declare global {
     },
     config: {
       update: () => Promise<void>
+    },
+    dialogManagement: {
+      addFolder: (folder: Folder) => Promise<void>
+      getDeletingRecordInfo: (recordType: RecordType) => Promise<void>
+      subscribeToGetDeletingRecordInfoResult: (callback: unknown) => void
+      unsubscribeToGetDeletingRecordInfoResult: () => void
+      deleteEntry: (id: UUID) => Promise<void>
+      cancelDeleteEntry: () => Promise<void>
+      deleteFolder: (id: UUID) => Promise<void>
+      cancelDeleteFolder: () => Promise<void>
+      setPassword: (password: string) => Promise<void>
+      setFileContent: (password: string) => Promise<void>
+      setInitialized: () => Promise<void>
+    },
+    log: {
+      log: (...args) => Promise<void>
+      info: (...args) => Promise<void>
+      warn: (...args) => Promise<void>
+      error: (...args) => Promise<void>
     }
   }
 }

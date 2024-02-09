@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import IpcEventNames from './ipc/ipcEventNames'
 import { Config, Theme } from '../../types'
+import { Folder, RecordType, UUID } from '../renderer/common/types'
 
 contextBridge.exposeInMainWorld('theming', {
   startupThemeSync: () => {
@@ -73,4 +74,47 @@ contextBridge.exposeInMainWorld('config', {
   update: (): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.Config.Update)
   }
+})
+
+contextBridge.exposeInMainWorld('dialogManagement', {
+  addFolder: (folder: Folder): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.AddFolder, folder)
+  },
+  getDeletingRecordInfo: (recordType: RecordType): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.GetDeletingRecordInfo, recordType)
+  },
+  subscribeToGetDeletingRecordInfoResult: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.GetDeletingRecordInfoResult, (event, ...args) => callback(...args))
+  },
+  unsubscribeToGetDeletingRecordInfoResult: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.GetDeletingRecordInfoResult)
+  },
+  deleteEntry: (id: UUID): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.DeleteEntry, id)
+  },
+  cancelDeleteEntry: () => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.CancelDeleteEntry)
+  },
+  deleteFolder: (id: UUID): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.DeleteFolder, id)
+  },
+  cancelDeleteFolder: () => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.CancelDeleteFolder)
+  },
+  setPassword: (password: string): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.SetPassword, password)
+  },
+  setFileContent: (password: string): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.SetFileContent, password)
+  },
+  setInitialized: (): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.SetInitialized)
+  }
+})
+
+contextBridge.exposeInMainWorld('log', {
+  log: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Log, ...args),
+  info: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Info, ...args),
+  warn: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Warn, ...args),
+  error: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Error, ...args)
 })

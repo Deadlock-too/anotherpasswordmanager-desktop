@@ -27,6 +27,9 @@ import {
   TooltipContent,
   useTimedTooltip
 } from './tooltip'
+import {
+  Loading
+} from './loading'
 
 export {
   Checkbox,
@@ -45,5 +48,6 @@ export {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  useTimedTooltip
+  useTimedTooltip,
+  Loading
 }

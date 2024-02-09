@@ -3,7 +3,11 @@ import { I18nextProvider } from 'react-i18next'
 import i18n from '../../../i18n'
 import SettingsWindow from './scenes/settings'
 import AddFolderWindow from './scenes/addFolder'
-import { WindowVariant } from '../main/utils/windowManager'
+import { WindowVariant } from '../main/utils/rendererWindowManager'
+import DeletionWindow from './scenes/deletion'
+import { RecordType } from '../common/types'
+import FailedOpenWindow from './scenes/failedOpen'
+import PasswordWindow from './scenes/password'
 
 const rootDiv = document.getElementById('secondary_root')
 if (!rootDiv)
@@ -26,6 +30,24 @@ switch (variant) {
     break
   case WindowVariant.AddFolder:
     component = <AddFolderWindow/>
+    break
+  case WindowVariant.FolderDeletion:
+    component = <DeletionWindow recordType={ RecordType.Folder }/>
+    break
+  case WindowVariant.EntryDeletion:
+    component = <DeletionWindow recordType={ RecordType.Entry }/>
+    break
+  case WindowVariant.FailedOpen:
+    component = <FailedOpenWindow/>
+    break
+  case WindowVariant.PasswordCreate:
+    component = <PasswordWindow variant={ 'create' }/>
+    break
+  case WindowVariant.PasswordOpen:
+    component = <PasswordWindow variant={ 'open' }/>
+    break
+  case WindowVariant.PasswordUpdate:
+    component = <PasswordWindow variant={ 'update' }/>
     break
   default:
     component = <div>Unknown variant</div>

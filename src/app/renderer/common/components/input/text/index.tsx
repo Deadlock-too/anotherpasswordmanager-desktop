@@ -1,8 +1,10 @@
-import { ChangeEvent, ReactNode } from 'react'
+import { ChangeEvent, ReactNode, useRef, useState } from 'react'
 import { FormikErrors, FormikProps, FormikTouched } from 'formik'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../tooltip'
+import { debounce } from 'lodash'
 
 interface ITextInputProps {
+  type: 'text' | 'password';
   label: string;
   field: string;
   placeholder?: string
@@ -20,6 +22,7 @@ interface ITextInputProps {
 }
 
 interface IFormikTextInputProps {
+  type: 'text' | 'password';
   label: string;
   field: string;
   placeholder: string
@@ -33,6 +36,7 @@ interface IFormikTextInputProps {
 }
 
 const TextInput = ({
+  type,
   label,
   field,
   placeholder,
@@ -49,35 +53,51 @@ const TextInput = ({
   customReadonlyComponent
 }: ITextInputProps) => {
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
+  const [ isTyping, setIsTyping ] = useState(false)
+  const debouncedInput = useRef(debounce((value) => {
+    setIsTyping(false)
+  }, 500)).current
 
   let inputComponent = (
     (
-      <>
-        <input
-          type="text"
-          name={ field }
-          onChange={ handleChange }
-          onBlur={ handleBlur }
-          value={ value }
-          placeholder={ placeholder }
-          className="input input-sm input-bordered w-full"
-          disabled={ disabled }
-          readOnly={ readonly }
-        />
-        {
-          touched && errors ?
-            <div className="label">
-              <span className="label-text-alt text-error">
-                { `${ errors }` }
-              </span>
-            </div>
-            : null
-        }
-      </>
+      <input
+        type={ type }
+        name={ field }
+        onChange={ (event) => {
+          handleChange(event)
+          debouncedInput(event.target.value)
+          setIsTyping(true)
+        } }
+        onBlur={ handleBlur }
+        value={ value }
+        placeholder={ placeholder }
+        className="input input-sm input-bordered w-full"
+        disabled={ disabled }
+        readOnly={ readonly }
+      />
     )
   )
 
+  //Add error tooltip wrapper
+  inputComponent = (
+    <Tooltip
+      placement="top"
+      open={ !readonly && !isTyping && touched && typeof errors === 'string' && errors.length > 0 }
+      onOpenChange={ () => {} } //Prevent to show the tooltip on hover
+    >
+      <TooltipTrigger>
+        { inputComponent }
+      </TooltipTrigger>
+      <TooltipContent>
+        <div
+          className="tooltip tooltip-error tooltip-open"
+          data-tip={ errors }
+        />
+      </TooltipContent>
+    </Tooltip>
+  )
 
+  //Add copy tooltip wrapper
   if (!customReadonlyComponent && copiableContent && readonly) {
     inputComponent = (
       <Tooltip open={ isOpen } onOpenChange={ handleTooltipClose }>
@@ -119,6 +139,7 @@ const TextInput = ({
 }
 
 const FormikTextInput = ({
+  type,
   label,
   field,
   placeholder,
@@ -132,6 +153,7 @@ const FormikTextInput = ({
 }: IFormikTextInputProps) => {
   return (
     <TextInput
+      type={ type }
       label={ label }
       field={ field }
       placeholder={ placeholder }

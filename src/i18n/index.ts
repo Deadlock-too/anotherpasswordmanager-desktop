@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next'
 import translations from './translations'
 import { Language } from '../types'
 
-const DEFAULT_LANGUAGE = Language.English //TODO SET TO OS LANGUAGE
+const DEFAULT_LANGUAGE = Language.English //TODO ID-24
 
 i18n
   .use(initReactI18next)

@@ -6,14 +6,18 @@ import {
   useConfigContext
 } from './index'
 import { useEffect, useState } from 'react'
+import { WindowContextProvider } from './windowContext'
+import { Loading } from '../components'
 
 export function ContextProvider({ children }) {
   return (
-    <ConfigContextProvider>
-      <InternalContextProvider>
-        { children }
-      </InternalContextProvider>
-    </ConfigContextProvider>
+    <WindowContextProvider>
+      <ConfigContextProvider>
+        <InternalContextProvider>
+          { children }
+        </InternalContextProvider>
+      </ConfigContextProvider>
+    </WindowContextProvider>
   )
 }
 
@@ -26,14 +30,10 @@ const InternalContextProvider = ({ children }) => {
   }, [])
 
   if (isConfigLoading)
-    return (
-      <div className="h-screen w-screen bg-base-100 flex justify-center items-center">
-        <div className="loading loading-spinner loading-lg"/>
-      </div>
-    )
+    return <Loading />
 
   return (
-    <ThemeContextProvider initialDarkTheme={initialDarkTheme}>
+    <ThemeContextProvider initialDarkTheme={ initialDarkTheme }>
       <ModalContextProvider>
         <FileContentContextProvider>
           { children }
@@ -42,5 +42,3 @@ const InternalContextProvider = ({ children }) => {
     </ThemeContextProvider>
   )
 }
-
-//TODO: DON'T WRAP EVERYTHING IN CONTEXT PROVIDERS BUT ONLY A SPECIFIC MANAGER THAT WILL MANAGE THE STATE OF THE CONTEXT AND WILL PREVENT UNNECESSARY RE-RENDERS

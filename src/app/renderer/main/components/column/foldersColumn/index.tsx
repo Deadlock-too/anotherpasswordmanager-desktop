@@ -2,6 +2,7 @@ import { ColumnBase, ColumnContentBase } from '../index'
 import { Folder } from '../../../../common/types'
 import { useFileContentContext, useModalContext } from '../../../../common/contexts'
 import { useTranslation } from 'react-i18next'
+import { openSecondaryWindow, WindowVariant } from '../../../utils/rendererWindowManager'
 
 const FoldersColumn = ({elements}) => {
   const {
@@ -16,7 +17,7 @@ const FoldersColumn = ({elements}) => {
     handleSelectFolder
   } = useFileContentContext()
   const { t } = useTranslation()
-
+  const { secondaryWindowEntry } = useModalContext()
   const { setIsAddFolderModalOpen } = useModalContext()
 
   const column = new ColumnBase<Folder>({
@@ -26,11 +27,8 @@ const FoldersColumn = ({elements}) => {
       margin: 'mr-1',
       unselectableContent: true,
       addButton: {
-        onClick: () => {
-          /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-          // @ts-ignore
-          document.getElementById('addFolderModal').showModal()
-          setIsAddFolderModalOpen(true)
+        onClick: async () => {
+          await openSecondaryWindow(WindowVariant.AddFolder, secondaryWindowEntry)
         },
         disabled: false
       }
@@ -42,10 +40,8 @@ const FoldersColumn = ({elements}) => {
         setEditingId: setEditingFolderId,
         handleUpdate: handleUpdateFolder,
         setElementName: (element, name) => element.Name = name,
-        showDeletionModal: () => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          document.getElementById('folderDeletionModal').showModal()
+        showDeletionWindow: async () => {
+          await openSecondaryWindow(WindowVariant.FolderDeletion, secondaryWindowEntry)
         },
         handleSelection: (folder) => {
           handleSelectFolder(folder, selectedEntryId, selectedFolderId)

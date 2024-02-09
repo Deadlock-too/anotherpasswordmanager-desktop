@@ -21,10 +21,11 @@ export default class Main {
     return await openMainWindow()
   }
 
-  // TODO Move logic to protocol dedicated class
+  //TODO ID-4
+
   // private static onOpenUrl(event: Electron.IpcMainEvent, url: string) {
   //   if (url.startsWith('anotherpasswordmanager://')) {
-  //     //TODO: open url handle protocol
+  //
   //   }
   // }
 
@@ -59,7 +60,7 @@ export default class Main {
   }
 
   private static manageProtocol() {
-    // TODO Manage protocol
+    // TODO ID-4
     // if (process.defaultApp) {
     //   if (process.argv.length >= 2) {
     //     Main.application.setAsDefaultProtocolClient('anotherpasswordmanager', process.execPath, [path.resolve(process.argv[1])])
@@ -88,7 +89,7 @@ export default class Main {
       .then(async () => await init(Main.application))
       .then(async () => await setShortcuts(Main.application))
       .then(async () => {
-        // TODO MANAGE WITH SETTING
+        //TODO ID-0
         const startInBackground = false
         if (startInBackground) {
           return
@@ -99,7 +100,8 @@ export default class Main {
           Main.StartupUrl = null
         }
 
-        // TODO DO NOT CLOSE ONLY IF MODIFIED AND ADD i18n
+        //TODO ID-5
+
         // Main.mainWindow.on('close', (e) => {
         //   const choice = dialog.showMessageBoxSync(Main.mainWindow, {
         //     type: 'question',
@@ -118,19 +120,13 @@ export default class Main {
       })
     // Main.application.on('ready', Main.onReady)
 
-    // TODO Move logic to when ready
-    // Main.application.whenReady()
-
-    // TODO Move logic to window manager and when ready
+    //TODO ID-6
     Main.application.on('window-all-closed', Main.onWindowAllClosed)
     Main.application.on('activate', Main.onActivate)
 
-    // TODO onOpenUrl
+    //TODO ID-4
     //Main.application.on('open-url', Main.onOpenUrl)
 
-    // TODO Move logic to protocol dedicated class
     Main.manageProtocol()
   }
 }
-
-//TODO MANAGE AUTO UPDATE

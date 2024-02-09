@@ -8,7 +8,7 @@ import { configToInitialValues, valuesToConfig } from '../../../../../utils'
 import { Language, Theme } from '../../../../../types'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../../../i18n'
-import { ScrollableDiv } from '../../../common/components'
+import { ScrollableDiv, Loading } from '../../../common/components'
 import TitleBar from '../../../main/components/titlebar'
 import { ContextProvider } from '../../../common/contexts/contextProvider'
 
@@ -18,7 +18,7 @@ enum SettingSections {
   Security = 'Security'
 }
 
-const SettingsScene = ({formikRef}) => {
+const SettingsScene = ({ formikRef }) => {
   const [ selectedSetting, setSelectedSetting ] = useState<SettingSections>(SettingSections.General)
   const { t } = useTranslation()
   const settings = Object.values(SettingSections)
@@ -69,7 +69,7 @@ const SettingsScene = ({formikRef}) => {
     customTheme: Theme,
     language: Language
   }, setTemporaryValues: boolean) => {
-    //TODO APPLY OTHER SETTINGS TOO IF POSSIBLE
+    //TODO ID-22
     await (async () => {
       await window.localization.changeLanguage(values.language)
 
@@ -115,7 +115,7 @@ const SettingsScene = ({formikRef}) => {
   }
 
   const handleReset = () => {
-    //TODO RESET NOT ONLY THEME EDITS
+    //TODO ID-23
     (async () => {
       await handleApplySettings({
         useSystemTheme: config.settings.appearance.useSystemTheme,
@@ -133,7 +133,7 @@ const SettingsScene = ({formikRef}) => {
       initialValues={ initialValues }
       onSubmit={ handleSubmit }
       onReset={ handleReset }
-      innerRef={formikRef}
+      innerRef={ formikRef }
     >
       {
         (formik) => (
@@ -228,7 +228,7 @@ const InternalSettings = () => {
   const { setIsDark } = useThemeContext()
   const { t } = useTranslation()
   const [ isLanguageLoading, setIsLanguageLoading ] = useState<boolean>(true)
-  const formikRef = useRef<FormikProps<any>>(null);
+  const formikRef = useRef<FormikProps<any>>(null)
 
   useEffect(() => {
     const updateIsDarkHandler = (isDark) => {
@@ -250,16 +250,12 @@ const InternalSettings = () => {
   }
 
   if (isConfigLoading || isLanguageLoading)
-    return (
-      <div className="h-screen w-screen bg-base-100 flex justify-center items-center">
-        <div className="loading loading-spinner loading-lg"/>
-      </div>
-    )
+    return <Loading/>
 
   return (<>
       <TitleBar variant="secondary" title={ t('SettingsDialog.Title') } onClose={ handleClose }/>
       <div className="main-content p-2">
-        <SettingsScene key={ JSON.stringify(config) } formikRef={formikRef} />
+        <SettingsScene key={ JSON.stringify(config) } formikRef={ formikRef }/>
       </div>
     </>
   )
@@ -272,7 +268,6 @@ const SettingsWindow = () => {
     </ContextProvider>
   )
 }
-
 
 
 export default SettingsWindow

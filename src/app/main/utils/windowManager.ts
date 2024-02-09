@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import { decrypt } from './crypt'
 import IpcEventNames from '../ipc/ipcEventNames'
 import { getThemeFromConfig } from './configManager'
+import { WindowVariant } from '../../renderer/main/utils/rendererWindowManager'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
@@ -29,12 +30,11 @@ async function createMainWindow() {
     minHeight: 300,
     minWidth: 550,
     titleBarStyle: 'hidden',
-    // icon: './assets/icon.png', //TODO ADD ICON
-    /* TODO MANAGE OPENED DIALOG OR SECONDARY MODAL WINDOW COLOR (if any dialog is opened set darker color, for an easier job compute all colors starting from the title bar color using HSL subtracting 5 to the last value and set a new field in the tailwind.config.js) */
+    // icon: './assets/icon.png', //TODO ID-1
     titleBarOverlay: {
       color: theme.color,
       symbolColor: theme.symbolColor,
-      height: 30 /* TODO MANAGE DARWIN PLATFORM DYNAMIC TITLE BAR HEIGHT (Low priority as not testable without device with Darwin platform) */
+      height: 30 //TODO ID-3
     }
   })
 
@@ -52,17 +52,43 @@ async function createMainWindow() {
     let resizable = false
 
     //use frameName to identify which window is being opened
-    if (details.frameName === 'settings') {
-      height = 600
-      width = 800
-      minHeight = 300
-      minWidth = 550
-      resizable = true
-    } else if (details.frameName === 'addFolder') {
-      height = 250
-      width = 450
-      minHeight = 1
-      minWidth = 1
+    switch (details.frameName) {
+      case WindowVariant.Settings:
+        const settingsMinHeight = 300
+        const settingsMinWidth = 550
+        height = (height < settingsMinHeight) ? settingsMinHeight : height
+        width = (width < settingsMinWidth) ? settingsMinWidth : width
+        minHeight = 300
+        minWidth = 550
+        resizable = true
+        break
+      case WindowVariant.AddFolder:
+      case WindowVariant.EntryDeletion:
+      case WindowVariant.FolderDeletion:
+        height = 250
+        width = 450
+        minHeight = 1
+        minWidth = 1
+        break
+      case WindowVariant.FailedOpen:
+        height = 200
+        width = 400
+        minHeight = 1
+        minWidth = 1
+        break
+      case WindowVariant.PasswordOpen:
+        height = 250
+        width = 450
+        minHeight = 1
+        minWidth = 1
+        break
+      case WindowVariant.PasswordCreate:
+      case WindowVariant.PasswordUpdate:
+        height = 320
+        width = 450
+        minHeight = 1
+        minWidth = 1
+        break
     }
 
     const x = Math.round((mainWindowState ? mainWindowState.x : 0) + (mainWindowState ? mainWindowState.width / 2 : 0) - width / 2)
@@ -85,9 +111,9 @@ async function createMainWindow() {
         // titleBarOverlay: {
         //   color: '#1d232a',
         //   symbolColor: '#ffffff',
-        //   height: 30 /* TODO MANAGE DARWIN PLATFORM DYNAMIC TITLE BAR HEIGHT (Low priority as not testable without device with Darwin platform) */
+        //   height: 30 //TODO ID-3
         // },
-        // icon: './assets/icon.png', //TODO ADD ICON
+        // icon: './assets/icon.png', //TODO ID-1
         x: x,
         y: y,
         parent: mainWindow ?? undefined,
@@ -176,7 +202,7 @@ export async function saveFileDialog() {
   let path: string | undefined = undefined
   await dialog.showSaveDialog({
     'title': i18n.default.t('SaveDialog.Title'),
-    'defaultPath': 'passwords.apm', //TODO CHOOSE DEFAULT FILE NAME
+    'defaultPath': 'passwords.apm', //TODO ID-2
     properties: [ 'showOverwriteConfirmation' ]
   }).then(
     (result) => {

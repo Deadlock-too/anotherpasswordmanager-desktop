@@ -3,13 +3,15 @@ import { FileContentContext, FileContentContextProvider } from './fileContentCon
 import { ModalContext, ModalContextProvider } from './modalContext'
 import { ThemeContext, ThemeContextProvider } from './themeContext'
 import { ConfigContext, ConfigContextProvider } from './configContext'
-import { ScrollContext, ScrollContextProvider } from './scrollContext'
+import { LocalContext, LocalContextProvider } from './scrollContext'
+import { WindowContext, WindowContextProvider } from './windowContext'
 
 const useFileContentContext = () => useContext(FileContentContext)
 const useModalContext = () => useContext(ModalContext)
 const useThemeContext = () => useContext(ThemeContext)
 const useConfigContext = () => useContext(ConfigContext)
-const useScrollContext = () => useContext(ScrollContext)
+const useLocalContext = () => useContext(LocalContext)
+const useWindowContext = () => useContext(WindowContext)
 
 export {
   useFileContentContext,
@@ -20,6 +22,8 @@ export {
   ThemeContextProvider,
   useConfigContext,
   ConfigContextProvider,
-  useScrollContext,
-  ScrollContextProvider
+  useLocalContext,
+  LocalContextProvider,
+  useWindowContext,
+  WindowContextProvider,
 }

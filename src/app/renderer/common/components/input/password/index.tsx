@@ -1,8 +1,9 @@
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { FormikErrors, FormikProps, FormikTouched } from 'formik'
 import { usePasswordToggle } from '../../../../main/hooks/passwordVisibility'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../tooltip'
 import { EyeIcon, EyeSlashIcon } from '../../../../../../assets/icons'
+import { debounce } from 'lodash'
 
 interface IPasswordInputProps {
   label: string;
@@ -52,27 +53,89 @@ const PasswordInput = ({
 }: IPasswordInputProps) => {
   const { type, passwordVisibility, togglePasswordVisibility } = usePasswordToggle()
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
+  const [ isHoveringButton, setIsHoveringButton ] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  const [ isTyping, setIsTyping ] = useState(false)
+  const debouncedInput = useRef(debounce((value) => {
+    setIsTyping(false)
+  }, 500)).current
+
+  useEffect(() => {
+    if (buttonRef.current) {
+      buttonRef.current.addEventListener('mouseover', () => setIsHoveringButton(true))
+      buttonRef.current.addEventListener('mouseout', () => setIsHoveringButton(false))
+
+      return () => {
+        buttonRef.current?.removeEventListener('mouseover', () => setIsHoveringButton(true))
+        buttonRef.current?.removeEventListener('mouseout', () => setIsHoveringButton(false))
+      }
+    }
+  }, [])
 
   let inputComponent = (
-    <input
-      type={ type }
-      name={ field }
-      onChange={ handleChange }
-      onBlur={ handleBlur }
-      value={ value }
-      placeholder={ placeholder }
-      className="input input-sm input-bordered w-full pr-16 rounded-r-none"
-      disabled={ disabled }
-      readOnly={ readonly }
-    />
+    <div className="join w-full">
+      <input
+        type={ type }
+        name={ field }
+        onChange={ (event) => {
+          handleChange(event)
+          debouncedInput(event.target.value)
+          setIsTyping(true)
+        } }
+        onBlur={ handleBlur }
+        value={ value }
+        placeholder={ placeholder }
+        className="input input-sm input-bordered w-full pr-16 rounded-r-none"
+        disabled={ disabled }
+        readOnly={ readonly }
+      />
+      <Tooltip>
+        <TooltipTrigger>
+          <button
+            ref={ buttonRef }
+            type="button"
+            className="relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info"
+            disabled={ disabled }
+            onClick={ (e) => {
+              e.preventDefault()
+              togglePasswordVisibility()
+            } }
+            onKeyUp={ (event) => {
+              if (event.key === ' ') {
+                event.preventDefault()
+                togglePasswordVisibility()
+              }
+            } }
+          >
+            {
+              passwordVisibility ?
+                <EyeIcon/> :
+                <EyeSlashIcon/>
+            }
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div
+            className="tooltip tooltip-base-100 tooltip-open"
+            data-tip={ passwordVisibility ? tooltipHiddenLabel : tooltipVisibleLabel }
+          />
+        </TooltipContent>
+      </Tooltip>
+    </div>
   )
 
+  //Add copy tooltip wrapper
   if (copiableContent && readonly) {
     inputComponent = (
-      <Tooltip open={ isOpen } onOpenChange={ handleTooltipClose }>
+      <Tooltip placement="top" open={ isOpen } onOpenChange={ () => {
+        if (!isHoveringButton)
+          handleTooltipClose()
+      } }>
         <TooltipTrigger className="w-full" onClick={ (e) => {
           e.preventDefault()
-          handleTooltipOpen()
+          if (!isHoveringButton)
+            handleTooltipOpen()
         } }>
           { inputComponent }
         </TooltipTrigger>
@@ -86,9 +149,28 @@ const PasswordInput = ({
     )
   }
 
+  //Add error tooltip wrapper
+  inputComponent = (
+    <Tooltip
+      placement="top"
+      open={ !readonly && !isTyping && touched && typeof errors === 'string' && errors.length > 0 }
+      onOpenChange={ () => {} } //Prevent to show the tooltip on hover
+    >
+      <TooltipTrigger>
+        { inputComponent }
+      </TooltipTrigger>
+      <TooltipContent>
+        <div
+          className="tooltip tooltip-error tooltip-open"
+          data-tip={ errors }
+        />
+      </TooltipContent>
+    </Tooltip>
+  )
+
   return (
     <label className="form-control w-full" onClick={ () => {
-      if (copiableContent && readonly && value !== undefined)
+      if (!isHoveringButton && copiableContent && readonly && value !== undefined)
         window.clipboard.write(value)
     } }>
       <div className="label">
@@ -96,51 +178,7 @@ const PasswordInput = ({
           { label }
         </span>
       </div>
-      <div className="join">
-        {
-          inputComponent
-        }
-        <Tooltip>
-          <TooltipTrigger>
-            <button
-              type="button"
-              className="relative top-0 right-0 rounded-l-none btn btn-sm btn-outline btn-info"
-              disabled={ disabled }
-              onClick={ (e) => {
-                e.preventDefault()
-                togglePasswordVisibility()
-              } }
-              onKeyUp={ (event) => {
-                if (event.key === ' ') {
-                  event.preventDefault()
-                  togglePasswordVisibility()
-                }
-              } }
-            >
-              {
-                passwordVisibility ?
-                  <EyeIcon/> :
-                  <EyeSlashIcon/>
-              }
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div
-              className="tooltip tooltip-base-100 tooltip-open"
-              data-tip={ passwordVisibility ? tooltipHiddenLabel : tooltipVisibleLabel }
-            />
-          </TooltipContent>
-        </Tooltip>
-      </div>
-      {
-        touched && errors ?
-          <div className="label">
-            <span className="label-text-alt text-error">
-              { `${ errors }` }
-            </span>
-          </div>
-          : null
-      }
+      { inputComponent }
     </label>
   )
 }

@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { default as i18n } from '../../i18n'
 import IpcEventNames from './ipc/ipcEventNames'
 import { Config, Theme } from '../../types'
+import { NamedIdentifiableType } from '../renderer/common/types'
 
 contextBridge.exposeInMainWorld('theming', {
   startupThemeSync: () => {
@@ -128,6 +129,63 @@ contextBridge.exposeInMainWorld('electron', {
   },
   unsubscribeToUpdateConfig: () => {
     ipcRenderer.removeAllListeners(IpcEventNames.Config.Update)
+  },
+  subscribeToAddFolder: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.AddFolder, (event, ...args) => callback(...args))
+  },
+  unsubscribeToAddFolder: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.AddFolder)
+  },
+  subscribeToDeleteEntry: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.DeleteEntry, (event, ...args) => callback(...args))
+  },
+  unsubscribeToDeleteEntry: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.DeleteEntry)
+  },
+  subscribeToCancelDeleteEntry: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.CancelDeleteEntry, (event, ...args) => callback(...args))
+  },
+  unsubscribeToCancelDeleteEntry: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.CancelDeleteEntry)
+  },
+  subscribeToDeleteFolder: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.DeleteFolder, (event, ...args) => callback(...args))
+  },
+  unsubscribeToDeleteFolder: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.DeleteFolder)
+  },
+  subscribeToCancelDeleteFolder: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.CancelDeleteFolder, (event, ...args) => callback(...args))
+  },
+  unsubscribeToCancelDeleteFolder: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.CancelDeleteFolder)
+  },
+  subscribeToSetPassword: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.SetPassword, (event, ...args) => callback(...args))
+  },
+  unsubscribeToSetPassword: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.SetPassword)
+  },
+  subscribeToSetFileContent: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.SetFileContent, (event, ...args) => callback(...args))
+  },
+  unsubscribeToSetFileContent: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.SetFileContent)
+  },
+  subscribeToSetInitialized: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.SetInitialized, (event, ...args) => callback(...args))
+  },
+  unsubscribeToSetInitialized: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.SetInitialized)
+  },
+  subscribeToGetDeletingRecordInfo: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.GetDeletingRecordInfo, (event, ...args) => callback(...args))
+  },
+  unsubscribeToGetDeletingRecordInfo: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.GetDeletingRecordInfo)
+  },
+  sendGetDeletingRecordInfoResult: (result: NamedIdentifiableType) => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.GetDeletingRecordInfoResult, result)
   },
   setFileContent: async (path: string, password: string) => {
     return await ipcRenderer.invoke(IpcEventNames.FileOpen.SetFileContent, path, password)
