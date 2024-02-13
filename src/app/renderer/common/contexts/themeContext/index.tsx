@@ -47,20 +47,6 @@ export function ThemeContextProvider({ children, initialDarkTheme }) {
     setCurrentTheme(theme)
   }
 
-  //Handle config update
-  useEffect(() => {
-    setUseSystemTheme(config.settings.appearance.useSystemTheme)
-    setLightTheme(config.settings.appearance.lightTheme)
-    setDarkTheme(config.settings.appearance.darkTheme)
-    setCustomTheme(config.settings.appearance.customTheme)
-
-    if (useSystemTheme) {
-      handleSetCurrentTheme(isDark ? darkTheme : lightTheme, false, true)
-    } else {
-      handleSetCurrentTheme(customTheme, true, false)
-    }
-  }, [config])
-
   useEffect(() => {
     if (temporaryUseSystemTheme ?? useSystemTheme) {
       if (isDark) {
