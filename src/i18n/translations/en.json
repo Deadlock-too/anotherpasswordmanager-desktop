@@ -242,6 +242,10 @@
     "Cancel Button": "Cancel",
     "Apply Button": "Apply"
   },
+  "Tray": {
+    "Show": "Show",
+    "Exit": "Exit"
+  },
   "Common": {
     "Validations": {
       "Required field": "Required field",

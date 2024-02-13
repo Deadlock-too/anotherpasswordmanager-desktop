@@ -2,9 +2,10 @@ import * as fs from 'fs'
 import { App, nativeTheme } from 'electron'
 import * as path from 'path'
 import { Config, Theme, Language } from '../../../types'
-import i18n from '../../../i18n'
 import { daisyui } from '../../../../tailwind.config'
 import defaultConfig from '../../../defaultConfig.json'
+import Main from '../main'
+import { createTray } from './trayManager'
 
 const configFileName = 'config.json'
 let configFilePath: string
@@ -33,6 +34,11 @@ export async function getLanguageFromConfig(): Promise<Language> {
   return config.settings.general.language
 }
 
+export async function getOpenMinimizedFromConfig(): Promise<boolean> {
+  const config = await readConfig()
+  return config.settings.general.openMinimized
+}
+
 export async function loadConfig(app: App) {
   configFilePath = path.join(app.getPath('userData'), configFileName)
   console.log('Config file path: ' + configFilePath)
@@ -49,12 +55,18 @@ export async function loadConfig(app: App) {
       console.log('New config created: ' + JSON.stringify(newConfig))
       internalConfig = newConfig
       return newConfig
-    }
-    else {
+    } else {
       console.error('Error creating a new config')
       return null
     }
   }
+}
+
+export async function applyConfig(): Promise<void> {
+  const config = internalConfig ?? await readConfig()
+
+  await applyMinimizeToTray(config.settings.general.minimizeToTray)
+  await applyCloseToTray(config.settings.general.closeToTray)
 }
 
 async function readConfigInternal(): Promise<Config | null> {
@@ -112,5 +124,40 @@ export async function writeConfig(config: Config): Promise<Config | null> {
   } catch (err) {
     console.error(err)
     return null
+  }
+}
+
+/**
+ * Apply config to the app
+ */
+export const handleMinimizeToTray = (e) => {
+  e.preventDefault()
+  Main.mainWindow.hide()
+
+  createTray()
+}
+
+export async function applyMinimizeToTray(minimizeToTray: boolean) {
+  Main.mainWindow.removeListener('minimize', handleMinimizeToTray)
+
+  if (minimizeToTray) {
+    Main.mainWindow.on('minimize', handleMinimizeToTray)
+  }
+}
+
+export const handleCloseToTray = (e) => {
+  if (!Main.Tray) {
+    e.preventDefault()
+    Main.mainWindow.hide()
+
+    createTray()
+  }
+}
+
+export async function applyCloseToTray(closeToTray: boolean) {
+  Main.mainWindow.removeListener('close', handleCloseToTray)
+
+  if (closeToTray) {
+    Main.mainWindow.on('close', handleCloseToTray)
   }
 }

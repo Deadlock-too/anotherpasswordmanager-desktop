@@ -14,7 +14,7 @@ declare const SECONDARY_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 let mainWindow: BrowserWindow | null
 
-async function createMainWindow() {
+async function createMainWindow(windowMinimized: boolean) {
   function onClose() {
     // Dereference the window object.
     mainWindow = null
@@ -35,8 +35,12 @@ async function createMainWindow() {
       color: theme.color,
       symbolColor: theme.symbolColor,
       height: 30 //TODO ID-3
-    }
+    },
+    show: !windowMinimized
   })
+
+  if (windowMinimized)
+    mainWindow.minimize()
 
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   mainWindow.on('closed', onClose)
@@ -130,17 +134,14 @@ async function createMainWindow() {
   mainWindow.webContents.send(IpcEventNames.Electron.SetSecondaryWindowEntry, SECONDARY_WINDOW_WEBPACK_ENTRY)
 }
 
-export async function openMainWindow(targetRoute: string | null = null): Promise<BrowserWindow> {
+export async function openMainWindow(windowMinimized: boolean = false): Promise<BrowserWindow> {
   let windows = BrowserWindow.getAllWindows()
   if (windows.length === 0) {
-    await createMainWindow()
+    await createMainWindow(windowMinimized)
     windows = BrowserWindow.getAllWindows()
   } else {
     windows[0].show()
     windows[0].focus()
-  }
-  if (targetRoute) {
-    windows[0].webContents.send(IpcEventNames.ROUTE, targetRoute)
   }
   return windows[0]
 }

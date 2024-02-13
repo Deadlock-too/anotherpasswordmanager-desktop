@@ -42,6 +42,10 @@ const IpcEventNames = {
     Get: 'config:get',
     Set: 'config:set',
     Update: 'config:update',
+    
+    OpenAtStartup: 'config:openAtStartup',
+    MinimizeToTray: 'config:minimizeToTray',
+    CloseToTray: 'config:closeToTray',
   },
   Localization: {
     ChangeLanguage: 'localization:changeLanguage',

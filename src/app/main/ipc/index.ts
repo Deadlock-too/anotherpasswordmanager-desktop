@@ -1,11 +1,18 @@
-import { BrowserWindow, clipboard, ipcMain, nativeTheme } from 'electron'
+import { BrowserWindow, clipboard, ipcMain, nativeTheme, Menu } from 'electron'
 import { openFileDialog, openFileFromPath, saveFileDialog } from '../utils/windowManager'
 import { daisyui } from '../../../../tailwind.config'
 import * as fs from 'fs'
 import IpcEventNames from './ipcEventNames'
-import { getLanguageFromConfig, getThemeFromConfig, readConfig, writeConfig } from '../utils/configManager'
+import {
+  applyCloseToTray, applyMinimizeToTray,
+  getLanguageFromConfig,
+  getThemeFromConfig,
+  readConfig,
+  writeConfig
+} from '../utils/configManager'
 import { Config, Language, Theme } from '../../../types'
 import { Folder, UUID } from '../../renderer/common/types'
+import Main from '../main'
 
 let currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
 
@@ -110,15 +117,27 @@ ipcMain.handle(IpcEventNames.Config.Set, async (_, data: Config): Promise<void> 
   await writeConfig(data)
 })
 
-ipcMain.handle(IpcEventNames.Localization.ChangeLanguage, async (_, lang: string): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.Localization.ChangeLanguage, lang)
-  })
-})
-
 ipcMain.handle(IpcEventNames.Config.Update, () => {
   BrowserWindow.getAllWindows().forEach((window) => {
     window.webContents.send(IpcEventNames.Config.Update)
+  })
+})
+
+ipcMain.handle(IpcEventNames.Config.OpenAtStartup, async (_, openAtStartup: boolean): Promise<void> => {
+  Main.setOpenAtStartup(openAtStartup)
+})
+
+ipcMain.handle(IpcEventNames.Config.MinimizeToTray, async (_, minimizeToTray: boolean): Promise<void> => {
+  await applyMinimizeToTray(minimizeToTray)
+})
+
+ipcMain.handle(IpcEventNames.Config.CloseToTray, async (_, closeToTray: boolean): Promise<void> => {
+  await applyCloseToTray(closeToTray)
+})
+
+ipcMain.handle(IpcEventNames.Localization.ChangeLanguage, async (_, lang: string): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.Localization.ChangeLanguage, lang)
   })
 })
 
@@ -183,29 +202,29 @@ ipcMain.handle(IpcEventNames.DialogManagement.SetInitialized, async (): Promise<
 })
 
 /**
-  * Logging events handlers (usable from renderer process, mainly for secondary windows that could not open dev tools)
+ * Logging events handlers (usable from renderer process, mainly for secondary windows that could not open dev tools)
  */
 ipcMain.handle(IpcEventNames.Log.Log, (_, ...args): void => {
   const label = 'Log'
-  console.log(`${label}-${getCurrentTimestamp()}:`, ...args)
+  console.log(`${ label }-${ getCurrentTimestamp() }:`, ...args)
 })
 ipcMain.handle(IpcEventNames.Log.Info, (_, ...args): void => {
   const label = 'Info'
-  console.info(`${label}-${getCurrentTimestamp()}:`, ...args)
+  console.info(`${ label }-${ getCurrentTimestamp() }:`, ...args)
 })
 ipcMain.handle(IpcEventNames.Log.Warn, (_, ...args): void => {
   const label = 'Warn'
-  console.warn(`${label}-${getCurrentTimestamp()}:`, ...args)
+  console.warn(`${ label }-${ getCurrentTimestamp() }:`, ...args)
 })
 ipcMain.handle(IpcEventNames.Log.Error, (_, ...args): void => {
   const label = 'Error'
-  console.error(`${label}-${getCurrentTimestamp()}:`, ...args)
+  console.error(`${ label }-${ getCurrentTimestamp() }:`, ...args)
 })
 
 /**
  * Helper functions
  */
-const getCurrentTimestamp = () : string => {
+const getCurrentTimestamp = (): string => {
   const currentTime = new Date(Date.now())
-  return `${currentTime.getHours().toString().padStart(2, '0')}:${currentTime.getMinutes().toString().padStart(2, '0')}:${currentTime.getSeconds().toString().padStart(2, '0')}.${currentTime.getMilliseconds().toString().padEnd(3, '0')}`
+  return `${ currentTime.getHours().toString().padStart(2, '0') }:${ currentTime.getMinutes().toString().padStart(2, '0') }:${ currentTime.getSeconds().toString().padStart(2, '0') }.${ currentTime.getMilliseconds().toString().padEnd(3, '0') }`
 }

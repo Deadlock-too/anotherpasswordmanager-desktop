@@ -16,6 +16,8 @@ interface FileContentContextState {
   initialize: (path: string, fileContent: string) => void
   filePath: string
   setFilePath: (path: string) => void
+  fileName: string
+  unsavedChanges: boolean
   fileContent: File | null
   reset: () => void
   folders: Folder[]
@@ -34,6 +36,7 @@ interface FileContentContextState {
   handleSelectEntry: (entry: Entry | null, newEntry: boolean) => void
   handleSelectFolder: (folder: Folder | null, currentlySelectedEntryId: UUID | null, currentlySelectedFolderId: UUID | null) => void
   updateFileContent: () => void
+  forceUpdateFileContent: () => void
   hoveringFolderId: UUID | null
   hoveringEntryId: UUID | null
   setHoveringFolderId: (id: UUID | null) => void
@@ -53,7 +56,7 @@ interface FileContentContextState {
 export const FileContentContext = createContext<FileContentContextState>({} as FileContentContextState)
 
 export function FileContentContextProvider({ children }) {
-  // const { config } = useConfigContext()
+  const { config } = useConfigContext()
 
   const [ password, setPassword ] = useState<string | null>(null)
   const [ contentVersion, setContentVersion ] = useState<string | null>(null)
@@ -61,10 +64,22 @@ export function FileContentContextProvider({ children }) {
   const [ folders, setFolders ] = useState<Folder[]>([])
   const [ entries, setEntries ] = useState<Entry[]>([])
   const [ filePath, setFilePath ] = useState<string>('')
+  const [ fileName, setFileName ] = useState<string>('')
   const [ fileContent, setFileContent ] = useState<File | null>(null)
   const [ internalUpdateFileContentToggle, setInternalUpdateFileContentToggle ] = useState(false)
+  const [ unsavedChanges, setUnsavedChanges ] = useState<boolean>(false)
 
-  const updateFileContent = () => setInternalUpdateFileContentToggle((prevState) => !prevState)
+  const updateFileContent = () => {
+    if (config.settings.general.autoSave) {
+      setInternalUpdateFileContentToggle((prevState) => !prevState)
+    } else {
+      setUnsavedChanges(true)
+    }
+  }
+
+  const forceUpdateFileContent = () => {
+    setInternalUpdateFileContentToggle((prevState) => !prevState)
+  }
 
   const initialize = useCallback((path: string, fileContent: string) => {
     const fc: File = JSON.parse(fileContent)
@@ -74,6 +89,7 @@ export function FileContentContextProvider({ children }) {
 
     setIsInitialized(true)
     setFilePath(path)
+    setFileName(path.split('\\').pop()?.split('/').pop() ?? '')
   }, [])
 
   useEffect(() => {
@@ -89,16 +105,9 @@ export function FileContentContextProvider({ children }) {
       } else {
         window.electron.saveFile(filePath, content)
       }
+      setUnsavedChanges(false)
     }
   }, [ internalUpdateFileContentToggle, filePath, password ])
-
-  //reload file content every n seconds
-  setInterval(() => {
-    if (isInitialized && filePath) {
-      //reload file content
-      //...
-    }
-  }, 1000 * 10)
 
   const reset = useCallback(() => {
     setFolders([])
@@ -120,7 +129,7 @@ export function FileContentContextProvider({ children }) {
       return newState
     })
     updateFileContent()
-  }, [])
+  }, [config.settings.general.autoSave])
 
   const handleDeleteFolder = useCallback((id: UUID) => {
     setFolders((prevState) => {
@@ -128,7 +137,7 @@ export function FileContentContextProvider({ children }) {
       return prevState.filter((_, i) => i !== index)
     })
     updateFileContent()
-  }, [])
+  }, [config.settings.general.autoSave])
 
   const handleDeleteEntry = useCallback((id: UUID) => {
     setEntries((prevState) => [ ...prevState.filter((entry) => entry.Id !== id) ])
@@ -145,7 +154,7 @@ export function FileContentContextProvider({ children }) {
       return prevState
     })
     updateFileContent()
-  }, [])
+  }, [config.settings.general.autoSave])
 
   const handleUpdateFolder = useCallback((folder: Folder) => {
     setFolders((prevState) => {
@@ -154,7 +163,7 @@ export function FileContentContextProvider({ children }) {
       return prevState
     })
     updateFileContent()
-  }, [])
+  }, [config.settings.general.autoSave])
 
   const handleAddEntry = useCallback((entry: Entry, folderId: UUID) => {
     setEntries(prevState => [ ...prevState, entry ])
@@ -164,12 +173,12 @@ export function FileContentContextProvider({ children }) {
       return prevState
     })
     updateFileContent()
-  }, [])
+  }, [config.settings.general.autoSave])
 
   const handleAddFolder = useCallback((folder: Folder) => {
     setFolders(prevState => [ ...prevState, folder ])
     updateFileContent()
-  }, [])
+  }, [config.settings.general.autoSave])
 
   const resetSelection = useCallback(() => {
     if (selectedEntryId) {
@@ -218,6 +227,8 @@ export function FileContentContextProvider({ children }) {
     initialize,
     filePath,
     setFilePath,
+    fileName,
+    unsavedChanges,
     fileContent,
     reset,
     folders,
@@ -236,6 +247,7 @@ export function FileContentContextProvider({ children }) {
     handleSelectEntry,
     handleSelectFolder,
     updateFileContent,
+    forceUpdateFileContent,
     hoveringFolderId,
     hoveringEntryId,
     setHoveringFolderId,

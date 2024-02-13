@@ -36,6 +36,9 @@ declare global {
       writeConfig: (config: Config) => Promise<void>
     },
     config: {
+      openAtStartup: (openAtStartup: boolean) => Promise<void>
+      minimizeToTray: (minimizeToTray: boolean) => Promise<void>
+      closeToTray: (closeToTray: boolean) => Promise<void>
       update: () => Promise<void>
     },
     dialogManagement: {

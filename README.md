@@ -1,34 +1,23 @@
 # Another-PasswordManager
-Another-PasswordManager is an opensource password manager written using Typescript, React, Tailwind, Electron and Webpack.
+Another-PasswordManager is an opensource password manager written using Typescript, React, Tailwind and Electron.
 
 ## Features
-- AES-256 encryption (???)
-- Password generation
-- Password strength checker
-- Passwords are stored locally
-- Passwords are encrypted with a master password
-- Passwords are stored in a JSON file
-- Passwords can be exported to a CSV file
-- Passwords can be imported from a CSV file
-- Passwords can be copied to the clipboard
-- Passwords can be deleted
-- Passwords can be edited
-- Passwords can be searched
-- Passwords can be sorted by name, username, password, url, and notes
-- Passwords can be filtered by name, username, password, url, and notes
-- Passwords can be sorted in ascending or descending order
+- AES-256 encryption
+- Password generation [TODO]
+- Password strength checker [TODO]
+- Entry values can be copied to the clipboard with a single click
 
 ## Tech
 Another-PasswordManager uses a number of open source projects to work properly:
-- [Electron] - Cross-platform desktop application framework
-- [Node.js] - Evented I/O for the backend
-- [TypeScript] - Typed superset of JavaScript that compiles to plain JavaScript
-- [jQuery] - JavaScript library designed to simplify HTML DOM tree traversal and manipulation
-- [Bootstrap] - CSS framework directed at responsive, mobile-first front-end web development
-- [Font Awesome] - Font and icon toolkit based on CSS and LESS
-- [CryptoJS] - JavaScript library of crypto standards
-- [jQuery CSV] - Parse CSV (Comma Separated Values) to Javascript arrays or dictionaries
-- [jQuery UI] - Curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library
+- [Electron](https://github.com/electron/electron) - Cross-platform desktop application framework
+- [TypeScript](https://github.com/microsoft/TypeScript) - Typed superset of JavaScript that compiles to plain JavaScript
+- [Webpack](https://github.com/webpack/webpack) - Static module bundler for modern JavaScript applications
+- [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) - Utility-first CSS framework for rapidly building custom designs
+- [Crypto-JS] - JavaScript library of crypto standards { NOT MANTAINED ANYMORE, NEED TO FIND A REPLACEMENT }
+
+
+Currently not in use but soon will be:
+- [Jest](https://github.com/jestjs/jest) - Delightful JavaScript Testing
 
 ## Browser Extensions
 

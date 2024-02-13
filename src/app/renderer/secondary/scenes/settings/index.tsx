@@ -67,7 +67,10 @@ const SettingsScene = ({ formikRef }) => {
     darkTheme: Theme,
     lightTheme: Theme,
     customTheme: Theme,
-    language: Language
+    language: Language,
+    openAtStartup: boolean,
+    minimizeToTray: boolean,
+    closeToTray: boolean
   }, setTemporaryValues: boolean) => {
     //TODO ID-22
     await (async () => {
@@ -92,6 +95,10 @@ const SettingsScene = ({ formikRef }) => {
       } else {
         await window.theming.setTheme(values.customTheme, false)
       }
+
+      await window.config.openAtStartup(values.openAtStartup)
+      await window.config.minimizeToTray(values.minimizeToTray)
+      await window.config.closeToTray(values.closeToTray)
     })()
       .then(async () => await i18n.changeLanguage(values.language))
   }
@@ -102,7 +109,10 @@ const SettingsScene = ({ formikRef }) => {
     (async () => {
       await handleApplySettings({
         ...newValues.settings.appearance,
-        language: newValues.settings.general.language
+        language: newValues.settings.general.language,
+        openAtStartup: newValues.settings.general.openAtStartup,
+        minimizeToTray: newValues.settings.general.minimizeToTray,
+        closeToTray: newValues.settings.general.closeToTray,
       }, false)
     })()
       .then(() => handleUpdateConfig({
@@ -123,6 +133,9 @@ const SettingsScene = ({ formikRef }) => {
         lightTheme: config.settings.appearance.lightTheme,
         customTheme: config.settings.appearance.customTheme,
         language: config.settings.general.language,
+        openAtStartup: config.settings.general.openAtStartup,
+        minimizeToTray: config.settings.general.minimizeToTray,
+        closeToTray: config.settings.general.closeToTray
       }, false)
     })()
       .then(() => window.close())
@@ -210,6 +223,9 @@ const SettingsScene = ({ formikRef }) => {
                     lightTheme: formik.values['appearanceLightTheme'],
                     customTheme: formik.values['appearanceCustomTheme'],
                     language: formik.values['generalLanguage'],
+                    openAtStartup: formik.values['generalOpenAtStartup'],
+                    minimizeToTray: formik.values['generalMinimizeToTray'],
+                    closeToTray: formik.values['generalCloseToTray']
                   }, true)
                 } }
               >

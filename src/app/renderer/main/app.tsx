@@ -194,7 +194,7 @@ const App = () => {
 
   return (
     <I18nextProvider i18n={ i18n.default }>
-      <TitleBar variant='main'/>
+      <TitleBar variant='main' title='Another password manager'/>
       <div className="overflow-hidden">
         {
           (!isInitialized) ?

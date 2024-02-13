@@ -16,7 +16,7 @@ const TitleBarButton = ({ icon, onClick }: { icon: ReactNode, onClick: () => voi
 }
 
 const SaveButton = () => {
-  const { filePath, setFilePath, fileContent, password } = useFileContentContext()
+  const { filePath, setFilePath, fileContent, password, forceUpdateFileContent } = useFileContentContext()
   const saveFile = () => {
     const saveFile = (path: string, content: string) => {
       window.electron.saveFile(path, content)
@@ -28,7 +28,7 @@ const SaveButton = () => {
     }
 
     if (filePath) {
-      saveFile(filePath, content)
+      forceUpdateFileContent()
       return
     } else {
       window.dialog.fileManagement.save()
@@ -64,7 +64,7 @@ const ChangeMasterKeyButton = () => {
   )
 }
 
-const CloseButton = ({onClick}) => {
+const CloseButton = ({ onClick }) => {
   return (
     <TitleBarButton
       icon={ <CloseIcon/> }
@@ -93,24 +93,31 @@ interface TitleBarProps {
 }
 
 const TitleBar = (props: TitleBarProps) => {
-  const { isInitialized } = useFileContentContext()
+  const { isInitialized, fileName, unsavedChanges } = useFileContentContext()
+  let title = props.title
+  if (isInitialized && title && props.variant === 'main') {
+    document.title = `${ fileName } - ${ title }`
+    title = `${ fileName }${ unsavedChanges ? '*' : '' } - ${ title }`
+  }
 
   return (
     <div className={
       props.variant === 'main' ?
-      'flex justify-between titlebar text-black dark:text-white items-center px-2 py-1 pr-36' :
-      'flex justify-between titlebar text-black dark:text-white items-center px-2 py-1 pr-1'
+        'flex justify-between titlebar text-black dark:text-white items-center px-2 py-1 pr-36' :
+        'flex justify-between titlebar text-black dark:text-white items-center px-2 py-1 pr-1'
     }>
       <div className="flex items-center">
         <TemporaryAppIcon/>
-        { isInitialized ?
-          <div>
-            <SaveButton/>
-            <ChangeMasterKeyButton/>
-          </div>
-          : null }
+        {
+          isInitialized ?
+            <div>
+              <SaveButton/>
+              <ChangeMasterKeyButton/>
+            </div>
+            : null
+        }
+        <h1 className="truncate label-text text-sm pl-1.5">{ title }</h1>
       </div>
-      <h1 className="truncate label-text text-sm">{props.title}</h1>
       {
         props.variant === 'main' ?
           <SettingsButton/>

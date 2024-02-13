@@ -4,12 +4,15 @@ import { init } from './services/init'
 import './ipc'
 import IpcEventNames from './ipc/ipcEventNames'
 import { setShortcuts } from './utils/shortcutManager'
+import { applyConfig, getOpenMinimizedFromConfig } from './utils/configManager'
+import * as process from 'process'
 
 export default class Main {
   static mainWindow: Electron.BrowserWindow
   static application: Electron.App
   static BrowserWindow: typeof BrowserWindow
   static StartupUrl: string | null
+  static Tray: Electron.Tray | undefined
 
   private static onWindowAllClosed() {
     if (process.platform !== 'darwin') {
@@ -17,8 +20,8 @@ export default class Main {
     }
   }
 
-  private static async onReady() : Promise<BrowserWindow> {
-    return await openMainWindow()
+  private static async onReady(windowMinimized: boolean): Promise<BrowserWindow> {
+    return await openMainWindow(windowMinimized)
   }
 
   //TODO ID-4
@@ -31,7 +34,7 @@ export default class Main {
 
   private static onActivate() {
     if (BrowserWindow.getAllWindows().length === 0) {
-      Main.onReady()
+      Main.onReady(false)
     }
   }
 
@@ -79,6 +82,13 @@ export default class Main {
     })
   }
 
+  public static setOpenAtStartup(openAtStartup: boolean) {
+    Main.application.setLoginItemSettings({
+      openAtLogin: openAtStartup,
+      name: 'AnotherPasswordManager'
+    })
+  }
+
   static main(app: Electron.App, browserWindow: typeof BrowserWindow) {
     Main.BrowserWindow = browserWindow
     Main.application = app
@@ -89,16 +99,14 @@ export default class Main {
       .then(async () => await init(Main.application))
       .then(async () => await setShortcuts(Main.application))
       .then(async () => {
-        //TODO ID-0
-        const startInBackground = false
-        if (startInBackground) {
-          return
-        }
-        Main.mainWindow = await Main.onReady()
+        const openMinimized = await getOpenMinimizedFromConfig()
+        Main.mainWindow = await Main.onReady(openMinimized)
         if (Main.StartupUrl) {
           Main.mainWindow.webContents.send(IpcEventNames.FileOpen.OpenFromPath, Main.StartupUrl)
           Main.StartupUrl = null
         }
+
+        await applyConfig()
 
         //TODO ID-5
 

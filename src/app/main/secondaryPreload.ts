@@ -73,6 +73,15 @@ contextBridge.exposeInMainWorld('settings', {
 contextBridge.exposeInMainWorld('config', {
   update: (): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.Config.Update)
+  },
+  openAtStartup: (openAtStartup: boolean): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Config.OpenAtStartup, openAtStartup)
+  },
+  minimizeToTray: (minimizeToTray: boolean): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Config.MinimizeToTray, minimizeToTray)
+  },
+  closeToTray: (closeToTray: boolean): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Config.CloseToTray, closeToTray)
   }
 })
 

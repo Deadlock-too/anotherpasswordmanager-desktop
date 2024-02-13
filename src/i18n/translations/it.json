@@ -242,6 +242,10 @@
     "Cancel Button": "Annulla",
     "Apply Button": "Applica"
   },
+  "Tray": {
+    "Show": "Mostra",
+    "Exit": "Esci"
+  },
   "Common": {
     "Validations": {
       "Required field": "Campo obbligatorio",
