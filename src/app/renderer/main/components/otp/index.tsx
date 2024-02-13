@@ -2,6 +2,7 @@ import { TOTP } from 'otpauth'
 import { useEffect, useState } from 'react'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../../common/components'
 import { useTranslation } from 'react-i18next'
+import { useConfigContext } from '../../../common/contexts'
 
 const RADIUS: number = 30
 const CIRCUMFERENCE: number = RADIUS * 2 * Math.PI
@@ -20,6 +21,7 @@ const copyOTP = ({ props, key, altKey, metaKey, shiftKey, ctrlKey }) => {
 }
 
 const SmallOTPComponent = (props: {
+  copyOnClick: boolean,
   otp: string,
   timer: { time: number, percentage: number },
   period: number
@@ -28,7 +30,9 @@ const SmallOTPComponent = (props: {
     <div className="flex flex-col items-center cursor-pointer justify-center hide-on-large-window"
          onClick={ (event) => {
            event.preventDefault()
-           window.clipboard.write(props.otp)
+           if (props.copyOnClick) {
+             window.clipboard.write(props.otp)
+           }
          } }
          tabIndex={ 0 }
          onKeyUp={ (event) => copyOTP({ props, ...event }) }
@@ -60,7 +64,11 @@ const SmallOTPComponentError = () => {
   )
 }
 
-const LargeOTPComponent = (props: { otp: string, timer: { time: number, percentage: number } }) => {
+const LargeOTPComponent = (props: {
+  copyOnClick: boolean,
+  otp: string,
+  timer: { time: number, percentage: number }
+}) => {
   let componentColor = 'text-info'
   if (props.timer.percentage < 50 && props.timer.percentage >= 25) {
     componentColor = 'text-warning'
@@ -71,7 +79,9 @@ const LargeOTPComponent = (props: { otp: string, timer: { time: number, percenta
   return (
     <div className="flex flex-row items-center cursor-pointer justify-center hide-on-small-window"
          onClick={ () => {
-           window.clipboard.write(props.otp)
+           if (props.copyOnClick) {
+             window.clipboard.write(props.otp)
+           }
          } }
          tabIndex={ 0 }
          onKeyUp={ (event) => copyOTP({ props, ...event }) }
@@ -217,16 +227,22 @@ const OTPError = () => {
 
 const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, percentage: number } }) => {
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
+  const { config } = useConfigContext()
+  const copyOnClick = config.settings.security.copyFieldValuesToClipboardOnClick
+
   const { t } = useTranslation()
 
   return (
     <Tooltip open={ isOpen } onOpenChange={ handleTooltipClose }>
       <TooltipTrigger className="w-full" onClick={ (e) => {
         e.preventDefault()
-        handleTooltipOpen()
+        if (copyOnClick) {
+          handleTooltipOpen()
+        }
       } }>
-        <SmallOTPComponent otp={ props.otp } timer={ props.timer } period={ props.totp.period }/>
-        <LargeOTPComponent otp={ props.otp } timer={ props.timer }/>
+        <SmallOTPComponent copyOnClick={ copyOnClick } otp={ props.otp } timer={ props.timer }
+                           period={ props.totp.period }/>
+        <LargeOTPComponent copyOnClick={ copyOnClick } otp={ props.otp } timer={ props.timer }/>
       </TooltipTrigger>
       <TooltipContent>
         <div
