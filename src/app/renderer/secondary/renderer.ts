@@ -53,6 +53,8 @@ declare global {
       setPassword: (password: string) => Promise<void>
       setFileContent: (password: string) => Promise<void>
       setInitialized: () => Promise<void>
+      unlock: (password: string) => Promise<void>
+      saveChanges: (saveChanges: boolean) => Promise<void>
     },
     log: {
       log: (...args) => Promise<void>

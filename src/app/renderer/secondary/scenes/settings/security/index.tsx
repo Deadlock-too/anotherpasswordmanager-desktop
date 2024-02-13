@@ -36,6 +36,13 @@ const SecuritySettings = ({ formik }) => {
             formik={ formik }
           />
         </SettingRow>
+        <SettingRow>
+          <FormikCheckbox
+            field="securityAutoLockOnTray"
+            label={ t('SettingsDialog.Security.Auto lock.On tray') }
+            formik={ formik }
+          />
+        </SettingRow>
       </Setting>
       <Setting title={ t('SettingsDialog.Security.Clipboard.Title') }>
         <SettingRow>

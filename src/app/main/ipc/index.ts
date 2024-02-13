@@ -201,6 +201,18 @@ ipcMain.handle(IpcEventNames.DialogManagement.SetInitialized, async (): Promise<
   })
 })
 
+ipcMain.handle(IpcEventNames.DialogManagement.Unlock, async (_, password: string): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.Unlock, password)
+  })
+})
+
+ipcMain.handle(IpcEventNames.DialogManagement.SaveChanges, async (_, saveChanges: boolean): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.DialogManagement.SaveChanges, saveChanges)
+  })
+})
+
 /**
  * Logging events handlers (usable from renderer process, mainly for secondary windows that could not open dev tools)
  */

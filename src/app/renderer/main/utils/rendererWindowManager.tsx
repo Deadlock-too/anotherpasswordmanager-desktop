@@ -5,14 +5,16 @@ let secondaryWindow: Window | null = null
 export enum WindowVariant {
   Settings = 'settings',
   PasswordOpen = 'passwordOpen',
+  PasswordUnlock = 'passwordUnlock',
   FailedOpen = 'failedOpen',
+  FailedUnlock = 'failedUnlock',
   PasswordCreate = 'passwordCreate',
   PasswordUpdate = 'passwordUpdate',
   AddFolder = 'addFolder',
   FolderDeletion = 'folderDeletion',
-  EntryDeletion = 'entryDeletion'
+  EntryDeletion = 'entryDeletion',
+  UnsavedChanges = 'unsavedChanges'
 }
-
 
 export const openSecondaryWindow = async (variant: WindowVariant, secondaryWindowEntry?: string) => {
   secondaryWindow = window.open(secondaryWindowEntry ?? 'http://localhost:3000/secondary_window', variant, `{"width":${window.outerWidth},"height":${window.outerHeight},"x":${window.screenX},"y":${window.screenY}}`)

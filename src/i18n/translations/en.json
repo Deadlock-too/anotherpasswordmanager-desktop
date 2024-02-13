@@ -131,8 +131,7 @@
       "Message": "Enter the master key password to open the file",
       "Password Label": "Master key password",
       "Password Placeholder": "Master key password",
-      "Submit Button": "Open",
-      "Cancel Button": "Cancel"
+      "Submit Button": "Open"
     },
     "Create": {
       "Title": "Create the master key password",
@@ -151,11 +150,30 @@
       "Confirm Label": "Confirm new master key password",
       "Confirm Placeholder": "Confirm new master key password",
       "Submit Button": "Update"
+    },
+    "Unlock": {
+      "Title": "Unlock",
+      "Message": "Enter the master key password to unlock the file",
+      "Password Label": "Master key password",
+      "Password Placeholder": "Master key password",
+      "Submit Button": "Unlock"
     }
   },
-  "FailedOpenDialog": {
-    "Title": "Failed to open file",
-    "Message": "Failed to open file. Please check the password and try again."
+  "FailureDialog": {
+    "Open": {
+      "Title": "Failed to open file",
+      "Message": "Failed to open file. Please check the password and try again."
+    },
+    "Unlock": {
+      "Title": "Failed to unlock file",
+      "Message": "Failed to unlock file. Please check the password and try again."
+    }
+  },
+  "UnsavedChangesDialog": {
+    "Title": "Unsaved changes",
+    "Message": "You have unsaved changes. Do you want to save them?",
+    "Save Button": "Save",
+    "Discard Button": "Discard"
   },
   "DeletionDialog": {
     "Folder": {
@@ -222,7 +240,8 @@
         "Auto lock after": "after",
         "seconds": "seconds",
         "On minimize": "On minimize",
-        "On sleep": "On sleep"
+        "On sleep": "On sleep",
+        "On tray": "On tray"
       },
       "Clipboard": {
         "Title": "Clipboard",
@@ -244,6 +263,11 @@
   },
   "Tray": {
     "Show": "Show",
+    "Exit": "Exit"
+  },
+  "Locked": {
+    "Message": "Locked. Your passwords are safe and protected.",
+    "Unlock": "Unlock",
     "Exit": "Exit"
   },
   "Common": {

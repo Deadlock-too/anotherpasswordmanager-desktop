@@ -67,6 +67,10 @@ declare global {
       unsubscribeToSetFileContent: () => void
       subscribeToSetInitialized: (callback: unknown) => void
       unsubscribeToSetInitialized: () => void
+      subscribeToUnlock: (callback: unknown) => void
+      unsubscribeToUnlock: () => void
+      subscribeToSaveChanges: (callback: unknown) => void
+      unsubscribeToSaveChanges: () => void
       subscribeToGetDeletingRecordInfo: (callback: unknown) => void
       unsubscribeToGetDeletingRecordInfo: () => void
       sendGetDeletingRecordInfoResult: (result: NamedIdentifiableType) => void

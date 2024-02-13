@@ -22,7 +22,7 @@ import { RecordType } from '../common/types'
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
   const { isInitialized, initialize, setFilePath, handleAddFolder, handleSelectFolder, selectedEntryId, selectedFolderId, handleDeleteEntry, handleDeleteFolder, setDeletingEntry, setDeletingFolder, deletingFolder, deletingEntry, filePath, setIsInitialized, setPassword } = useFileContentContext()
-  const { setIsPasswordModalOpen, setSecondaryWindowEntry, secondaryWindowEntry } = useModalContext()
+  const { setSecondaryWindowEntry, secondaryWindowEntry } = useModalContext()
   const { setIsDark } = useThemeContext()
   const { reloadConfig } = useConfigContext()
   const { setIsResizing, setIsScrolling } = useWindowContext()

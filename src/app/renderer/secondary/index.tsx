@@ -6,8 +6,9 @@ import AddFolderWindow from './scenes/addFolder'
 import { WindowVariant } from '../main/utils/rendererWindowManager'
 import DeletionWindow from './scenes/deletion'
 import { RecordType } from '../common/types'
-import FailedOpenWindow from './scenes/failedOpen'
+import FailureWindow from './scenes/failure'
 import PasswordWindow from './scenes/password'
+import UnsavedChangesWindow from './scenes/unsavedChanges'
 
 const rootDiv = document.getElementById('secondary_root')
 if (!rootDiv)
@@ -38,7 +39,10 @@ switch (variant) {
     component = <DeletionWindow recordType={ RecordType.Entry }/>
     break
   case WindowVariant.FailedOpen:
-    component = <FailedOpenWindow/>
+    component = <FailureWindow variant={ 'open' }/>
+    break
+  case WindowVariant.FailedUnlock:
+    component = <FailureWindow variant={ 'unlock' }/>
     break
   case WindowVariant.PasswordCreate:
     component = <PasswordWindow variant={ 'create' }/>
@@ -48,6 +52,12 @@ switch (variant) {
     break
   case WindowVariant.PasswordUpdate:
     component = <PasswordWindow variant={ 'update' }/>
+    break
+  case WindowVariant.PasswordUnlock:
+    component = <PasswordWindow variant={ 'unlock' }/>
+    break
+  case WindowVariant.UnsavedChanges:
+    component = <UnsavedChangesWindow />
     break
   default:
     component = <div>Unknown variant</div>

@@ -51,6 +51,8 @@ interface FileContentContextState {
   setEditingEntryId: (id: UUID | null) => void
   refreshDetail: boolean
   toggleRefreshDetail: () => void
+  isLocked: boolean
+  setIsLocked: (isLocked: boolean) => void
 }
 
 export const FileContentContext = createContext<FileContentContextState>({} as FileContentContextState)
@@ -68,6 +70,7 @@ export function FileContentContextProvider({ children }) {
   const [ fileContent, setFileContent ] = useState<File | null>(null)
   const [ internalUpdateFileContentToggle, setInternalUpdateFileContentToggle ] = useState(false)
   const [ unsavedChanges, setUnsavedChanges ] = useState<boolean>(false)
+  const [ isLocked, setIsLocked ] = useState<boolean>(false)
 
   const updateFileContent = () => {
     if (config.settings.general.autoSave) {
@@ -78,7 +81,7 @@ export function FileContentContextProvider({ children }) {
   }
 
   const forceUpdateFileContent = () => {
-    setInternalUpdateFileContentToggle((prevState) => !prevState)
+    handleUpdateFileContent()
   }
 
   const initialize = useCallback((path: string, fileContent: string) => {
@@ -92,7 +95,7 @@ export function FileContentContextProvider({ children }) {
     setFileName(path.split('\\').pop()?.split('/').pop() ?? '')
   }, [])
 
-  useEffect(() => {
+  const handleUpdateFileContent = () => {
     const fc = {
       AppVersion: CURRENT_APP_VERSION,
       Folders: folders
@@ -107,11 +110,25 @@ export function FileContentContextProvider({ children }) {
       }
       setUnsavedChanges(false)
     }
+  }
+
+  useEffect(() => {
+    handleUpdateFileContent()
   }, [ internalUpdateFileContentToggle, filePath, password ])
 
   const reset = useCallback(() => {
     setFolders([])
     setEntries([])
+    setFilePath('')
+    setFileName('')
+    setFileContent(null)
+    setPassword(null)
+    setContentVersion(null)
+    setUnsavedChanges(false)
+    setIsLocked(false)
+    handleSelectEntryInternal(null)
+    handleSelectFolderInternal(null)
+    setIsInitialized(false)
   }, [])
 
   const handleUpdateEntry = useCallback((entry: Entry) => {
@@ -261,7 +278,9 @@ export function FileContentContextProvider({ children }) {
     setEditingFolderId,
     setEditingEntryId,
     refreshDetail,
-    toggleRefreshDetail
+    toggleRefreshDetail,
+    isLocked,
+    setIsLocked
   }
 
   return (

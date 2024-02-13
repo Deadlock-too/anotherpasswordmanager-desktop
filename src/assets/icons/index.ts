@@ -18,7 +18,12 @@ import { ReactComponent as MoonIcon } from './svg/radix/moon.svg'
 import { ReactComponent as PlusIcon } from './svg/radix/plus.svg'
 import { ReactComponent as CloseIcon } from './svg/radix/cross-1.svg'
 import { ReactComponent as SettingsIcon } from './svg/radix/gear.svg'
-import { ReactComponent as TemporaryAppIcon } from './svg/radix/lock-closed.svg'
+import { ReactComponent as TemporaryAppIcon } from './svg/radix/tokens.svg'
+
+/* Generated with https://v0.dev/ */
+import { ReactComponent as DoorOpenIcon } from './svg/v0.dev/door-open.svg'
+import { ReactComponent as KeyIcon } from './svg/v0.dev/key.svg'
+import { ReactComponent as ShieldCheckIcon } from './svg/v0.dev/shield-check.svg'
 
 export {
   LockIcon,
@@ -36,5 +41,8 @@ export {
   CrossIcon,
   CheckIcon,
   SettingsIcon,
-  TemporaryAppIcon
+  TemporaryAppIcon,
+  DoorOpenIcon,
+  KeyIcon,
+  ShieldCheckIcon
 }

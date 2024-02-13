@@ -47,7 +47,7 @@ async function createMainWindow(windowMinimized: boolean) {
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
 
-    let mainWindowState = JSON.parse(details.features)
+    const mainWindowState = JSON.parse(details.features)
 
     let height = mainWindowState.height - 100
     let width = mainWindowState.width - 100
@@ -57,7 +57,7 @@ async function createMainWindow(windowMinimized: boolean) {
 
     //use frameName to identify which window is being opened
     switch (details.frameName) {
-      case WindowVariant.Settings:
+      case WindowVariant.Settings: {
         const settingsMinHeight = 300
         const settingsMinWidth = 550
         height = (height < settingsMinHeight) ? settingsMinHeight : height
@@ -66,33 +66,41 @@ async function createMainWindow(windowMinimized: boolean) {
         minWidth = 550
         resizable = true
         break
+      }
       case WindowVariant.AddFolder:
       case WindowVariant.EntryDeletion:
-      case WindowVariant.FolderDeletion:
+      case WindowVariant.FolderDeletion: {
         height = 250
         width = 450
         minHeight = 1
         minWidth = 1
         break
+      }
       case WindowVariant.FailedOpen:
+      case WindowVariant.FailedUnlock: {
         height = 200
         width = 400
         minHeight = 1
         minWidth = 1
         break
+      }
+      case WindowVariant.UnsavedChanges:
       case WindowVariant.PasswordOpen:
+      case WindowVariant.PasswordUnlock: {
         height = 250
         width = 450
         minHeight = 1
         minWidth = 1
         break
+      }
       case WindowVariant.PasswordCreate:
-      case WindowVariant.PasswordUpdate:
+      case WindowVariant.PasswordUpdate: {
         height = 320
         width = 450
         minHeight = 1
         minWidth = 1
         break
+      }
     }
 
     const x = Math.round((mainWindowState ? mainWindowState.x : 0) + (mainWindowState ? mainWindowState.width / 2 : 0) - width / 2)

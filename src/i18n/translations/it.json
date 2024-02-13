@@ -128,15 +128,14 @@
   "PasswordDialog": {
     "Open": {
       "Title": "Inserisci la password principale",
-      "Message": "Inserisci la password principale per sbloccare il database.",
+      "Message": "Inserisci la password principale per sbloccare il file.",
       "Password Label": "Password principale",
       "Password Placeholder": "Password principale",
-      "Submit Button": "Sblocca",
-      "Cancel Button": "Annulla"
+      "Submit Button": "Sblocca"
     },
     "Create": {
       "Title": "Crea la password principale",
-      "Message": "La password principale è necessaria per accedere al database. Inserisci una password sicura.",
+      "Message": "La password principale è necessaria per accedere al file. Inserisci una password sicura.",
       "Password Label": "Password principale",
       "Password Placeholder": "Password principale",
       "Confirm Label": "Conferma password",
@@ -151,11 +150,30 @@
       "Confirm Label": "Conferma password",
       "Confirm Placeholder": "Conferma password",
       "Submit Button": "Aggiorna"
+    },
+    "Unlock": {
+      "Title": "Sblocca",
+      "Message": "Inserisci la password principale per sbloccare il file.",
+      "Password Label": "Password principale",
+      "Password Placeholder": "Password principale",
+      "Submit Button": "Sblocca"
     }
   },
-  "FailedOpenDialog": {
-    "Title": "Errore apertura file",
-    "Message": "Impossibile aprire il file. Controlla la password principale e riprova."
+  "FailureDialog": {
+    "Open": {
+      "Title": "Errore apertura file",
+      "Message": "Impossibile aprire il file. Controlla la password principale e riprova."
+    },
+    "Unlock": {
+      "Title": "Errore sblocco file",
+      "Message": "Impossibile sbloccare il file. Controlla la password principale e riprova."
+    }
+  },
+  "UnsavedChangesDialog": {
+    "Title": "Modifiche non salvate",
+    "Message": "Ci sono modifiche non salvate. Vuoi salvare prima di uscire?",
+    "Save Button": "Salva",
+    "Discard Button": "Scarta"
   },
   "DeletionDialog": {
     "Folder": {
@@ -222,7 +240,8 @@
         "Auto lock after": "dopo",
         "seconds": "secondi",
         "On minimize": "Alla minimizzazione",
-        "On sleep": "Alla sospensione"
+        "On sleep": "Alla sospensione",
+        "On tray": "In area di notifica"
       },
       "Clipboard": {
         "Title": "Appunti",
@@ -241,6 +260,11 @@
     "Submit Button": "Salva",
     "Cancel Button": "Annulla",
     "Apply Button": "Applica"
+  },
+  "Locked": {
+    "Message": "Bloccato. Le tue password sono protette ed al sicuro.",
+    "Unlock": "Sblocca",
+    "Exit": "Esci"
   },
   "Tray": {
     "Show": "Mostra",

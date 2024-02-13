@@ -5,8 +5,32 @@ import { RefObject, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FormikTextInput } from '../../../common/components'
 
-interface PasswordSceneProps extends PasswordWindowProps {
+interface IPasswordSceneProps extends IPasswordWindowProps {
   formikRef: RefObject<FormikProps<any>>
+}
+
+const UnlockPasswordVariant = (props: { formik: FormikProps<any> }) => {
+  const { t } = useTranslation()
+  return (
+    <>
+      <FormikTextInput
+        type="password"
+        formik={ props.formik }
+        field="password"
+        label={ t('PasswordDialog.Unlock.Password Label') }
+        placeholder={ t('PasswordDialog.Unlock.Password Placeholder') }
+        readonly={ false }
+        disabled={ props.formik.isSubmitting }
+      />
+      <button
+        className="btn ml-auto mt-8"
+        type="submit"
+        disabled={ props.formik.isSubmitting }
+      >
+        { t('PasswordDialog.Unlock.Submit Button') }
+      </button>
+    </>
+  )
 }
 
 const OpenPasswordVariant = (props: { formik: FormikProps<any> }) => {
@@ -99,7 +123,7 @@ const UpdatePasswordVariant = (props: { formik: FormikProps<any> }) => {
   )
 }
 
-const PasswordScene = (props: PasswordSceneProps) => {
+const PasswordScene = (props: IPasswordSceneProps) => {
   const { t } = useTranslation()
 
   const setPassword = async (password: string) => {
@@ -115,6 +139,10 @@ const PasswordScene = (props: PasswordSceneProps) => {
       })
   }
 
+  const unlock = async (password: string) => {
+    await window.dialogManagement.unlock(password)
+  }
+
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1) //TODO ID-25
   }
@@ -127,6 +155,8 @@ const PasswordScene = (props: PasswordSceneProps) => {
         return <CreatePasswordVariant formik={ formik }/>
       case 'update':
         return <UpdatePasswordVariant formik={ formik }/>
+      case 'unlock':
+        return <UnlockPasswordVariant formik={ formik }/>
     }
   }
 
@@ -144,9 +174,21 @@ const PasswordScene = (props: PasswordSceneProps) => {
       } }
       onSubmit={ (values, { setSubmitting }) => {
         setTimeout(() => {
-          setPassword(values.password)
+          // Declare the function that will be subsequently assigned
+          let executingFunc = async (password: string) => {
+            /* empty func */
+          }
+
+          if (props.variant === 'unlock') {
+            executingFunc = unlock
+          } else {
+            executingFunc = setPassword
+          }
+
+          executingFunc(values.password)
             .then(() => setSubmitting(false))
             .then(window.close)
+
         }, 400)
       } }
       onReset={ () => {
@@ -170,7 +212,7 @@ const PasswordScene = (props: PasswordSceneProps) => {
   )
 }
 
-const InternalPassword = (props: PasswordWindowProps) => {
+const InternalPassword = (props: IPasswordWindowProps) => {
   const formikRef = useRef<FormikProps<any>>(null)
   const handleClose = () => {
     formikRef.current?.resetForm()
@@ -185,11 +227,11 @@ const InternalPassword = (props: PasswordWindowProps) => {
   )
 }
 
-interface PasswordWindowProps {
-  variant: 'open' | 'create' | 'update'
+interface IPasswordWindowProps {
+  variant: 'open' | 'create' | 'update' | 'unlock'
 }
 
-const PasswordWindow = (props: PasswordWindowProps) => {
+const PasswordWindow = (props: IPasswordWindowProps) => {
   return (
     <ContextProvider>
       <InternalPassword variant={ props.variant }/>

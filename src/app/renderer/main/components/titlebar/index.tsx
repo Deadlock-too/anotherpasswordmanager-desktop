@@ -1,4 +1,4 @@
-import { CloseIcon, SaveIcon, SettingsIcon, TemporaryAppIcon, UpdateIcon } from '../../../../../assets/icons'
+import { CloseIcon, LockIcon, SaveIcon, SettingsIcon, TemporaryAppIcon, UpdateIcon } from '../../../../../assets/icons'
 import { encrypt } from '../../../../main/utils/crypt'
 import { useFileContentContext, useModalContext } from '../../../common/contexts'
 import { ReactNode } from 'react'
@@ -73,6 +73,16 @@ const CloseButton = ({ onClick }) => {
   )
 }
 
+const LockButton = () => {
+  const { setIsLocked } = useFileContentContext()
+  return (
+    <TitleBarButton
+      icon={ <LockIcon /> }
+      onClick={ () => setIsLocked(true) }
+    />
+  )
+}
+
 const SettingsButton = () => {
   const { secondaryWindowEntry } = useModalContext()
 
@@ -93,7 +103,7 @@ interface TitleBarProps {
 }
 
 const TitleBar = (props: TitleBarProps) => {
-  const { isInitialized, fileName, unsavedChanges } = useFileContentContext()
+  const { isInitialized, fileName, unsavedChanges, isLocked } = useFileContentContext()
   let title = props.title
   if (isInitialized && title && props.variant === 'main') {
     document.title = `${ fileName } - ${ title }`
@@ -113,6 +123,11 @@ const TitleBar = (props: TitleBarProps) => {
             <div>
               <SaveButton/>
               <ChangeMasterKeyButton/>
+              {
+                props.variant === 'main' && !isLocked ?
+                  <LockButton/>
+                  : null
+              }
             </div>
             : null
         }

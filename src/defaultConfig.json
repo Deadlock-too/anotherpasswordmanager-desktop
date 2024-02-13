@@ -19,6 +19,7 @@
       "autoLockTime": 600,
       "autoLockOnMinimize": false,
       "autoLockOnSleep": false,
+      "autoLockOnTray": false,
       "autoCleanClipboard": false,
       "autoCleanClipboardTime": 30,
       "copyFieldValuesToClipboardOnClick": false,

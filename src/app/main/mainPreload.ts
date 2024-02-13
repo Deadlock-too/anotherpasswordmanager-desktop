@@ -178,6 +178,18 @@ contextBridge.exposeInMainWorld('electron', {
   unsubscribeToSetInitialized: () => {
     ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.SetInitialized)
   },
+  subscribeToUnlock: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.Unlock, (event, ...args) => callback(...args))
+  },
+  unsubscribeToUnlock: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.Unlock)
+  },
+  subscribeToSaveChanges: (callback) => {
+    ipcRenderer.on(IpcEventNames.DialogManagement.SaveChanges, (event, ...args) => callback(...args))
+  },
+  unsubscribeToSaveChanges: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.DialogManagement.SaveChanges)
+  },
   subscribeToGetDeletingRecordInfo: (callback) => {
     ipcRenderer.on(IpcEventNames.DialogManagement.GetDeletingRecordInfo, (event, ...args) => callback(...args))
   },

@@ -118,6 +118,12 @@ contextBridge.exposeInMainWorld('dialogManagement', {
   },
   setInitialized: (): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.DialogManagement.SetInitialized)
+  },
+  unlock: (password: string): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.Unlock, password)
+  },
+  saveChanges: (saveChanges: boolean): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.DialogManagement.SaveChanges, saveChanges)
   }
 })
 

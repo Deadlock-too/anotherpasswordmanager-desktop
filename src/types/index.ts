@@ -6,7 +6,7 @@ export type Config = {
       openMinimized: boolean
       minimizeToTray: boolean
       closeToTray: boolean
-      autoSave: boolean //TODO ID-0.5
+      autoSave: boolean
     }
     appearance: {
       customTheme: Theme
@@ -19,6 +19,7 @@ export type Config = {
       autoLockTime?: number //TODO ID-0.8
       autoLockOnMinimize: boolean //TODO ID-0.9
       autoLockOnSleep: boolean //TODO ID-0.10
+      autoLockOnTray: boolean //TODO ID-0.15
       autoCleanClipboard: boolean //TODO ID-0.11
       autoCleanClipboardTime?: number //TODO ID-0.12
       copyFieldValuesToClipboardOnClick: boolean

@@ -37,6 +37,8 @@ const IpcEventNames = {
     SetPassword: 'dialogManagement:setPassword',
     SetFileContent: 'dialogManagement:setFileContent',
     SetInitialized: 'dialogManagement:setInitialized',
+    Unlock: 'dialogManagement:unlock',
+    SaveChanges: 'dialogManagement:saveChanges',
   },
   Config: {
     Get: 'config:get',

@@ -18,7 +18,6 @@ const FoldersColumn = ({elements}) => {
   } = useFileContentContext()
   const { t } = useTranslation()
   const { secondaryWindowEntry } = useModalContext()
-  const { setIsAddFolderModalOpen } = useModalContext()
 
   const column = new ColumnBase<Folder>({
     style: {

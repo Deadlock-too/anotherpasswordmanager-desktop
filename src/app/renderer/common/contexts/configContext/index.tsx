@@ -29,9 +29,9 @@ export function ConfigContextProvider({ children }) {
     reloadConfig()
   }, [])
 
-  useEffect(() => {
-    console.log(JSON.stringify(config))
-  }, [config])
+  // useEffect(() => {
+  //   console.log(JSON.stringify(config))
+  // }, [config])
 
   // //Refresh config every 10 seconds
   // useEffect(() => {
