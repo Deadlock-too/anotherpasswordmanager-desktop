@@ -109,6 +109,10 @@ ipcMain.handle(IpcEventNames.Clipboard.Write, async (_, args): Promise<void> => 
   return clipboard.writeText(args, 'clipboard')
 })
 
+ipcMain.handle(IpcEventNames.Clipboard.Clear, async (): Promise<void> => {
+  return clipboard.clear()
+})
+
 ipcMain.handle(IpcEventNames.Electron.SaveFile, async (_, path: string, data: string): Promise<void> => {
   fs.writeFileSync(path, data, { encoding: 'utf-8' })
 })

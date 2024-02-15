@@ -21,7 +21,7 @@ const SecuritySettings = ({ formik }) => {
             disabled={ !formik.values.securityAutoLock }
             formik={ formik }
             min={ 30 }
-            max={ 60 * 60 * 24 * 7 }
+            max={ 60 * 60 * 12 }
           />
         </SettingRow>
         <SettingRow>
@@ -52,21 +52,26 @@ const SecuritySettings = ({ formik }) => {
       <Setting title={ t('SettingsDialog.Security.Clipboard.Title') }>
         <SettingRow>
           <FormikCheckbox
-            field="securityAutoCleanClipboard"
+            field="securityAutoClearClipboard"
             label={ t('SettingsDialog.Security.Clipboard.Auto clear clipboard') }
             formik={ formik }
           />
           <FormikNumberInput
             preLabel={ t('SettingsDialog.Security.Clipboard.Clear after') }
             afterLabel={ t('SettingsDialog.Security.Clipboard.seconds') }
-            field="securityAutoCleanClipboardTime"
-            disabled={ !formik.values.securityAutoCleanClipboard }
+            field="securityAutoClearClipboardTime"
+            disabled={ !formik.values.securityAutoClearClipboard }
             formik={ formik }
             min={ 1 }
-            max={ 60 * 60 * 24 * 7 }
+            max={ 60 * 60 }
           />
         </SettingRow>
         <SettingRow>
+          <FormikCheckbox
+            field="securityAutoClearClipboardOnLock"
+            label={ t('SettingsDialog.Security.Clipboard.Clear on lock') }
+            formik={ formik }
+          />
           <FormikCheckbox
             field="securityCopyFieldValuesToClipboardOnClick"
             label={ t('SettingsDialog.Security.Clipboard.Copy field values to clipboard on click') }

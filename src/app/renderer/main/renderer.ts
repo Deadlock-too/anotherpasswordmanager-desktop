@@ -35,6 +35,7 @@ declare global {
     clipboard: {
       read: () => Promise<string>,
       write: (text: string) => Promise<void>
+      clear: () => Promise<void>
     },
     lock: {
       subscribeToLock: (callback: unknown) => void

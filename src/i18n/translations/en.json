@@ -249,6 +249,7 @@
         "Auto clear clipboard": "Auto clear clipboard",
         "Clear after": "Clear after",
         "seconds": "seconds",
+        "Clear on lock": "Clear on lock",
         "Copy field values to clipboard on click": "Copy field values to clipboard on click"
       },
       "Entry expire": {

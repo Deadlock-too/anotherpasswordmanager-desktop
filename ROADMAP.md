@@ -5,11 +5,7 @@
 
 #### Priority implementations
 - [ ] **[ID-0]** Implement missing settings already defined
-  - [ ] Implement security settings
-    - [x] **[ID-0.7]** Implement autoLock
-    - [x] **[ID-0.8]** Implement autoLockTime
-    - [ ] **[ID-0.11]** Implement autoCleanClipboard
-    - [ ] **[ID-0.12]** Implement autoCleanClipboardTime
+  - [ ] Implement security settings (finish managing when expiry is implemented)
     - [ ] **[ID-0.13]** Implement defaultNewEntryExpire
     - [ ] **[ID-0.14]** Implement defaultNewEntryExpireTime
 - [ ] `HIGH PRIORITY` Redefine IpcEvents hierarchy and event subscription management 

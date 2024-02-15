@@ -4,6 +4,7 @@ import { usePasswordToggle } from '../../../../main/hooks/passwordVisibility'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../tooltip'
 import { EyeIcon, EyeSlashIcon } from '../../../../../../assets/icons'
 import { debounce } from 'lodash'
+import { useClipboardContext } from '../../../contexts'
 
 interface IPasswordInputProps {
   label: string;
@@ -55,7 +56,7 @@ const PasswordInput = ({
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
   const [ isHoveringButton, setIsHoveringButton ] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-
+  const { handleSetClipboard } = useClipboardContext()
   const [ isTyping, setIsTyping ] = useState(false)
   const debouncedInput = useRef(debounce((value) => {
     setIsTyping(false)
@@ -169,9 +170,9 @@ const PasswordInput = ({
   )
 
   return (
-    <label className="form-control w-full" onClick={ () => {
+    <label className="form-control w-full" onMouseUp={ () => {
       if (!isHoveringButton && copiableContent && readonly && value !== undefined)
-        window.clipboard.write(value)
+        handleSetClipboard(value)
     } }>
       <div className="label">
         <span className="label-text font-bold">

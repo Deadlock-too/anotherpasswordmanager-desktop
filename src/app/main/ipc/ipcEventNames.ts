@@ -15,6 +15,7 @@ const IpcEventNames = {
   Clipboard: {
     Read: 'clipboard:read',
     Write: 'clipboard:write',
+    Clear: 'clipboard:clear',
   },
   Electron: {
     SaveFile: 'electron:saveFile',

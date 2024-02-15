@@ -6,6 +6,7 @@ import { ConfigContext, ConfigContextProvider } from './configContext'
 import { LocalContext, LocalContextProvider } from './scrollContext'
 import { WindowContext, WindowContextProvider } from './windowContext'
 import { IdleContext, IdleContextProvider } from './idleContext'
+import { ClipboardContext, ClipboardContextProvider } from './clipboardContext'
 
 
 const useFileContentContext = () => useContext(FileContentContext)
@@ -15,6 +16,7 @@ const useConfigContext = () => useContext(ConfigContext)
 const useLocalContext = () => useContext(LocalContext)
 const useWindowContext = () => useContext(WindowContext)
 const useIdleContext = () => useContext(IdleContext)
+const useClipboardContext = () => useContext(ClipboardContext)
 
 export {
   useFileContentContext,
@@ -30,5 +32,7 @@ export {
   useWindowContext,
   WindowContextProvider,
   useIdleContext,
-  IdleContextProvider
+  IdleContextProvider,
+  useClipboardContext,
+  ClipboardContextProvider
 }

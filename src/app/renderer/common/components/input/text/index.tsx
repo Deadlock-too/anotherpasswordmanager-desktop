@@ -2,6 +2,7 @@ import { ChangeEvent, ReactNode, useRef, useState } from 'react'
 import { FormikErrors, FormikProps, FormikTouched } from 'formik'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../tooltip'
 import { debounce } from 'lodash'
+import { useClipboardContext } from '../../../contexts'
 
 interface ITextInputProps {
   type: 'text' | 'password';
@@ -53,6 +54,7 @@ const TextInput = ({
   customReadonlyComponent
 }: ITextInputProps) => {
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
+  const { handleSetClipboard } = useClipboardContext()
   const [ isTyping, setIsTyping ] = useState(false)
   const debouncedInput = useRef(debounce((value) => {
     setIsTyping(false)
@@ -118,11 +120,11 @@ const TextInput = ({
   }
 
   return (
-    <label className="form-control w-full" onClick={ (event) => {
+    <label className="form-control w-full" onMouseUp={ (event) => {
       if (preventDefaultOnClick)
         event.preventDefault()
       if (copiableContent && readonly && value !== undefined)
-        window.clipboard.write(value)
+        handleSetClipboard(value)
     } }>
       <div className="label">
         <span className="label-text font-bold">

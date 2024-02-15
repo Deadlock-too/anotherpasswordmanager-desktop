@@ -21,11 +21,12 @@ export type Config = {
       autoLockOnSleep: boolean
       autoLockOnLock: boolean
       autoLockOnTray: boolean
-      autoCleanClipboard: boolean //TODO ID-0.11
-      autoCleanClipboardTime?: number //TODO ID-0.12
+      autoClearClipboard: boolean
+      autoClearClipboardTime: number
+      autoClearClipboardOnLock: boolean
       copyFieldValuesToClipboardOnClick: boolean
       defaultNewEntryExpire: boolean //TODO ID-0.13
-      defaultNewEntryExpireTime?: number //TODO ID-0.14
+      defaultNewEntryExpireTime: number //TODO ID-0.14
     }
   }
 }

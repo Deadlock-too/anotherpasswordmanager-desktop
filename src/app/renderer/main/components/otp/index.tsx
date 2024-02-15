@@ -2,21 +2,21 @@ import { TOTP } from 'otpauth'
 import { useEffect, useState } from 'react'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../../common/components'
 import { useTranslation } from 'react-i18next'
-import { useConfigContext } from '../../../common/contexts'
+import { useClipboardContext, useConfigContext } from '../../../common/contexts'
 
-const RADIUS: number = 30
+const RADIUS = 30
 const CIRCUMFERENCE: number = RADIUS * 2 * Math.PI
-export const RegExpPattern: string = 'otpauth:\\/\\/(?<protocol>totp|hotp)\\/(?:(?<issuerInLabel>[a-zA-Z]+):)?(?<label>[a-zA-Z+.@]+)(?:\\?|(?:%3F))(?:secret)(?:(?:%3D)|=)(?<secret>[^&%\\r\\n]+)(?:(?:(?:%26)|&)issuer(?:(?:%3D)|=)(?<issuer>[^&\\r\\n]+))?(?:(?:(?:%26)|&)algorithm(?:(?:%3D)|=)(?<algorithm>[^&\\r\\n]+))?(?:(?:(?:%26)|&)digits(?:(?:%3D)|=)(?<digits>[0-9]+))?(?:(?:(?:%26)|&)period(?:(?:%3D)|=)(?<period>[0-9]+))?(?:(?:(?:%26)|&)counter(?:(?:%3D)|=)(?<counter>[0-9]+))?'
+export const RegExpPattern = 'otpauth:\\/\\/(?<protocol>totp|hotp)\\/(?:(?<issuerInLabel>[a-zA-Z]+):)?(?<label>[a-zA-Z+.@]+)(?:\\?|(?:%3F))(?:secret)(?:(?:%3D)|=)(?<secret>[^&%\\r\\n]+)(?:(?:(?:%26)|&)issuer(?:(?:%3D)|=)(?<issuer>[^&\\r\\n]+))?(?:(?:(?:%26)|&)algorithm(?:(?:%3D)|=)(?<algorithm>[^&\\r\\n]+))?(?:(?:(?:%26)|&)digits(?:(?:%3D)|=)(?<digits>[0-9]+))?(?:(?:(?:%26)|&)period(?:(?:%3D)|=)(?<period>[0-9]+))?(?:(?:(?:%26)|&)counter(?:(?:%3D)|=)(?<counter>[0-9]+))?'
 
-const copyOTP = ({ props, key, altKey, metaKey, shiftKey, ctrlKey }) => {
+const copyOTP = ({props, key, altKey, metaKey, shiftKey, ctrlKey }) => {
   if (key === 'Enter') {
-    window.clipboard.write(props.otp)
+    props.handleSetClipboard(props.otp)
   }
   if (key === ' ') {
-    window.clipboard.write(props.otp)
+    props.handleSetClipboard(props.otp)
   }
   if (!altKey && !metaKey && !shiftKey && ctrlKey && key === 'c') {
-    window.clipboard.write(props.otp)
+    props.handleSetClipboard(props.otp)
   }
 }
 
@@ -24,14 +24,15 @@ const SmallOTPComponent = (props: {
   copyOnClick: boolean,
   otp: string,
   timer: { time: number, percentage: number },
-  period: number
+  period: number,
+  handleSetClipboard: (value: string) => void
 }) => {
   return (
     <div className="flex flex-col items-center cursor-pointer justify-center hide-on-large-window"
          onClick={ (event) => {
            event.preventDefault()
            if (props.copyOnClick) {
-             window.clipboard.write(props.otp)
+             props.handleSetClipboard(props.otp)
            }
          } }
          tabIndex={ 0 }
@@ -68,6 +69,7 @@ const LargeOTPComponent = (props: {
   copyOnClick: boolean,
   otp: string,
   timer: { time: number, percentage: number }
+  handleSetClipboard: (value: string) => void
 }) => {
   let componentColor = 'text-info'
   if (props.timer.percentage < 50 && props.timer.percentage >= 25) {
@@ -80,7 +82,7 @@ const LargeOTPComponent = (props: {
     <div className="flex flex-row items-center cursor-pointer justify-center hide-on-small-window"
          onClick={ () => {
            if (props.copyOnClick) {
-             window.clipboard.write(props.otp)
+             props.handleSetClipboard(props.otp)
            }
          } }
          tabIndex={ 0 }
@@ -227,6 +229,7 @@ const OTPError = () => {
 
 const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, percentage: number } }) => {
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
+  const { handleSetClipboard } = useClipboardContext()
   const { config } = useConfigContext()
   const copyOnClick = config.settings.security.copyFieldValuesToClipboardOnClick
 
@@ -240,9 +243,11 @@ const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, p
           handleTooltipOpen()
         }
       } }>
-        <SmallOTPComponent copyOnClick={ copyOnClick } otp={ props.otp } timer={ props.timer }
+        <SmallOTPComponent copyOnClick={ copyOnClick } handleSetClipboard={ handleSetClipboard } otp={ props.otp }
+                           timer={ props.timer }
                            period={ props.totp.period }/>
-        <LargeOTPComponent copyOnClick={ copyOnClick } otp={ props.otp } timer={ props.timer }/>
+        <LargeOTPComponent copyOnClick={ copyOnClick } handleSetClipboard={ handleSetClipboard } otp={ props.otp }
+                           timer={ props.timer }/>
       </TooltipTrigger>
       <TooltipContent>
         <div

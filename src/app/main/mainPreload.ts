@@ -84,6 +84,9 @@ contextBridge.exposeInMainWorld('clipboard', {
   },
   write: (text: string): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.Clipboard.Write, text)
+  },
+  clear: (): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Clipboard.Clear)
   }
 })
 

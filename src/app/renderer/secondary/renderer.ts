@@ -30,6 +30,7 @@ declare global {
     clipboard: {
       read: () => Promise<string>,
       write: (text: string) => Promise<void>
+      clear: () => Promise<void>
     },
     settings: {
       readConfig: () => Promise<Config>,

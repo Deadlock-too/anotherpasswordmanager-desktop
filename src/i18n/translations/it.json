@@ -249,6 +249,7 @@
         "Auto clear clipboard": "Svuota automaticamente gli appunti",
         "Clear after": "Svuota dopo",
         "seconds": "secondi",
+        "Clear on lock": "Svuota al blocco",
         "Copy field values to clipboard on click": "Copia i valori dei campi negli appunti al click"
       },
       "Entry expire": {

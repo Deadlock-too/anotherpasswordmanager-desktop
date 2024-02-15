@@ -1,4 +1,5 @@
 import {
+  ClipboardContextProvider,
   ConfigContextProvider,
   FileContentContextProvider,
   ModalContextProvider,
@@ -40,9 +41,11 @@ const InternalContextProvider = (props: IContextProviderProps) => {
 
   let context = (
     <FileContentContextProvider>
-      <IdleContextProvider variant={ props.variant }>
-        { props.children }
-      </IdleContextProvider>
+      <ClipboardContextProvider>
+        <IdleContextProvider variant={ props.variant }>
+          { props.children }
+        </IdleContextProvider>
+      </ClipboardContextProvider>
     </FileContentContextProvider>
   )
 
