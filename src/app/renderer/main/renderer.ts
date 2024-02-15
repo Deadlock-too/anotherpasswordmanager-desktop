@@ -36,6 +36,11 @@ declare global {
       read: () => Promise<string>,
       write: (text: string) => Promise<void>
     },
+    lock: {
+      subscribeToLock: (callback: unknown) => void
+      unsubscribeToLock: () => void
+      lock: () => void
+    },
     electron: {
       subscribeToFileOpened: (callback: unknown) => void
       unsubscribeToFileOpened: () => void
@@ -81,8 +86,14 @@ declare global {
       unsubscribeToSetSecondaryWindowEntry: () => void
     },
     settings: {
-      readConfig: () => Promise<Config>,
+      readConfig: () => Promise<Config>
       writeConfig: (config: Config) => Promise<void>
+    },
+    log: {
+      log: (...args) => Promise<void>
+      info: (...args) => Promise<void>
+      warn: (...args) => Promise<void>
+      error: (...args) => Promise<void>
     }
   }
 }

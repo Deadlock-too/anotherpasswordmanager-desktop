@@ -17,7 +17,7 @@ if (!initialized) {
 
 const root = createRoot(rootDiv)
 root.render(
-  <ContextProvider>
+  <ContextProvider variant="main">
     <App/>
   </ContextProvider>
 )

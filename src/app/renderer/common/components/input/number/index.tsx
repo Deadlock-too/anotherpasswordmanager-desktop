@@ -43,7 +43,15 @@ const NumberInput = ({
           type="number"
           className="input input-xs w-16"
           name={ field }
-          onChange={ handleChange }
+          onChange={ (event) => {
+            if (min && parseInt(event.target.value) < min) {
+              event.target.value = min.toString()
+            }
+            if (max && parseInt(event.target.value) > max) {
+              event.target.value = max.toString()
+            }
+            handleChange(event)
+          } }
           value={ value }
           placeholder={ placeholder }
           disabled={ disabled }

@@ -19,6 +19,7 @@ const IpcEventNames = {
   Electron: {
     SaveFile: 'electron:saveFile',
     SetSecondaryWindowEntry: 'electron:setSecondaryWindowEntry',
+    Lock: 'electron:lock',
   },
   FileOpen: {
     Opened: 'fileOpen:fileOpened',
@@ -48,6 +49,9 @@ const IpcEventNames = {
     OpenAtStartup: 'config:openAtStartup',
     MinimizeToTray: 'config:minimizeToTray',
     CloseToTray: 'config:closeToTray',
+    AutoLockOnMinimize: 'config:autoLockOnMinimize',
+    AutoLockOnSleep: 'config:autoLockOnSleep',
+    AutoLockOnLock: 'config:autoLockOnLock',
   },
   Localization: {
     ChangeLanguage: 'localization:changeLanguage',

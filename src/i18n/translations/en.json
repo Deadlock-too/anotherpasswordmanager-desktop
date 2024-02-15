@@ -241,7 +241,8 @@
         "seconds": "seconds",
         "On minimize": "On minimize",
         "On sleep": "On sleep",
-        "On tray": "On tray"
+        "On tray": "On tray",
+        "On lock": "On lock"
       },
       "Clipboard": {
         "Title": "Clipboard",

@@ -19,6 +19,7 @@
       "autoLockTime": 600,
       "autoLockOnMinimize": false,
       "autoLockOnSleep": false,
+      "autoLockOnLock": false,
       "autoLockOnTray": false,
       "autoCleanClipboard": false,
       "autoCleanClipboardTime": 30,

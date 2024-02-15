@@ -5,23 +5,15 @@
 
 #### Priority implementations
 - [ ] **[ID-0]** Implement missing settings already defined
-  - [ ] Implement general settings 
-    - [x] **[ID-0.1]** Implement open at startup
-    - [x] **[ID-0.2]** Implement open minimized
-    - [x] **[ID-0.3]** Implement minimize to tray
-    - [x] **[ID-0.4]** Implement close to tray
-    - [x] **[ID-0.5]** Implement autoSave
-    - [ ] ~~**[ID-0.6]** Implement autoSaveTime~~
   - [ ] Implement security settings
-    - [ ] **[ID-0.7]** Implement autoLock
-    - [ ] **[ID-0.8]** Implement autoLockTime
-    - [ ] **[ID-0.9]** Implement autoLockOnMinimize
-    - [ ] **[ID-0.10]** Implement autoLockOnSleep
-    - [ ] **[ID-0.15]** Implement autoLockOnTray
+    - [x] **[ID-0.7]** Implement autoLock
+    - [x] **[ID-0.8]** Implement autoLockTime
     - [ ] **[ID-0.11]** Implement autoCleanClipboard
     - [ ] **[ID-0.12]** Implement autoCleanClipboardTime
     - [ ] **[ID-0.13]** Implement defaultNewEntryExpire
     - [ ] **[ID-0.14]** Implement defaultNewEntryExpireTime
+- [ ] `HIGH PRIORITY` Redefine IpcEvents hierarchy and event subscription management 
+- [ ] `HIGH PRIORITY` Reorganize features and improvements in the roadmap giving them a priority, a difficulty, a time estimate and a deadline (move it to Notion for easier management)
 - [ ] **[ID-1]** Define app icon
 - [ ] **[ID-2]** Define default file name for the password file
 - [ ] **[ID-4]** Manage protocol links in dedicated class
@@ -53,6 +45,10 @@
 - [ ] **[ID-22]** On settings apply, update not only theme and language but also other settings
 - [ ] **[ID-23]** On settings reset, reset all applied settings
 - [ ] **[ID-24]** Use library like os-locale to get the user's locale and set initial language
+- [ ] **[ID-26]** Centralize all lock management in secondary windows instead of having it duplicated in every component
+- [ ] Add notification about successful file saves and eventual errors
+- [ ] Fix tabbing problems for better accessibility
+- [ ] On shutdown ask for saving unsaved changes (use powerMonitor to do so, already used for suspend, pay attention that the `shutdown` event is not available on Windows at the moment, might need to find a workaround)
 - [ ] Design and add intro animation on open
 - [ ] Entry improvements:
   - [ ] Different entry types (login, credit card, secure note, etc.)
@@ -82,8 +78,10 @@
   - [ ] Add shortcuts for common actions
   - [ ] Add shortcuts for custom actions
 - [ ] Customizable dashboard with widgets
-- [ ] Add setting to delete file after a number of failed attempts trying to unlock the file or opening it. Include a warning about the possible loss of data and make it overridable per single file. Save hashes of the files that don't want to be deleted to prevent accidental deletion and prevent brute force attacks by simply removing from the hash list. Think about how to make unmodifiable counter of failed attempts.
+- [ ] Add setting to delete file after a number of failed attempts trying to unlock the file or opening it. Include a warning about the possible loss of data and make it overridable per single file. Save hashes of the files that don't want to be deleted to prevent accidental deletion and prevent brute force attacks by simply removing from the hash list. Think about how to make unmodifiable counter of failed attempts (Maybe try to use electron safe-storage API).
+- [ ] Think about more utility settings to add
 - [ ] Auto-update
+- [ ] Crash reporting
 - [ ] Browser extensions
   - [ ] Chrome
   - [ ] Firefox

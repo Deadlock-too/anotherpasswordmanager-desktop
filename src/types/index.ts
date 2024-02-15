@@ -15,11 +15,12 @@ export type Config = {
       useSystemTheme: boolean
     }
     security: {
-      autoLock: boolean //TODO ID-0.7
-      autoLockTime?: number //TODO ID-0.8
-      autoLockOnMinimize: boolean //TODO ID-0.9
-      autoLockOnSleep: boolean //TODO ID-0.10
-      autoLockOnTray: boolean //TODO ID-0.15
+      autoLock: boolean
+      autoLockTime: number
+      autoLockOnMinimize: boolean
+      autoLockOnSleep: boolean
+      autoLockOnLock: boolean
+      autoLockOnTray: boolean
       autoCleanClipboard: boolean //TODO ID-0.11
       autoCleanClipboardTime?: number //TODO ID-0.12
       copyFieldValuesToClipboardOnClick: boolean

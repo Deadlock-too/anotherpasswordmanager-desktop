@@ -6,19 +6,19 @@ import { useEffect } from 'react'
 
 const Locked = () => {
   const { t } = useTranslation()
-  const { secondaryWindowEntry } = useModalContext()
+  const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   const { unsavedChanges, password, setIsLocked, reset, forceUpdateFileContent } = useFileContentContext()
 
   const onExit = async () => {
     if (unsavedChanges) {
-      await openSecondaryWindow(WindowVariant.UnsavedChanges, secondaryWindowEntry)
+      await openSecondaryWindow(WindowVariant.UnsavedChanges, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     } else {
       reset()
     }
   }
 
   const onUnlock = async () => {
-    await openSecondaryWindow(WindowVariant.PasswordUnlock, secondaryWindowEntry)
+    await openSecondaryWindow(WindowVariant.PasswordUnlock, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
   }
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Locked = () => {
       if (pwd === password) {
         setIsLocked(false)
       } else {
-        await openSecondaryWindow(WindowVariant.FailedUnlock, secondaryWindowEntry)
+        await openSecondaryWindow(WindowVariant.FailedUnlock, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
       }
     }
     window.electron.subscribeToUnlock(unlockHandler)

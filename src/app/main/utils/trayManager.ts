@@ -1,13 +1,23 @@
-import { Menu, Tray } from 'electron'
+import { BrowserWindow, Menu, Tray } from 'electron'
 import Main from '../main'
 import Pkg from '../../../../package.json'
 import * as path from 'path'
 import i18n from '../../../i18n'
+import IpcEventNames from '../ipc/ipcEventNames'
+import { getAutoLockOnTrayFromConfig } from './configManager'
 
 
-export const createTray = () => {
+export const createTray = async () => {
   if (Main.Tray)
     return
+
+  await getAutoLockOnTrayFromConfig().then(autoLockOnTray => {
+    if (autoLockOnTray) {
+      BrowserWindow.getAllWindows().forEach(window => {
+        window.webContents.send(IpcEventNames.Electron.Lock)
+      })
+    }
+  })
 
   Main.Tray = new Tray(path.join(__dirname, 'assets', 'icons', 'icon.png'))
 

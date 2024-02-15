@@ -87,6 +87,16 @@ contextBridge.exposeInMainWorld('clipboard', {
   }
 })
 
+contextBridge.exposeInMainWorld('lock', {
+  subscribeToLock: (callback) => {
+    ipcRenderer.on(IpcEventNames.Electron.Lock, (event, ...args) => callback(...args))
+  },
+  unsubscribeToLock: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.Electron.Lock)
+  },
+  lock: () => ipcRenderer.invoke(IpcEventNames.Electron.Lock)
+})
+
 contextBridge.exposeInMainWorld('electron', {
   subscribeToFileOpened: (callback) => {
     ipcRenderer.on(IpcEventNames.FileOpen.Opened, (event, ...args) => callback(...args))
@@ -220,4 +230,11 @@ contextBridge.exposeInMainWorld('settings', {
   writeConfig: (config: Config): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.Config.Set, config)
   }
+})
+
+contextBridge.exposeInMainWorld('log', {
+  log: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Log, ...args),
+  info: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Info, ...args),
+  warn: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Warn, ...args),
+  error: (...args) => ipcRenderer.invoke(IpcEventNames.Log.Error, ...args)
 })

@@ -16,10 +16,17 @@ export enum WindowVariant {
   UnsavedChanges = 'unsavedChanges'
 }
 
-export const openSecondaryWindow = async (variant: WindowVariant, secondaryWindowEntry?: string) => {
+export const openSecondaryWindow = async (variant: WindowVariant, beforeOpen: () => void, onClose: () => void, secondaryWindowEntry?: string) => {
+  beforeOpen()
   secondaryWindow = window.open(secondaryWindowEntry ?? 'http://localhost:3000/secondary_window', variant, `{"width":${window.outerWidth},"height":${window.outerHeight},"x":${window.screenX},"y":${window.screenY}}`)
   if (secondaryWindow) {
     secondaryWindow.name = variant
+
+    setInterval(() => {
+      if (secondaryWindow && secondaryWindow.closed) {
+        onClose()
+      }
+    }, 1000)
   }
 }
 

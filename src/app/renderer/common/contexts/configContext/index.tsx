@@ -17,10 +17,7 @@ export function ConfigContextProvider({ children }) {
 
   const reloadConfig = () => {
     window.settings.readConfig().then((config) => {
-      setConfig(prev => ({
-        ...prev,
-        ...config
-      }))
+      setConfig(config)
       setIsConfigLoading(false)
     })
   }

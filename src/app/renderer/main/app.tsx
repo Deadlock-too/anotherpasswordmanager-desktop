@@ -21,8 +21,26 @@ import { RecordType } from '../common/types'
 
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
-  const { isInitialized, initialize, setFilePath, handleAddFolder, handleSelectFolder, selectedEntryId, selectedFolderId, handleDeleteEntry, handleDeleteFolder, setDeletingEntry, setDeletingFolder, deletingFolder, deletingEntry, filePath, setIsInitialized, setPassword } = useFileContentContext()
-  const { setSecondaryWindowEntry, secondaryWindowEntry } = useModalContext()
+  const {
+    isInitialized,
+    initialize,
+    setFilePath,
+    handleAddFolder,
+    handleSelectFolder,
+    selectedEntryId,
+    selectedFolderId,
+    handleDeleteEntry,
+    handleDeleteFolder,
+    setDeletingEntry,
+    setDeletingFolder,
+    deletingFolder,
+    deletingEntry,
+    filePath,
+    setIsInitialized,
+    setPassword,
+    setIsLocked
+  } = useFileContentContext()
+  const { setSecondaryWindowEntry, secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   const { setIsDark } = useThemeContext()
   const { reloadConfig } = useConfigContext()
   const { setIsResizing, setIsScrolling } = useWindowContext()
@@ -65,13 +83,13 @@ const App = () => {
     window.electron.subscribeToFileOpened(fileOpenedHandler)
 
     const fileOpenFailedHandler = async () => {
-      await openSecondaryWindow(WindowVariant.FailedOpen, secondaryWindowEntry)
+      await openSecondaryWindow(WindowVariant.FailedOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     }
     window.electron.subscribeToFailedOpenFile(fileOpenFailedHandler)
 
     const openFileFromPathHandler = async (path) => {
       setFilePath(path)
-      await openSecondaryWindow(WindowVariant.PasswordOpen, secondaryWindowEntry)
+      await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     }
     window.electron.subscribeToOpenFileFromPath(openFileFromPathHandler)
 
@@ -176,7 +194,7 @@ const App = () => {
     return () => {
       window.electron.unsubscribeToGetDeletingRecordInfo()
     }
-  }, [deletingEntry, deletingFolder])
+  }, [ deletingEntry, deletingFolder ])
 
   useEffect(() => {
     const setFileContentHandler = (password) => {
@@ -187,19 +205,32 @@ const App = () => {
     return () => {
       window.electron.unsubscribeToSetFileContent()
     }
-  }, [filePath])
+  }, [ filePath ])
+
+  useEffect(() => {
+    if (isInitialized) {
+      const lockHandler = () => {
+        setIsLocked(true)
+      }
+      window.lock.subscribeToLock(lockHandler)
+    }
+
+    return () => {
+      window.lock.unsubscribeToLock()
+    }
+  }, [isInitialized])
 
   if (!initialI18nStore)
     return null
 
   return (
     <I18nextProvider i18n={ i18n.default }>
-      <TitleBar variant='main' title='Another password manager'/>
+      <TitleBar variant="main" title="Another password manager"/>
       <div className="overflow-hidden">
         {
           (!isInitialized) ?
             <Intro onNewButtonClick={ async () => {
-              await openSecondaryWindow(WindowVariant.PasswordCreate, secondaryWindowEntry)
+              await openSecondaryWindow(WindowVariant.PasswordCreate, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
             } }/> :
             <Main/>
         }

@@ -35,10 +35,18 @@ declare global {
       readConfig: () => Promise<Config>,
       writeConfig: (config: Config) => Promise<void>
     },
+    lock: {
+      subscribeToLock: (callback: unknown) => void
+      unsubscribeToLock: () => void
+      lock: () => void
+    },
     config: {
       openAtStartup: (openAtStartup: boolean) => Promise<void>
       minimizeToTray: (minimizeToTray: boolean) => Promise<void>
       closeToTray: (closeToTray: boolean) => Promise<void>
+      autoLockOnMinimize: (autoLockOnMinimize: boolean) => Promise<void>
+      autoLockOnSleep: (autoLockOnSleep: boolean) => Promise<void>
+      autoLockOnLock: (autoLockOnLock: boolean) => Promise<void>
       update: () => Promise<void>
     },
     dialogManagement: {

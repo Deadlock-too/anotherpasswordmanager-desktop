@@ -241,7 +241,8 @@
         "seconds": "secondi",
         "On minimize": "Alla minimizzazione",
         "On sleep": "Alla sospensione",
-        "On tray": "In area di notifica"
+        "On tray": "In area di notifica",
+        "On lock": "Al blocco"
       },
       "Clipboard": {
         "Title": "Appunti",

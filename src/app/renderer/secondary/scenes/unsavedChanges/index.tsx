@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import TitleBar from '../../../main/components/titlebar'
+import { useEffect } from 'react'
 
 const UnsavedChangesScene = () => {
   const { t } = useTranslation()
@@ -43,20 +44,26 @@ const UnsavedChangesScene = () => {
   )
 }
 
-const InternalUnsavedChanges = () => {
+const UnsavedChangesWindow = () => {
+  const handleClose = () => {
+    window.close()
+  }
+
+  useEffect(() => {
+    window.lock.subscribeToLock(handleClose)
+
+    return () => {
+      window.lock.unsubscribeToLock()
+    }
+  }, [])
+
   return (
     <>
-      <TitleBar variant={ 'secondary' } onClose={ () => window.close() }/>
+      <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
       <div className="main-content pt-2 px-6 pb-6">
         <UnsavedChangesScene/>
       </div>
     </>
-  )
-}
-
-const UnsavedChangesWindow = () => {
-  return (
-    <InternalUnsavedChanges/>
   )
 }
 

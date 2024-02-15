@@ -1,12 +1,11 @@
 import TitleBar from '../../../main/components/titlebar'
-import { ContextProvider } from '../../../common/contexts/contextProvider'
 import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import { Loading } from '../../../common/components'
 import { NamedIdentifiableType, RecordType } from '../../../common/types'
 
 const DeletionScene = (props: { recordType: RecordType }) => {
-  const [recordInfo, setRecordInfo] = useState<NamedIdentifiableType>()
+  const [ recordInfo, setRecordInfo ] = useState<NamedIdentifiableType>()
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -23,7 +22,7 @@ const DeletionScene = (props: { recordType: RecordType }) => {
   }, [])
 
   if (recordInfo === undefined)
-    return <Loading />
+    return <Loading/>
 
   //Truncate record name if it's too long
   const recordInfoName = recordInfo.Name.length > 32 ? recordInfo.Name.substring(0, 32) + '...' : recordInfo.Name
@@ -103,7 +102,7 @@ const DeletionScene = (props: { recordType: RecordType }) => {
   )
 }
 
-const InternalDeletion = (props: { recordType: RecordType }) => {
+const DeletionWindow = (props: { recordType: RecordType }) => {
   const handleClose = () => {
     (async () => {
       switch (props.recordType) {
@@ -117,6 +116,15 @@ const InternalDeletion = (props: { recordType: RecordType }) => {
     })()
       .then(window.close)
   }
+
+  useEffect(() => {
+    window.lock.subscribeToLock(handleClose)
+
+    return () => {
+      window.lock.unsubscribeToLock()
+    }
+  }, [])
+
   return (
     <>
       <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
@@ -124,14 +132,6 @@ const InternalDeletion = (props: { recordType: RecordType }) => {
         <DeletionScene recordType={ props.recordType }/>
       </div>
     </>
-  )
-}
-
-const DeletionWindow = (props: { recordType: RecordType }) => {
-  return (
-    <ContextProvider>
-      <InternalDeletion recordType={ props.recordType }/>
-    </ContextProvider>
   )
 }
 

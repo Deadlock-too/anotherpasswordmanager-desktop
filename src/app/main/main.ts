@@ -11,6 +11,7 @@ export default class Main {
   static mainWindow: Electron.BrowserWindow
   static application: Electron.App
   static BrowserWindow: typeof BrowserWindow
+  static PowerMonitor: typeof Electron.powerMonitor
   static StartupUrl: string | null
   static Tray: Electron.Tray | undefined
 
@@ -89,9 +90,10 @@ export default class Main {
     })
   }
 
-  static main(app: Electron.App, browserWindow: typeof BrowserWindow) {
+  static main(app: Electron.App, browserWindow: typeof BrowserWindow, powerMonitor: typeof Electron.powerMonitor) {
     Main.BrowserWindow = browserWindow
     Main.application = app
+    Main.PowerMonitor = powerMonitor
     this.StartupUrl = null
     Main.manageLock()
     Main.manageOpenFile()

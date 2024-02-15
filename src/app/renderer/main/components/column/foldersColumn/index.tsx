@@ -17,7 +17,7 @@ const FoldersColumn = ({elements}) => {
     handleSelectFolder
   } = useFileContentContext()
   const { t } = useTranslation()
-  const { secondaryWindowEntry } = useModalContext()
+  const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
 
   const column = new ColumnBase<Folder>({
     style: {
@@ -27,7 +27,7 @@ const FoldersColumn = ({elements}) => {
       unselectableContent: true,
       addButton: {
         onClick: async () => {
-          await openSecondaryWindow(WindowVariant.AddFolder, secondaryWindowEntry)
+          await openSecondaryWindow(WindowVariant.AddFolder, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
         },
         disabled: false
       }
@@ -40,7 +40,7 @@ const FoldersColumn = ({elements}) => {
         handleUpdate: handleUpdateFolder,
         setElementName: (element, name) => element.Name = name,
         showDeletionWindow: async () => {
-          await openSecondaryWindow(WindowVariant.FolderDeletion, secondaryWindowEntry)
+          await openSecondaryWindow(WindowVariant.FolderDeletion, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
         },
         handleSelection: (folder) => {
           handleSelectFolder(folder, selectedEntryId, selectedFolderId)

@@ -5,23 +5,29 @@ import {
   ThemeContextProvider,
   useConfigContext
 } from './index'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { WindowContextProvider } from './windowContext'
 import { Loading } from '../components'
+import { IdleContextProvider } from './idleContext'
 
-export function ContextProvider({ children }) {
+interface IContextProviderProps {
+  children: ReactNode
+  variant: 'main' | 'secondary'
+}
+
+export function ContextProvider(props: IContextProviderProps) {
   return (
     <WindowContextProvider>
       <ConfigContextProvider>
-        <InternalContextProvider>
-          { children }
+        <InternalContextProvider { ...props }>
+          { props.children }
         </InternalContextProvider>
       </ConfigContextProvider>
     </WindowContextProvider>
   )
 }
 
-const InternalContextProvider = ({ children }) => {
+const InternalContextProvider = (props: IContextProviderProps) => {
   const { isConfigLoading } = useConfigContext()
   const [ initialDarkTheme, setInitialDarkTheme ] = useState<boolean>(false)
 
@@ -30,15 +36,28 @@ const InternalContextProvider = ({ children }) => {
   }, [])
 
   if (isConfigLoading)
-    return <Loading />
+    return <Loading/>
+
+  let context = (
+    <FileContentContextProvider>
+      <IdleContextProvider variant={ props.variant }>
+        { props.children }
+      </IdleContextProvider>
+    </FileContentContextProvider>
+  )
+
+  if (props.variant === 'main') {
+    context = (
+      <ModalContextProvider>
+        { context }
+      </ModalContextProvider>
+    )
+  }
+
 
   return (
     <ThemeContextProvider initialDarkTheme={ initialDarkTheme }>
-      <ModalContextProvider>
-        <FileContentContextProvider>
-          { children }
-        </FileContentContextProvider>
-      </ModalContextProvider>
+      { context }
     </ThemeContextProvider>
   )
 }

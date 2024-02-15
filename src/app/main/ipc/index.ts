@@ -4,7 +4,11 @@ import { daisyui } from '../../../../tailwind.config'
 import * as fs from 'fs'
 import IpcEventNames from './ipcEventNames'
 import {
-  applyCloseToTray, applyMinimizeToTray,
+  applyAutoLockOnLock,
+  applyAutoLockOnMinimize,
+  applyAutoLockOnSleep,
+  applyCloseToTray,
+  applyMinimizeToTray,
   getLanguageFromConfig,
   getThemeFromConfig,
   readConfig,
@@ -133,6 +137,24 @@ ipcMain.handle(IpcEventNames.Config.MinimizeToTray, async (_, minimizeToTray: bo
 
 ipcMain.handle(IpcEventNames.Config.CloseToTray, async (_, closeToTray: boolean): Promise<void> => {
   await applyCloseToTray(closeToTray)
+})
+
+ipcMain.handle(IpcEventNames.Config.AutoLockOnMinimize, async (_, autoLockOnMinimize: boolean): Promise<void> => {
+  await applyAutoLockOnMinimize(autoLockOnMinimize)
+})
+
+ipcMain.handle(IpcEventNames.Config.AutoLockOnSleep, async (_, autoLockOnSleep: boolean): Promise<void> => {
+  await applyAutoLockOnSleep(autoLockOnSleep)
+})
+
+ipcMain.handle(IpcEventNames.Config.AutoLockOnLock, async (_, autoLockOnLock: boolean): Promise<void> => {
+  await applyAutoLockOnLock(autoLockOnLock)
+})
+
+ipcMain.handle(IpcEventNames.Electron.Lock, async (): Promise<void> => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.Electron.Lock)
+  })
 })
 
 ipcMain.handle(IpcEventNames.Localization.ChangeLanguage, async (_, lang: string): Promise<void> => {

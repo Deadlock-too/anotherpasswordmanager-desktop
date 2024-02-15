@@ -46,7 +46,6 @@ async function createMainWindow(windowMinimized: boolean) {
   mainWindow.on('closed', onClose)
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-
     const mainWindowState = JSON.parse(details.features)
 
     let height = mainWindowState.height - 100
@@ -137,7 +136,7 @@ async function createMainWindow(windowMinimized: boolean) {
     }
   })
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   mainWindow.webContents.send(IpcEventNames.Electron.SetSecondaryWindowEntry, SECONDARY_WINDOW_WEBPACK_ENTRY)
 }

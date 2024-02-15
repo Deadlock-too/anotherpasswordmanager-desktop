@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Folder, uuid } from '../../../common/types'
 import { Formik, FormikProps } from 'formik'
-import { ContextProvider } from '../../../common/contexts/contextProvider'
 import TitleBar from '../../../main/components/titlebar'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { FormikTextInput } from '../../../common/components'
 
 const AddFolderScene = ({ formikRef }) => {
@@ -68,11 +67,20 @@ const AddFolderScene = ({ formikRef }) => {
   )
 }
 
-const InternalAddFolder = () => {
+const AddFolderWindow = () => {
   const formikRef = useRef<FormikProps<any>>(null)
   const handleClose = () => {
     formikRef.current?.resetForm()
   }
+
+  //TODO ID-26
+  useEffect(() => {
+    window.lock.subscribeToLock(handleClose)
+
+    return () => {
+      window.lock.unsubscribeToLock()
+    }
+  }, [])
 
   return (
     <>
@@ -81,14 +89,6 @@ const InternalAddFolder = () => {
         <AddFolderScene formikRef={ formikRef }/>
       </div>
     </>
-  )
-}
-
-const AddFolderWindow = () => {
-  return (
-    <ContextProvider>
-      <InternalAddFolder/>
-    </ContextProvider>
   )
 }
 

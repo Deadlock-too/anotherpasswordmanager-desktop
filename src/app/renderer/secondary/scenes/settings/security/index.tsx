@@ -20,7 +20,7 @@ const SecuritySettings = ({ formik }) => {
             field="securityAutoLockTime"
             disabled={ !formik.values.securityAutoLock }
             formik={ formik }
-            min={ 1 }
+            min={ 30 }
             max={ 60 * 60 * 24 * 7 }
           />
         </SettingRow>
@@ -31,15 +31,20 @@ const SecuritySettings = ({ formik }) => {
             formik={ formik }
           />
           <FormikCheckbox
-            field="securityAutoLockOnSleep"
-            label={ t('SettingsDialog.Security.Auto lock.On sleep') }
+            field="securityAutoLockOnTray"
+            label={ t('SettingsDialog.Security.Auto lock.On tray') }
             formik={ formik }
           />
         </SettingRow>
         <SettingRow>
           <FormikCheckbox
-            field="securityAutoLockOnTray"
-            label={ t('SettingsDialog.Security.Auto lock.On tray') }
+            field="securityAutoLockOnSleep"
+            label={ t('SettingsDialog.Security.Auto lock.On sleep') }
+            formik={ formik }
+          />
+          <FormikCheckbox
+            field="securityAutoLockOnLock"
+            label={ t('SettingsDialog.Security.Auto lock.On lock') }
             formik={ formik }
           />
         </SettingRow>

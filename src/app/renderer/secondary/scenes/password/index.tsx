@@ -1,7 +1,6 @@
-import { ContextProvider } from '../../../common/contexts/contextProvider'
 import TitleBar from '../../../main/components/titlebar'
 import { Formik, FormikProps } from 'formik'
-import { RefObject, useRef } from 'react'
+import { RefObject, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FormikTextInput } from '../../../common/components'
 
@@ -212,11 +211,24 @@ const PasswordScene = (props: IPasswordSceneProps) => {
   )
 }
 
-const InternalPassword = (props: IPasswordWindowProps) => {
+interface IPasswordWindowProps {
+  variant: 'open' | 'create' | 'update' | 'unlock'
+}
+
+const PasswordWindow = (props: IPasswordWindowProps) => {
   const formikRef = useRef<FormikProps<any>>(null)
   const handleClose = () => {
     formikRef.current?.resetForm()
   }
+
+  useEffect(() => {
+    window.lock.subscribeToLock(handleClose)
+
+    return () => {
+      window.lock.unsubscribeToLock()
+    }
+  }, [])
+
   return (
     <>
       <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
@@ -227,16 +239,5 @@ const InternalPassword = (props: IPasswordWindowProps) => {
   )
 }
 
-interface IPasswordWindowProps {
-  variant: 'open' | 'create' | 'update' | 'unlock'
-}
-
-const PasswordWindow = (props: IPasswordWindowProps) => {
-  return (
-    <ContextProvider>
-      <InternalPassword variant={ props.variant }/>
-    </ContextProvider>
-  )
-}
 
 export default PasswordWindow

@@ -9,6 +9,7 @@ import { RecordType } from '../common/types'
 import FailureWindow from './scenes/failure'
 import PasswordWindow from './scenes/password'
 import UnsavedChangesWindow from './scenes/unsavedChanges'
+import { ContextProvider } from '../common/contexts/contextProvider'
 
 const rootDiv = document.getElementById('secondary_root')
 if (!rootDiv)
@@ -66,6 +67,8 @@ switch (variant) {
 const root = createRoot(rootDiv)
 root.render(
   <I18nextProvider i18n={ i18n.default }>
-    { component }
+    <ContextProvider variant='secondary'>
+      { component }
+    </ContextProvider>
   </I18nextProvider>
 )

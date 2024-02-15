@@ -8,9 +8,8 @@ import { configToInitialValues, valuesToConfig } from '../../../../../utils'
 import { Language, Theme } from '../../../../../types'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../../../i18n'
-import { ScrollableDiv, Loading } from '../../../common/components'
+import { Loading, ScrollableDiv } from '../../../common/components'
 import TitleBar from '../../../main/components/titlebar'
-import { ContextProvider } from '../../../common/contexts/contextProvider'
 
 enum SettingSections {
   General = 'General',
@@ -70,7 +69,10 @@ const SettingsScene = ({ formikRef }) => {
     language: Language,
     openAtStartup: boolean,
     minimizeToTray: boolean,
-    closeToTray: boolean
+    closeToTray: boolean,
+    autoLockOnMinimize: boolean,
+    autoLockOnSleep: boolean,
+    autoLockOnLock: boolean,
   }, setTemporaryValues: boolean) => {
     //TODO ID-22
     await (async () => {
@@ -99,6 +101,9 @@ const SettingsScene = ({ formikRef }) => {
       await window.config.openAtStartup(values.openAtStartup)
       await window.config.minimizeToTray(values.minimizeToTray)
       await window.config.closeToTray(values.closeToTray)
+      await window.config.autoLockOnMinimize(values.autoLockOnMinimize)
+      await window.config.autoLockOnSleep(values.autoLockOnSleep)
+      await window.config.autoLockOnLock(values.autoLockOnLock)
     })()
       .then(async () => await i18n.changeLanguage(values.language))
   }
@@ -113,6 +118,9 @@ const SettingsScene = ({ formikRef }) => {
         openAtStartup: newValues.settings.general.openAtStartup,
         minimizeToTray: newValues.settings.general.minimizeToTray,
         closeToTray: newValues.settings.general.closeToTray,
+        autoLockOnMinimize: newValues.settings.security.autoLockOnMinimize,
+        autoLockOnSleep: newValues.settings.security.autoLockOnSleep,
+        autoLockOnLock: newValues.settings.security.autoLockOnLock,
       }, false)
     })()
       .then(() => handleUpdateConfig({
@@ -135,7 +143,10 @@ const SettingsScene = ({ formikRef }) => {
         language: config.settings.general.language,
         openAtStartup: config.settings.general.openAtStartup,
         minimizeToTray: config.settings.general.minimizeToTray,
-        closeToTray: config.settings.general.closeToTray
+        closeToTray: config.settings.general.closeToTray,
+        autoLockOnMinimize: config.settings.security.autoLockOnMinimize,
+        autoLockOnSleep: config.settings.security.autoLockOnSleep,
+        autoLockOnLock: config.settings.security.autoLockOnLock,
       }, false)
     })()
       .then(() => window.close())
@@ -225,7 +236,10 @@ const SettingsScene = ({ formikRef }) => {
                     language: formik.values['generalLanguage'],
                     openAtStartup: formik.values['generalOpenAtStartup'],
                     minimizeToTray: formik.values['generalMinimizeToTray'],
-                    closeToTray: formik.values['generalCloseToTray']
+                    closeToTray: formik.values['generalCloseToTray'],
+                    autoLockOnMinimize: formik.values['securityAutoLockOnMinimize'],
+                    autoLockOnSleep: formik.values['securityAutoLockOnSleep'],
+                    autoLockOnLock: formik.values['securityAutoLockOnLock'],
                   }, true)
                 } }
               >
@@ -239,7 +253,7 @@ const SettingsScene = ({ formikRef }) => {
   )
 }
 
-const InternalSettings = () => {
+const SettingsWindow = () => {
   const { config, isConfigLoading } = useConfigContext()
   const { setIsDark } = useThemeContext()
   const { t } = useTranslation()
@@ -256,8 +270,11 @@ const InternalSettings = () => {
       .then((lang) => i18n.changeLanguage(lang))
       .then(() => setIsLanguageLoading(false))
 
+    window.lock.subscribeToLock(handleClose)
+
     return () => {
       window.electron.unsubscribeToUpdateIsDark()
+      window.lock.unsubscribeToLock()
     }
   }, [])
 
@@ -276,14 +293,5 @@ const InternalSettings = () => {
     </>
   )
 }
-
-const SettingsWindow = () => {
-  return (
-    <ContextProvider>
-      <InternalSettings/>
-    </ContextProvider>
-  )
-}
-
 
 export default SettingsWindow

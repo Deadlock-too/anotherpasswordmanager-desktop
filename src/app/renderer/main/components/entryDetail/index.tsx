@@ -9,7 +9,7 @@ import { openSecondaryWindow, WindowVariant } from '../../utils/rendererWindowMa
 
 const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
   const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useFileContentContext()
-  const { secondaryWindowEntry } = useModalContext()
+  const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   const [ readonly, setReadonly ] = useState(props.entry !== undefined)
   const { t } = useTranslation()
   const toggleReadonly = () => {
@@ -152,7 +152,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   onClick={ async () => {
                     if (formik.values.id !== undefined) {
                       setDeletingEntry(new Entry(formik.values.id, formik.values.title))
-                      await openSecondaryWindow(WindowVariant.EntryDeletion, secondaryWindowEntry)
+                      await openSecondaryWindow(WindowVariant.EntryDeletion, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
                       formik.handleReset()
                     }
                   } }

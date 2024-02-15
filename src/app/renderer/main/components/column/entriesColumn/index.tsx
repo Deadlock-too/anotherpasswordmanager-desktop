@@ -15,7 +15,7 @@ const EntriesColumn = ({elements}) => {
     handleUpdateEntry,
     handleSelectEntry
   } = useFileContentContext()
-  const { secondaryWindowEntry } = useModalContext()
+  const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   const { t } = useTranslation()
 
   const column = new ColumnBase<Entry>({
@@ -37,7 +37,7 @@ const EntriesColumn = ({elements}) => {
         handleUpdate: handleUpdateEntry,
         setElementName: (element, name) => element.Name = name,
         showDeletionWindow: async () => {
-          await openSecondaryWindow(WindowVariant.EntryDeletion, secondaryWindowEntry)
+          await openSecondaryWindow(WindowVariant.EntryDeletion, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
         },
         handleSelection: (entry) => {
           handleSelectEntry(entry, false)

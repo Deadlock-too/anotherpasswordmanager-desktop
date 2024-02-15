@@ -1,11 +1,12 @@
 import * as fs from 'fs'
-import { App, nativeTheme } from 'electron'
+import { App, BrowserWindow, nativeTheme } from 'electron'
 import * as path from 'path'
 import { Config, Theme, Language } from '../../../types'
 import { daisyui } from '../../../../tailwind.config'
 import defaultConfig from '../../../defaultConfig.json'
 import Main from '../main'
 import { createTray } from './trayManager'
+import IpcEventNames from '../ipc/ipcEventNames'
 
 const configFileName = 'config.json'
 let configFilePath: string
@@ -39,6 +40,11 @@ export async function getOpenMinimizedFromConfig(): Promise<boolean> {
   return config.settings.general.openMinimized
 }
 
+export async function getAutoLockOnTrayFromConfig(): Promise<boolean> {
+  const config = await readConfig()
+  return config.settings.security.autoLockOnTray
+}
+
 export async function loadConfig(app: App) {
   configFilePath = path.join(app.getPath('userData'), configFileName)
   console.log('Config file path: ' + configFilePath)
@@ -67,6 +73,9 @@ export async function applyConfig(): Promise<void> {
 
   await applyMinimizeToTray(config.settings.general.minimizeToTray)
   await applyCloseToTray(config.settings.general.closeToTray)
+  await applyAutoLockOnMinimize(config.settings.security.autoLockOnMinimize)
+  await applyAutoLockOnSleep(config.settings.security.autoLockOnSleep)
+  await applyAutoLockOnLock(config.settings.security.autoLockOnLock)
 }
 
 async function readConfigInternal(): Promise<Config | null> {
@@ -130,11 +139,11 @@ export async function writeConfig(config: Config): Promise<Config | null> {
 /**
  * Apply config to the app
  */
-export const handleMinimizeToTray = (e) => {
+export const handleMinimizeToTray = async (e) => {
   e.preventDefault()
   Main.mainWindow.hide()
 
-  createTray()
+  await createTray()
 }
 
 export async function applyMinimizeToTray(minimizeToTray: boolean) {
@@ -145,12 +154,12 @@ export async function applyMinimizeToTray(minimizeToTray: boolean) {
   }
 }
 
-export const handleCloseToTray = (e) => {
+export const handleCloseToTray = async (e) => {
   if (!Main.Tray) {
     e.preventDefault()
     Main.mainWindow.hide()
 
-    createTray()
+    await createTray()
   }
 }
 
@@ -159,5 +168,35 @@ export async function applyCloseToTray(closeToTray: boolean) {
 
   if (closeToTray) {
     Main.mainWindow.on('close', handleCloseToTray)
+  }
+}
+
+export const handleLock = async () => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(IpcEventNames.Electron.Lock)
+  })
+}
+
+export async function applyAutoLockOnMinimize(autoLockOnMinimize: boolean) {
+  Main.mainWindow.removeListener('minimize', handleLock)
+
+  if (autoLockOnMinimize) {
+    Main.mainWindow.on('minimize', handleLock)
+  }
+}
+
+export async function applyAutoLockOnSleep(autoLockOnSleep: boolean) {
+  Main.PowerMonitor.removeListener('suspend', handleLock)
+
+  if (autoLockOnSleep) {
+    Main.PowerMonitor.on('suspend', handleLock)
+  }
+}
+
+export async function applyAutoLockOnLock(autoLockOnLock: boolean) {
+  Main.PowerMonitor.removeListener('lock-screen', handleLock)
+
+  if (autoLockOnLock) {
+    Main.PowerMonitor.on('lock-screen', handleLock)
   }
 }

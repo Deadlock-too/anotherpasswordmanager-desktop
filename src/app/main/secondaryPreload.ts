@@ -61,6 +61,15 @@ contextBridge.exposeInMainWorld('electron', {
   },
 })
 
+contextBridge.exposeInMainWorld('lock', {
+  subscribeToLock: (callback) => {
+    ipcRenderer.on(IpcEventNames.Electron.Lock, (event, ...args) => callback(...args))
+  },
+  unsubscribeToLock: () => {
+    ipcRenderer.removeAllListeners(IpcEventNames.Electron.Lock)
+  },
+})
+
 contextBridge.exposeInMainWorld('settings', {
   readConfig: (): Promise<Config> => {
     return ipcRenderer.invoke(IpcEventNames.Config.Get)
@@ -82,6 +91,15 @@ contextBridge.exposeInMainWorld('config', {
   },
   closeToTray: (closeToTray: boolean): Promise<void> => {
     return ipcRenderer.invoke(IpcEventNames.Config.CloseToTray, closeToTray)
+  },
+  autoLockOnMinimize: (autoLockOnMinimize: boolean): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Config.AutoLockOnMinimize, autoLockOnMinimize)
+  },
+  autoLockOnSleep: (autoLockOnSleep: boolean): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Config.AutoLockOnSleep, autoLockOnSleep)
+  },
+  autoLockOnLock: (autoLockOnLock: boolean): Promise<void> => {
+    return ipcRenderer.invoke(IpcEventNames.Config.AutoLockOnLock, autoLockOnLock)
   }
 })
 

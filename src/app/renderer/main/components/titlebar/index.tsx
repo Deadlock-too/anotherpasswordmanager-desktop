@@ -53,12 +53,12 @@ const SaveButton = () => {
 }
 
 const ChangeMasterKeyButton = () => {
-  const { secondaryWindowEntry } = useModalContext()
+  const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   return (
     <TitleBarButton
       icon={ <UpdateIcon/> }
       onClick={ async () => {
-        await openSecondaryWindow(WindowVariant.PasswordUpdate, secondaryWindowEntry)
+        await openSecondaryWindow(WindowVariant.PasswordUpdate, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
       } }
     />
   )
@@ -84,13 +84,13 @@ const LockButton = () => {
 }
 
 const SettingsButton = () => {
-  const { secondaryWindowEntry } = useModalContext()
+  const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
 
   return (
     <TitleBarButton
       icon={ <SettingsIcon/> }
       onClick={ async () => {
-        await openSecondaryWindow(WindowVariant.Settings, secondaryWindowEntry)
+        await openSecondaryWindow(WindowVariant.Settings, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
       } }
     />
   )
