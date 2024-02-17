@@ -46,6 +46,7 @@
 - [ ] Fix tabbing problems for better accessibility
 - [ ] On shutdown ask for saving unsaved changes (use powerMonitor to do so, already used for suspend, pay attention that the `shutdown` event is not available on Windows at the moment, might need to find a workaround)
 - [ ] Design and add intro animation on open
+- [ ] Redesign settings interface
 - [ ] Entry improvements:
   - [ ] Different entry types (login, credit card, secure note, etc.)
   - [ ] Entry expiry:
@@ -88,13 +89,36 @@
 - [ ] Mobile app
 - [ ] Web app
 
-### Done
+### Features implemented
 - [x] Basic entry management (creation, deletion, editing)
-- [x] OTP field
 - [x] File Encryption
-- [x] Localization
-- [x] Entry field values copying to clipboard
-- [x] Themes
+- [x] OTP Management
+- [x] Basic Settings
+  - [x] General
+    - [x] Language
+      - [x] Italian
+      - [x] English
+    - [x] Auto-save
+    - [x] Open behavior
+      - [x] Open at startup
+      - [x] Open minimized
+    - [x] Tray
+      - [x] Minimize to tray
+      - [x] Close to tray
+  - [x] Appearance
+    - [x] Theme
+      - [x] Choose from available themes
+      - [x] Sync with system (choosing light and dark themes to be used)
+  - [x] Security
+    - [x] Auto-lock
+      - [x] Lock timeout
+      - [x] Lock on minimize
+      - [x] Lock on close
+      - [x] Lock on suspend 
+    - [x] Clipboard
+      - [x] Copy field value to clipboard
+      - [x] Clipboard clear timeout
+      - [x] Clipboard clear on lock
 
 ## Possible future features (not yet planned)
 ### Custom theme creation
