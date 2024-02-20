@@ -4,12 +4,14 @@ import { Formik, FormikProps } from 'formik'
 import TitleBar from '../../../main/components/titlebar'
 import { useEffect, useRef } from 'react'
 import { FormikTextInput } from '../../../common/components'
+import IpcEventNames from '../../../../main/ipc/ipcEventNames'
+import { EventIdentifiers } from '../../../../main/consts'
 
 const AddFolderScene = ({ formikRef }) => {
   const { t } = useTranslation()
 
   const handleAddFolder = async (folder: Folder) => {
-    await window.dialogManagement.addFolder(folder)
+    await window.electron.events.propagate(EventIdentifiers.AddFolder, folder)
   }
 
   return (
@@ -22,7 +24,7 @@ const AddFolderScene = ({ formikRef }) => {
         }
         return errors
       } }
-      onSubmit={ (values, { setSubmitting, resetForm }) => {
+      onSubmit={ (values, { setSubmitting }) => {
         setTimeout(() => {
           const folder = new Folder(uuid(), values.title)
           handleAddFolder(folder).then(() => {
@@ -75,10 +77,10 @@ const AddFolderWindow = () => {
 
   //TODO ID-26
   useEffect(() => {
-    window.lock.subscribeToLock(handleClose)
+    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
 
     return () => {
-      window.lock.unsubscribeToLock()
+      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
     }
   }, [])
 

@@ -16,7 +16,7 @@ export function ConfigContextProvider({ children }) {
   const [ isConfigLoading, setIsConfigLoading ] = useState<boolean>(true)
 
   const reloadConfig = () => {
-    window.settings.readConfig().then((config) => {
+    window.app.config.get().then((config) => {
       setConfig(config)
       setIsConfigLoading(false)
     })
@@ -39,7 +39,7 @@ export function ConfigContextProvider({ children }) {
 
   const handleUpdateConfig = async (config: Config) => {
     setConfig(config)
-    window.settings.writeConfig(config)
+    window.app.config.set(config)
       .then(() => {
         setIsConfigLoading(false)
       })

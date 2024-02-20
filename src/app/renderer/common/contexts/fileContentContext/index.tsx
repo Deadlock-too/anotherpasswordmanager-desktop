@@ -104,9 +104,9 @@ export function FileContentContextProvider({ children }) {
     if (isInitialized && filePath) {
       const content = JSON.stringify(fc)
       if (password) {
-        window.electron.saveFile(filePath, encrypt(content, password))
+        window.app.file.save(filePath, encrypt(content, password))
       } else {
-        window.electron.saveFile(filePath, content)
+        window.app.file.save(filePath, content)
       }
       setUnsavedChanges(false)
     }

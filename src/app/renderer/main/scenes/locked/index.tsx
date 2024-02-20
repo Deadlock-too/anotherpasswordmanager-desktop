@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useFileContentContext, useModalContext } from '../../../common/contexts'
 import { openSecondaryWindow, WindowVariant } from '../../utils/rendererWindowManager'
 import { useEffect } from 'react'
+import { EventIdentifiers } from '../../../../main/consts'
 
 const Locked = () => {
   const { t } = useTranslation()
@@ -29,10 +30,10 @@ const Locked = () => {
         await openSecondaryWindow(WindowVariant.FailedUnlock, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
       }
     }
-    window.electron.subscribeToUnlock(unlockHandler)
+    window.electron.events.subscribe(EventIdentifiers.Unlock, unlockHandler)
 
     return () => {
-      window.electron.unsubscribeToUnlock()
+      window.electron.events.unsubscribe(EventIdentifiers.Unlock)
     }
   }, [ password ])
 
@@ -43,10 +44,10 @@ const Locked = () => {
       }
       reset()
     }
-    window.electron.subscribeToSaveChanges(saveChangesHandler)
+    window.electron.events.subscribe(EventIdentifiers.SaveChanges, saveChangesHandler)
 
     return () => {
-      window.electron.unsubscribeToSaveChanges()
+      window.electron.events.unsubscribe(EventIdentifiers.SaveChanges)
     }
   }, [ unsavedChanges ])
 

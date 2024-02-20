@@ -16,7 +16,7 @@ if (!rootDiv)
   throw new Error('Root div not found')
 
 let initialized = false
-window.theming.startupThemeAsync.then(theme => {
+window.app.theming.startupThemeAsync.then(theme => {
   if (initialized)
     return
   document.querySelector('html')?.setAttribute('data-theme', theme)

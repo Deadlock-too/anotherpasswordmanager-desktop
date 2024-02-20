@@ -14,7 +14,7 @@ export function ClipboardContextProvider({ children }) {
   const [ isClipboardSet, setIsClipboardSet ] = useState(false)
 
   const clearClipboard = () => {
-    window.clipboard.read().then((value) => {
+    window.system.clipboard.read().then((value) => {
       clearTimeout(timer)
       timer = undefined
 
@@ -22,7 +22,7 @@ export function ClipboardContextProvider({ children }) {
         return
       }
 
-      window.clipboard.clear()
+      window.system.clipboard.clear()
       setClipboardValue(undefined)
       setIsClipboardSet(false)
     })
@@ -32,7 +32,7 @@ export function ClipboardContextProvider({ children }) {
   let timer: NodeJS.Timeout | undefined = undefined
 
   const handleSetClipboard = (value: string) => {
-    window.clipboard.write(value)
+    window.system.clipboard.write(value)
     setClipboardValue(value)
     setIsClipboardSet(true)
   }

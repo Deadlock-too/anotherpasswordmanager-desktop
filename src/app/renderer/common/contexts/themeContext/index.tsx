@@ -30,7 +30,7 @@ export function ThemeContextProvider({ children, initialDarkTheme }) {
     : config.settings.appearance.customTheme
 
   const [ currentTheme, setCurrentTheme ] = useState<Theme>(initialTheme)
-  const [ customTheme, setCustomTheme ] = useState<Theme>(config.settings.appearance.customTheme)
+  const [ customTheme, _ ] = useState<Theme>(config.settings.appearance.customTheme)
   const [ lightTheme, setLightTheme ] = useState<Theme>(config.settings.appearance.lightTheme)
   const [ darkTheme, setDarkTheme ] = useState<Theme>(config.settings.appearance.darkTheme)
   const [ useSystemTheme, setUseSystemTheme ] = useState<boolean>(config.settings.appearance.useSystemTheme)
@@ -40,7 +40,7 @@ export function ThemeContextProvider({ children, initialDarkTheme }) {
   const [ temporaryDarkTheme, setTemporaryDarkTheme ] = useState<Theme | undefined>()
 
   const handleSetCurrentTheme = (theme: Theme, manageDark: boolean, setSystem: boolean) => {
-    window.theming.setTheme(theme, setSystem).then(isDarkRes => {
+    window.app.theming.setTheme(theme, setSystem).then(isDarkRes => {
       if (manageDark)
         setIsDark(isDarkRes)
     })

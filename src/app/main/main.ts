@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog } from 'electron'
+import { BrowserWindow } from 'electron'
 import { openMainWindow } from './utils/windowManager'
 import { init } from './services/init'
 import './ipc'
@@ -48,7 +48,7 @@ export default class Main {
         const window = await openMainWindow()
         Main.setStartupUrl(argv)
         if (Main.StartupUrl) {
-          window.webContents.send(IpcEventNames.FileOpen.OpenFromPath, Main.StartupUrl)
+          window.webContents.send(IpcEventNames.App.File.OpenFromPath, Main.StartupUrl)
           Main.StartupUrl = null
         }
       })
@@ -104,7 +104,7 @@ export default class Main {
         const openMinimized = await getOpenMinimizedFromConfig()
         Main.mainWindow = await Main.onReady(openMinimized)
         if (Main.StartupUrl) {
-          Main.mainWindow.webContents.send(IpcEventNames.FileOpen.OpenFromPath, Main.StartupUrl)
+          Main.mainWindow.webContents.send(IpcEventNames.App.File.OpenFromPath, Main.StartupUrl)
           Main.StartupUrl = null
         }
 

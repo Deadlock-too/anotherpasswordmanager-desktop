@@ -23,7 +23,10 @@ async function createMainWindow(windowMinimized: boolean) {
   const theme = await getThemeFromConfig()
   mainWindow = new BrowserWindow({
     webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      sandbox: true,
+      contextIsolation: true,
+      devTools: false
     },
     height: 600,
     width: 800,
@@ -138,10 +141,10 @@ async function createMainWindow(windowMinimized: boolean) {
 
   // mainWindow.webContents.openDevTools()
 
-  mainWindow.webContents.send(IpcEventNames.Electron.SetSecondaryWindowEntry, SECONDARY_WINDOW_WEBPACK_ENTRY)
+  mainWindow.webContents.send(IpcEventNames.App.SetSecondaryWindowEntry, SECONDARY_WINDOW_WEBPACK_ENTRY)
 }
 
-export async function openMainWindow(windowMinimized: boolean = false): Promise<BrowserWindow> {
+export async function openMainWindow(windowMinimized = false): Promise<BrowserWindow> {
   let windows = BrowserWindow.getAllWindows()
   if (windows.length === 0) {
     await createMainWindow(windowMinimized)
@@ -171,7 +174,7 @@ export async function openFileDialog() {
       (result) => {
         if (!result.canceled && result.filePaths.length > 0 && mainWindow) {
           const path = result.filePaths[0]
-          mainWindow.webContents.send(IpcEventNames.FileOpen.OpenFromPath, path)
+          mainWindow.webContents.send(IpcEventNames.App.File.OpenFromPath, path)
         }
       }).catch((err) => {
       console.error(`Error: ${ err }`)
@@ -198,12 +201,12 @@ export async function openFileFromPath(path: string, password: string): Promise<
     if (tryParseContent(decryptedContent)) {
       result = decryptedContent
     } else {
-      mainWindow?.webContents.send(IpcEventNames.FileOpen.Failed, path, content)
+      mainWindow?.webContents.send(IpcEventNames.App.File.OpenFailed, path, content)
       return
     }
   }
 
-  mainWindow?.webContents.send(IpcEventNames.FileOpen.Opened, path, result)
+  mainWindow?.webContents.send(IpcEventNames.App.File.OpenSuccess, path, result)
 }
 
 export async function saveFileDialog() {

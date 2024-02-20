@@ -10,7 +10,7 @@ let initialized = false
 
 if (!initialized) {
   //Used sync to prevent cases when would get an error because of the async
-  const theme = window.theming.startupThemeSync
+  const theme = window.app.theming.startupThemeSync
   document.querySelector('html')?.setAttribute('data-theme', theme)
   initialized = true
 }

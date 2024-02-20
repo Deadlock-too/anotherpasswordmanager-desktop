@@ -3,6 +3,8 @@ import { Formik, FormikProps } from 'formik'
 import { RefObject, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FormikTextInput } from '../../../common/components'
+import IpcEventNames from '../../../../main/ipc/ipcEventNames'
+import { EventIdentifiers } from '../../../../main/consts'
 
 interface IPasswordSceneProps extends IPasswordWindowProps {
   formikRef: RefObject<FormikProps<any>>
@@ -126,20 +128,20 @@ const PasswordScene = (props: IPasswordSceneProps) => {
   const { t } = useTranslation()
 
   const setPassword = async (password: string) => {
-    await window.dialogManagement.setPassword(password)
+    await window.electron.events.propagate(EventIdentifiers.SetPassword, password)
       .then(() => {
         if (props.variant === 'open') {
-          window.dialogManagement.setFileContent(password)
+          window.electron.events.propagate(EventIdentifiers.SetFileContent, password)
         }
 
         if (props.variant === 'create') {
-          window.dialogManagement.setInitialized()
+          window.electron.events.propagate(EventIdentifiers.SetInitialized)
         }
       })
   }
 
   const unlock = async (password: string) => {
-    await window.dialogManagement.unlock(password)
+    await window.electron.events.propagate(EventIdentifiers.Unlock, password)
   }
 
   const capitalizeFirstLetter = (string: string) => {
@@ -222,10 +224,10 @@ const PasswordWindow = (props: IPasswordWindowProps) => {
   }
 
   useEffect(() => {
-    window.lock.subscribeToLock(handleClose)
+    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
 
     return () => {
-      window.lock.unsubscribeToLock()
+      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
     }
   }, [])
 

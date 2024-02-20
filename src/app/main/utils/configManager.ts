@@ -173,7 +173,7 @@ export async function applyCloseToTray(closeToTray: boolean) {
 
 export const handleLock = async () => {
   BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.Electron.Lock)
+    window.webContents.send(IpcEventNames.App.Lock)
   })
 }
 

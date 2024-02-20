@@ -33,7 +33,7 @@ const InternalContextProvider = (props: IContextProviderProps) => {
   const [ initialDarkTheme, setInitialDarkTheme ] = useState<boolean>(false)
 
   useEffect(() => {
-    window.theming.isDark().then(setInitialDarkTheme)
+    window.app.theming.isDark().then(setInitialDarkTheme)
   }, [])
 
   if (isConfigLoading)

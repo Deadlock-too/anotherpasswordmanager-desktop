@@ -17,7 +17,9 @@ import {
   updateSecondaryWindowTheme,
   WindowVariant
 } from './utils/rendererWindowManager'
-import { RecordType } from '../common/types'
+import { NamedIdentifiableType, RecordType } from '../common/types'
+import IpcEventNames from '../../main/ipc/ipcEventNames'
+import { EventIdentifiers } from '../../main/consts'
 
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)
@@ -70,33 +72,40 @@ const App = () => {
 
   //TODO ID-7
   useEffect(() => {
-    window.localization.getInitialI18nStore().then(setInitialI18nStore)
+    window.app.localization.getInitialI18nStore().then(setInitialI18nStore)
 
     window.addEventListener('resize', onResize)
     window.addEventListener('scroll', onScroll)
 
-    window.localization.startupLanguage.then(language => {
+    window.app.localization.startupLanguage.then(language => {
       i18n.changeLanguage(language)
     })
 
+    const subscribedEvents : string[] = []
+
+    const subscribeToEvent = (eventName: string, handler: (...args) => void) => {
+      window.electron.events.subscribe(eventName, handler)
+      subscribedEvents.push(eventName)
+    }
+
     const fileOpenedHandler = (path, content) => initialize(path, content)
-    window.electron.subscribeToFileOpened(fileOpenedHandler)
+    subscribeToEvent(IpcEventNames.App.File.OpenSuccess, fileOpenedHandler)
 
     const fileOpenFailedHandler = async () => {
       await openSecondaryWindow(WindowVariant.FailedOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     }
-    window.electron.subscribeToFailedOpenFile(fileOpenFailedHandler)
+    subscribeToEvent(IpcEventNames.App.File.OpenFailed, fileOpenFailedHandler)
 
     const openFileFromPathHandler = async (path) => {
       setFilePath(path)
       await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     }
-    window.electron.subscribeToOpenFileFromPath(openFileFromPathHandler)
+    subscribeToEvent(IpcEventNames.App.File.OpenFromPath, openFileFromPathHandler)
 
     const secondaryWindowEntryHandler = (entry) => {
       setSecondaryWindowEntry(entry)
     }
-    window.electron.subscribeToSetSecondaryWindowEntry(secondaryWindowEntryHandler)
+    subscribeToEvent(IpcEventNames.App.SetSecondaryWindowEntry, secondaryWindowEntryHandler)
 
     const updateThemeHandler = (theme) => {
       window.document.querySelector('html')?.setAttribute('data-theme', theme)
@@ -104,106 +113,95 @@ const App = () => {
       if (secondaryWindow)
         updateSecondaryWindowTheme(theme, secondaryWindow)
     }
-    window.electron.subscribeToUpdateTheme(updateThemeHandler)
+    subscribeToEvent(IpcEventNames.App.Theming.UpdateTheme, updateThemeHandler)
 
     const updateIsDarkHandler = (isDark) => {
       setIsDark(isDark)
     }
-    window.electron.subscribeToUpdateIsDark(updateIsDarkHandler)
+    subscribeToEvent(IpcEventNames.App.Theming.UpdateIsDark, updateIsDarkHandler)
 
-    const updateConfigHandler = () => {
+    const refreshConfigHandler = () => {
       reloadConfig()
     }
-    window.electron.subscribeToUpdateConfig(updateConfigHandler)
+    subscribeToEvent(IpcEventNames.App.Config.Refresh, refreshConfigHandler)
 
     const setLanguageHandler = (language) => {
       i18n.changeLanguage(language)
     }
-    window.electron.subscribeToChangeLanguage(setLanguageHandler)
+    subscribeToEvent(IpcEventNames.App.Localization.ChangeLanguage, setLanguageHandler)
 
     const addFolderHandler = (folder) => {
       handleAddFolder(folder)
       handleSelectFolder(folder, selectedEntryId, selectedFolderId)
     }
-    window.electron.subscribeToAddFolder(addFolderHandler)
+    subscribeToEvent(EventIdentifiers.AddFolder, addFolderHandler)
 
     const deleteEntryHandler = (entryId) => {
       handleDeleteEntry(entryId)
     }
-    window.electron.subscribeToDeleteEntry(deleteEntryHandler)
+    subscribeToEvent(EventIdentifiers.DeleteEntry, deleteEntryHandler)
 
     const cancelDeleteEntryHandler = () => {
       setDeletingEntry(null)
     }
-    window.electron.subscribeToCancelDeleteEntry(cancelDeleteEntryHandler)
+    subscribeToEvent(EventIdentifiers.CancelDeleteEntry, cancelDeleteEntryHandler)
 
     const deleteFolderHandler = (folderId) => {
       handleDeleteFolder(folderId)
     }
-    window.electron.subscribeToDeleteFolder(deleteFolderHandler)
+    subscribeToEvent(EventIdentifiers.DeleteFolder, deleteFolderHandler)
 
     const cancelDeleteFolderHandler = () => {
       setDeletingFolder(null)
     }
-    window.electron.subscribeToCancelDeleteFolder(cancelDeleteFolderHandler)
+    subscribeToEvent(EventIdentifiers.CancelDeleteFolder, cancelDeleteFolderHandler)
 
     const setPasswordHandler = (password) => {
       setPassword(password)
     }
-    window.electron.subscribeToSetPassword(setPasswordHandler)
+    subscribeToEvent(EventIdentifiers.SetPassword, setPasswordHandler)
 
     const setIsInitializedHandler = () => {
       setIsInitialized(true)
     }
-    window.electron.subscribeToSetInitialized(setIsInitializedHandler)
+    subscribeToEvent(EventIdentifiers.SetInitialized, setIsInitializedHandler)
 
     return () => {
-      window.electron.unsubscribeToFileOpened()
-      window.electron.unsubscribeToFailedOpenFile()
-      window.electron.unsubscribeToOpenFileFromPath()
-      window.electron.unsubscribeToSetSecondaryWindowEntry()
-      window.electron.unsubscribeToUpdateTheme()
-      window.electron.unsubscribeToUpdateIsDark()
-      window.electron.unsubscribeToChangeLanguage()
-      window.electron.unsubscribeToUpdateConfig()
-      window.electron.unsubscribeToAddFolder()
-      window.electron.unsubscribeToDeleteEntry()
-      window.electron.unsubscribeToCancelDeleteEntry()
-      window.electron.unsubscribeToDeleteFolder()
-      window.electron.unsubscribeToCancelDeleteFolder()
-      window.electron.unsubscribeToSetInitialized()
+      subscribedEvents.forEach(eventName => window.electron.events.unsubscribe(eventName))
       window.removeEventListener('resize', onResize)
       window.removeEventListener('scroll', onScroll)
     }
   }, [])
 
   useEffect(() => {
-    window.electron.subscribeToGetDeletingRecordInfo((recordType: RecordType) => {
+    window.electron.events.subscribe(EventIdentifiers.GetDeletingRecordInfo, async (recordType: RecordType) => {
       switch (recordType) {
         case RecordType.Entry:
-          if (deletingEntry)
-            window.electron.sendGetDeletingRecordInfoResult(deletingEntry)
+          if (deletingEntry) {
+            await window.electron.events.propagateResult<NamedIdentifiableType>(EventIdentifiers.GetDeletingRecordInfo, deletingEntry)
+          }
           break
         case RecordType.Folder:
-          if (deletingFolder)
-            window.electron.sendGetDeletingRecordInfoResult(deletingFolder)
+          if (deletingFolder) {
+            await window.electron.events.propagateResult<NamedIdentifiableType>(EventIdentifiers.GetDeletingRecordInfo, deletingFolder)
+          }
           break
       }
     })
 
     return () => {
-      window.electron.unsubscribeToGetDeletingRecordInfo()
+      window.electron.events.unsubscribe(EventIdentifiers.GetDeletingRecordInfo)
     }
   }, [ deletingEntry, deletingFolder ])
 
   useEffect(() => {
     const setFileContentHandler = (password) => {
-      window.electron.setFileContent(filePath, password)
+      window.app.file.open(filePath, password)
     }
-    window.electron.subscribeToSetFileContent(setFileContentHandler)
+    window.electron.events.subscribe(EventIdentifiers.SetFileContent, setFileContentHandler)
 
     return () => {
-      window.electron.unsubscribeToSetFileContent()
+      window.electron.events.unsubscribe(EventIdentifiers.SetFileContent)
     }
   }, [ filePath ])
 
@@ -212,11 +210,11 @@ const App = () => {
       const lockHandler = () => {
         setIsLocked(true)
       }
-      window.lock.subscribeToLock(lockHandler)
+      window.electron.events.subscribe(IpcEventNames.App.Lock, lockHandler)
     }
 
     return () => {
-      window.lock.unsubscribeToLock()
+      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
     }
   }, [isInitialized])
 

@@ -19,7 +19,7 @@ const SaveButton = () => {
   const { filePath, setFilePath, fileContent, password, forceUpdateFileContent } = useFileContentContext()
   const saveFile = () => {
     const saveFile = (path: string, content: string) => {
-      window.electron.saveFile(path, content)
+      window.app.file.save(path, content)
     }
 
     let content = JSON.stringify(fileContent)
@@ -31,7 +31,7 @@ const SaveButton = () => {
       forceUpdateFileContent()
       return
     } else {
-      window.dialog.fileManagement.save()
+      window.app.file.saveDialog()
         .then((path: string | undefined) => {
           if (!path) {
             return

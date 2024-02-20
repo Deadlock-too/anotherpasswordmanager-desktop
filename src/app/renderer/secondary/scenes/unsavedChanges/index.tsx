@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import TitleBar from '../../../main/components/titlebar'
 import { useEffect } from 'react'
+import IpcEventNames from '../../../../main/ipc/ipcEventNames'
+import { EventIdentifiers } from '../../../../main/consts'
 
 const UnsavedChangesScene = () => {
   const { t } = useTranslation()
@@ -9,12 +11,12 @@ const UnsavedChangesScene = () => {
   const message = t(`UnsavedChangesDialog.Message`)
 
   const onSave = async () => {
-    await window.dialogManagement.saveChanges(true)
+    await window.electron.events.propagate(EventIdentifiers.SaveChanges,true)
       .then(window.close)
   }
 
   const onDiscard = async () => {
-    await window.dialogManagement.saveChanges(false)
+    await window.electron.events.propagate(EventIdentifiers.SaveChanges, false)
       .then(window.close)
   }
 
@@ -50,10 +52,10 @@ const UnsavedChangesWindow = () => {
   }
 
   useEffect(() => {
-    window.lock.subscribeToLock(handleClose)
+    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
 
     return () => {
-      window.lock.unsubscribeToLock()
+      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
     }
   }, [])
 

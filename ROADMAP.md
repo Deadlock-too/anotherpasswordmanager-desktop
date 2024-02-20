@@ -8,8 +8,7 @@
   - [ ] Implement security settings (finish managing when expiry is implemented)
     - [ ] **[ID-0.13]** Implement defaultNewEntryExpire
     - [ ] **[ID-0.14]** Implement defaultNewEntryExpireTime
-- [ ] `HIGH PRIORITY` Redefine IpcEvents hierarchy and event subscription management 
-- [ ] `HIGH PRIORITY` Reorganize features and improvements in the roadmap giving them a priority, a difficulty, a time estimate and a deadline (move it to Notion for easier management)
+- [ ] `HIGH PRIORITY` Redefine IpcEvents hierarchy and event subscription management
 - [ ] **[ID-1]** Define app icon
 - [ ] **[ID-2]** Define default file name for the password file
 - [ ] **[ID-4]** Manage protocol links in dedicated class
@@ -94,31 +93,28 @@
 - [x] File Encryption
 - [x] OTP Management
 - [x] Basic Settings
-  - [x] General
-    - [x] Language
-      - [x] Italian
-      - [x] English
-    - [x] Auto-save
-    - [x] Open behavior
-      - [x] Open at startup
-      - [x] Open minimized
-    - [x] Tray
-      - [x] Minimize to tray
-      - [x] Close to tray
-  - [x] Appearance
-    - [x] Theme
-      - [x] Choose from available themes
-      - [x] Sync with system (choosing light and dark themes to be used)
-  - [x] Security
-    - [x] Auto-lock
-      - [x] Lock timeout
-      - [x] Lock on minimize
-      - [x] Lock on close
-      - [x] Lock on suspend 
-    - [x] Clipboard
-      - [x] Copy field value to clipboard
-      - [x] Clipboard clear timeout
-      - [x] Clipboard clear on lock
+  - [x] Localization
+    - [x] Italian
+    - [x] English
+  - [x] Auto-save
+  - [x] Open behavior
+    - [x] Open at startup
+    - [x] Open minimized
+  - [x] Tray
+    - [x] Minimize to tray
+    - [x] Close to tray
+  - [x] Theming
+    - [x] Choice from available themes
+    - [x] Sync with system (with selection for light and dark themes to use)
+  - [x] Auto-lock
+    - [x] Lock timeout
+    - [x] Lock on minimize
+    - [x] Lock on close
+    - [x] Lock on suspend 
+  - [x] Clipboard
+    - [x] Copy field value to clipboard
+    - [x] Clipboard clear timeout
+    - [x] Clipboard clear on lock
 
 ## Possible future features (not yet planned)
 ### Custom theme creation

@@ -1,4 +1,4 @@
-import { BrowserWindow, clipboard, ipcMain, nativeTheme, Menu } from 'electron'
+import { BrowserWindow, clipboard, ipcMain, nativeTheme } from 'electron'
 import { openFileDialog, openFileFromPath, saveFileDialog } from '../utils/windowManager'
 import { daisyui } from '../../../../tailwind.config'
 import * as fs from 'fs'
@@ -15,10 +15,18 @@ import {
   writeConfig
 } from '../utils/configManager'
 import { Config, Language, Theme } from '../../../types'
-import { Folder, UUID } from '../../renderer/common/types'
 import Main from '../main'
+import { ConfigIdentifiers } from '../consts'
 
 let currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
+
+//TODO ID-25
+const propagateToAllWindows = (eventName: string, ...args: any[]) => {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(eventName, ...args)
+  })
+}
+
 
 /**
  * Ipc events
@@ -27,9 +35,7 @@ nativeTheme.on('updated', () => {
   if (currentShouldUseDarkColors === nativeTheme.shouldUseDarkColors || nativeTheme.themeSource !== 'system')
     return
 
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.Theming.UpdateIsDark, nativeTheme.shouldUseDarkColors)
-  })
+  propagateToAllWindows(IpcEventNames.App.Theming.UpdateIsDark, nativeTheme.shouldUseDarkColors)
 
   currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
 })
@@ -38,28 +44,28 @@ nativeTheme.on('updated', () => {
 /**
  * Ipc event handlers
  */
-ipcMain.handle(IpcEventNames.FileManagement.Open, async (): Promise<void> => {
+ipcMain.handle(IpcEventNames.App.File.OpenDialog, async (): Promise<void> => {
   return await openFileDialog()
 })
 
-ipcMain.handle(IpcEventNames.FileManagement.Save, async (): Promise<string | undefined> => {
+ipcMain.handle(IpcEventNames.App.File.SaveDialog, async (): Promise<string | undefined> => {
   return await saveFileDialog()
 })
 
-ipcMain.handle(IpcEventNames.FileOpen.SetFileContent, async (_, path: string, password: string): Promise<void> => {
+ipcMain.handle(IpcEventNames.App.File.Open, async (_, path: string, password: string): Promise<void> => {
   return await openFileFromPath(path, password)
 })
 
-ipcMain.handle(IpcEventNames.Theming.GetStartupTheme, async (): Promise<Theme> => {
+ipcMain.handle(IpcEventNames.App.Theming.GetStartupTheme, async (): Promise<Theme> => {
   const theme = await getThemeFromConfig()
   return theme.currentTheme
 })
 
-ipcMain.handle(IpcEventNames.Localization.GetStartupLanguage, async (): Promise<Language> => {
+ipcMain.handle(IpcEventNames.App.Localization.GetStartupLanguage, async (): Promise<Language> => {
   return await getLanguageFromConfig()
 })
 
-ipcMain.handle(IpcEventNames.Theming.SetTheme, async (_, themeName, setSystem): Promise<boolean> => {
+ipcMain.handle(IpcEventNames.App.Theming.SetTheme, async (_, themeName, setSystem): Promise<boolean> => {
   const theme = daisyui.themes.find(t => themeName in t)[themeName]
 
   if (setSystem) {
@@ -73,7 +79,7 @@ ipcMain.handle(IpcEventNames.Theming.SetTheme, async (_, themeName, setSystem): 
   const content = theme['base-content'] ?? (isDark ? '#ffffff' : '#000000')
 
   BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.Theming.UpdateTheme, themeName)
+    window.webContents.send(IpcEventNames.App.Theming.UpdateTheme, themeName)
     try {
       window.setTitleBarOverlay({
         color: color,
@@ -89,174 +95,96 @@ ipcMain.handle(IpcEventNames.Theming.SetTheme, async (_, themeName, setSystem): 
   return nativeTheme.shouldUseDarkColors
 })
 
-ipcMain.handle(IpcEventNames.Theming.IsDark, () => {
+ipcMain.handle(IpcEventNames.App.Theming.IsDark, () => {
   return nativeTheme.shouldUseDarkColors
 })
 
-ipcMain.handle(IpcEventNames.Theming.IsSystem, () => {
+ipcMain.handle(IpcEventNames.App.Theming.IsSystem, () => {
   return nativeTheme.themeSource === 'system'
 })
 
-ipcMain.handle(IpcEventNames.Theming.SetSystem, () => {
+ipcMain.handle(IpcEventNames.App.Theming.SetSystem, () => {
   nativeTheme.themeSource = 'system'
 })
 
-ipcMain.handle(IpcEventNames.Clipboard.Read, async (): Promise<string> => {
+ipcMain.handle(IpcEventNames.System.Clipboard.Read, async (): Promise<string> => {
   return clipboard.readText('clipboard')
 })
 
-ipcMain.handle(IpcEventNames.Clipboard.Write, async (_, args): Promise<void> => {
+ipcMain.handle(IpcEventNames.System.Clipboard.Write, async (_, args): Promise<void> => {
   return clipboard.writeText(args, 'clipboard')
 })
 
-ipcMain.handle(IpcEventNames.Clipboard.Clear, async (): Promise<void> => {
+ipcMain.handle(IpcEventNames.System.Clipboard.Clear, async (): Promise<void> => {
   return clipboard.clear()
 })
 
-ipcMain.handle(IpcEventNames.Electron.SaveFile, async (_, path: string, data: string): Promise<void> => {
+ipcMain.handle(IpcEventNames.App.File.Save, async (_, path: string, data: string): Promise<void> => {
   fs.writeFileSync(path, data, { encoding: 'utf-8' })
 })
 
-ipcMain.handle(IpcEventNames.Config.Get, (): Promise<Config> => {
+ipcMain.handle(IpcEventNames.App.Config.Get, (): Promise<Config> => {
   return readConfig()
 })
 
-ipcMain.handle(IpcEventNames.Config.Set, async (_, data: Config): Promise<void> => {
+ipcMain.handle(IpcEventNames.App.Config.Set, async (_, data: Config): Promise<void> => {
   await writeConfig(data)
 })
 
-ipcMain.handle(IpcEventNames.Config.Update, () => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.Config.Update)
-  })
+ipcMain.handle(IpcEventNames.App.Config.Refresh, () => {
+  propagateToAllWindows(IpcEventNames.App.Config.Refresh)
 })
 
-ipcMain.handle(IpcEventNames.Config.OpenAtStartup, async (_, openAtStartup: boolean): Promise<void> => {
-  Main.setOpenAtStartup(openAtStartup)
+ipcMain.handle(IpcEventNames.App.Config.Apply, async (_, configIdentifier: string, value: any): Promise<void> => {
+  switch (configIdentifier) {
+    case ConfigIdentifiers.OpenAtStartup: {
+      Main.setOpenAtStartup(value)
+      break
+    }
+    case ConfigIdentifiers.MinimizeToTray: {
+      await applyMinimizeToTray(value)
+      break
+    }
+    case ConfigIdentifiers.CloseToTray: {
+      await applyCloseToTray(value)
+      break
+    }
+    case ConfigIdentifiers.AutoLockOnMinimize: {
+      await applyAutoLockOnMinimize(value)
+      break
+    }
+    case ConfigIdentifiers.AutoLockOnSleep: {
+      await applyAutoLockOnSleep(value)
+      break
+    }
+    case ConfigIdentifiers.AutoLockOnLock: {
+      await applyAutoLockOnLock(value)
+      break
+    }
+  }
 })
 
-ipcMain.handle(IpcEventNames.Config.MinimizeToTray, async (_, minimizeToTray: boolean): Promise<void> => {
-  await applyMinimizeToTray(minimizeToTray)
+ipcMain.handle(IpcEventNames.App.Lock, async (): Promise<void> => {
+  propagateToAllWindows(IpcEventNames.App.Lock)
 })
 
-ipcMain.handle(IpcEventNames.Config.CloseToTray, async (_, closeToTray: boolean): Promise<void> => {
-  await applyCloseToTray(closeToTray)
+ipcMain.handle(IpcEventNames.App.Localization.ChangeLanguage, async (_, lang: string): Promise<void> => {
+  propagateToAllWindows(IpcEventNames.App.Localization.ChangeLanguage, lang)
 })
 
-ipcMain.handle(IpcEventNames.Config.AutoLockOnMinimize, async (_, autoLockOnMinimize: boolean): Promise<void> => {
-  await applyAutoLockOnMinimize(autoLockOnMinimize)
+ipcMain.handle(IpcEventNames.Electron.Events.Propagate, async (_, eventName: string, ...args: any[]): Promise<void> => {
+  propagateToAllWindows(eventName, ...args)
 })
 
-ipcMain.handle(IpcEventNames.Config.AutoLockOnSleep, async (_, autoLockOnSleep: boolean): Promise<void> => {
-  await applyAutoLockOnSleep(autoLockOnSleep)
-})
-
-ipcMain.handle(IpcEventNames.Config.AutoLockOnLock, async (_, autoLockOnLock: boolean): Promise<void> => {
-  await applyAutoLockOnLock(autoLockOnLock)
-})
-
-ipcMain.handle(IpcEventNames.Electron.Lock, async (): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.Electron.Lock)
-  })
-})
-
-ipcMain.handle(IpcEventNames.Localization.ChangeLanguage, async (_, lang: string): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.Localization.ChangeLanguage, lang)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.AddFolder, async (_, folder: Folder): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.AddFolder, folder)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.GetDeletingRecordInfo, async (_, recordType): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.GetDeletingRecordInfo, recordType)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.GetDeletingRecordInfoResult, async (_, result): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.GetDeletingRecordInfoResult, result)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.DeleteEntry, async (_, id: UUID): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.DeleteEntry, id)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.CancelDeleteEntry, async (): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.CancelDeleteEntry)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.DeleteFolder, async (_, id: UUID): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.DeleteFolder, id)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.CancelDeleteFolder, async (): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.CancelDeleteFolder)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.SetPassword, async (_, password: string): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.SetPassword, password)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.SetFileContent, async (_, password: string): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.SetFileContent, password)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.SetInitialized, async (): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.SetInitialized)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.Unlock, async (_, password: string): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.Unlock, password)
-  })
-})
-
-ipcMain.handle(IpcEventNames.DialogManagement.SaveChanges, async (_, saveChanges: boolean): Promise<void> => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.DialogManagement.SaveChanges, saveChanges)
-  })
+ipcMain.handle(IpcEventNames.Electron.Events.PropagateResult, async (_, eventName: string, result: any): Promise<void> => {
+  propagateToAllWindows(eventName, result)
 })
 
 /**
  * Logging events handlers (usable from renderer process, mainly for secondary windows that could not open dev tools)
  */
-ipcMain.handle(IpcEventNames.Log.Log, (_, ...args): void => {
-  const label = 'Log'
-  console.log(`${ label }-${ getCurrentTimestamp() }:`, ...args)
-})
-ipcMain.handle(IpcEventNames.Log.Info, (_, ...args): void => {
-  const label = 'Info'
-  console.info(`${ label }-${ getCurrentTimestamp() }:`, ...args)
-})
-ipcMain.handle(IpcEventNames.Log.Warn, (_, ...args): void => {
-  const label = 'Warn'
-  console.warn(`${ label }-${ getCurrentTimestamp() }:`, ...args)
-})
-ipcMain.handle(IpcEventNames.Log.Error, (_, ...args): void => {
-  const label = 'Error'
-  console.error(`${ label }-${ getCurrentTimestamp() }:`, ...args)
+ipcMain.handle(IpcEventNames.Electron.Log, (_, ...args): void => {
+  console.log(`${ getCurrentTimestamp() }:`, ...args)
 })
 
 /**

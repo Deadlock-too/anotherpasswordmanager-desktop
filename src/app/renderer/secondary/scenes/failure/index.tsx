@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import TitleBar from '../../../main/components/titlebar'
 import { upperFirst } from 'lodash'
 import { useEffect } from 'react'
+import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 
 const FailureScene = (props: IFailureWindowProps) => {
   const { t } = useTranslation()
@@ -29,10 +30,10 @@ const FailureWindow = (props: IFailureWindowProps) => {
   }
 
   useEffect(() => {
-    window.lock.subscribeToLock(handleClose)
+    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
 
     return () => {
-      window.lock.unsubscribeToLock()
+      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
     }
   }, [])
 

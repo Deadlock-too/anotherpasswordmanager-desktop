@@ -14,7 +14,7 @@ export const createTray = async () => {
   await getAutoLockOnTrayFromConfig().then(autoLockOnTray => {
     if (autoLockOnTray) {
       BrowserWindow.getAllWindows().forEach(window => {
-        window.webContents.send(IpcEventNames.Electron.Lock)
+        window.webContents.send(IpcEventNames.App.Lock)
       })
     }
   })

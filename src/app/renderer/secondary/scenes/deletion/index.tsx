@@ -3,21 +3,23 @@ import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import { Loading } from '../../../common/components'
 import { NamedIdentifiableType, RecordType } from '../../../common/types'
+import IpcEventNames from '../../../../main/ipc/ipcEventNames'
+import { EventIdentifiers } from '../../../../main/consts'
 
 const DeletionScene = (props: { recordType: RecordType }) => {
   const [ recordInfo, setRecordInfo ] = useState<NamedIdentifiableType>()
   const { t } = useTranslation()
 
   useEffect(() => {
-    window.dialogManagement.getDeletingRecordInfo(props.recordType)
+    window.electron.events.propagate(EventIdentifiers.GetDeletingRecordInfo, props.recordType)
 
-    const getDeletionRecordInfoResultHandler = (recordInfo: NamedIdentifiableType) => {
+    const getDeletionRecordInfoHandler = (recordInfo: NamedIdentifiableType) => {
       setRecordInfo(recordInfo)
     }
-    window.dialogManagement.subscribeToGetDeletingRecordInfoResult(getDeletionRecordInfoResultHandler)
+    window.electron.events.subscribeToResult(EventIdentifiers.GetDeletingRecordInfo, getDeletionRecordInfoHandler)
 
     return () => {
-      window.dialogManagement.unsubscribeToGetDeletingRecordInfoResult()
+      window.electron.events.unsubscribeFromResult(EventIdentifiers.GetDeletingRecordInfo)
     }
   }, [])
 
@@ -27,7 +29,7 @@ const DeletionScene = (props: { recordType: RecordType }) => {
   //Truncate record name if it's too long
   const recordInfoName = recordInfo.Name.length > 32 ? recordInfo.Name.substring(0, 32) + '...' : recordInfo.Name
 
-  let title = {
+  const title = {
     [RecordType.Folder]: t('DeletionDialog.Folder.Title'),
     [RecordType.Entry]: t('DeletionDialog.Entry.Title')
   }[props.recordType]
@@ -53,10 +55,10 @@ const DeletionScene = (props: { recordType: RecordType }) => {
   const onSubmit = async () => {
     switch (props.recordType) {
       case RecordType.Folder:
-        await window.dialogManagement.deleteFolder(recordInfo.Id)
+        await window.electron.events.propagate(EventIdentifiers.DeleteFolder, recordInfo.Id)
         break
       case RecordType.Entry:
-        await window.dialogManagement.deleteEntry(recordInfo.Id)
+        await window.electron.events.propagate(EventIdentifiers.DeleteEntry, recordInfo.Id)
         break
     }
   }
@@ -64,10 +66,10 @@ const DeletionScene = (props: { recordType: RecordType }) => {
   const onCancel = async () => {
     switch (props.recordType) {
       case RecordType.Folder:
-        await window.dialogManagement.cancelDeleteFolder()
+        await window.electron.events.propagate(EventIdentifiers.CancelDeleteFolder)
         break
       case RecordType.Entry:
-        await window.dialogManagement.cancelDeleteEntry()
+        await window.electron.events.propagate(EventIdentifiers.CancelDeleteEntry)
         break
     }
   }
@@ -107,10 +109,10 @@ const DeletionWindow = (props: { recordType: RecordType }) => {
     (async () => {
       switch (props.recordType) {
         case RecordType.Folder:
-          await window.dialogManagement.cancelDeleteFolder()
+          await window.electron.events.propagate(EventIdentifiers.CancelDeleteFolder)
           break
         case RecordType.Entry:
-          await window.dialogManagement.cancelDeleteEntry()
+          await window.electron.events.propagate(EventIdentifiers.CancelDeleteEntry)
           break
       }
     })()
@@ -118,10 +120,10 @@ const DeletionWindow = (props: { recordType: RecordType }) => {
   }
 
   useEffect(() => {
-    window.lock.subscribeToLock(handleClose)
+    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
 
     return () => {
-      window.lock.unsubscribeToLock()
+      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
     }
   }, [])
 

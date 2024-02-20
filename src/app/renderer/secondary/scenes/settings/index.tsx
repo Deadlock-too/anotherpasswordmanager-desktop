@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../../../i18n'
 import { Loading, ScrollableDiv } from '../../../common/components'
 import TitleBar from '../../../main/components/titlebar'
+import IpcEventNames from '../../../../main/ipc/ipcEventNames'
+import { ConfigIdentifiers } from '../../../../main/consts'
 
 enum SettingSections {
   General = 'General',
@@ -76,13 +78,13 @@ const SettingsScene = ({ formikRef }) => {
   }, setTemporaryValues: boolean) => {
     //TODO ID-22
     await (async () => {
-      await window.localization.changeLanguage(values.language)
+      await window.app.localization.changeLanguage(values.language)
 
       if (values.useSystemTheme) {
-        await window.theming.setSystem()
+        await window.app.theming.setSystem()
       }
 
-      const isDark = await window.theming.isDark()
+      const isDark = await window.app.theming.isDark()
 
       setTemporaryUseSystemTheme(setTemporaryValues ? values.useSystemTheme : undefined)
       setTemporaryLightTheme(setTemporaryValues ? values.lightTheme : undefined)
@@ -90,20 +92,20 @@ const SettingsScene = ({ formikRef }) => {
 
       if (values.useSystemTheme) {
         if (isDark) {
-          await window.theming.setTheme(values.darkTheme, true)
+          await window.app.theming.setTheme(values.darkTheme, true)
         } else {
-          await window.theming.setTheme(values.lightTheme, true)
+          await window.app.theming.setTheme(values.lightTheme, true)
         }
       } else {
-        await window.theming.setTheme(values.customTheme, false)
+        await window.app.theming.setTheme(values.customTheme, false)
       }
 
-      await window.config.openAtStartup(values.openAtStartup)
-      await window.config.minimizeToTray(values.minimizeToTray)
-      await window.config.closeToTray(values.closeToTray)
-      await window.config.autoLockOnMinimize(values.autoLockOnMinimize)
-      await window.config.autoLockOnSleep(values.autoLockOnSleep)
-      await window.config.autoLockOnLock(values.autoLockOnLock)
+      await window.app.config.apply(ConfigIdentifiers.OpenAtStartup, values.openAtStartup)
+      await window.app.config.apply(ConfigIdentifiers.MinimizeToTray, values.minimizeToTray)
+      await window.app.config.apply(ConfigIdentifiers.CloseToTray, values.closeToTray)
+      await window.app.config.apply(ConfigIdentifiers.AutoLockOnMinimize, values.autoLockOnMinimize)
+      await window.app.config.apply(ConfigIdentifiers.AutoLockOnSleep, values.autoLockOnSleep)
+      await window.app.config.apply(ConfigIdentifiers.AutoLockOnLock, values.autoLockOnLock)
     })()
       .then(async () => await i18n.changeLanguage(values.language))
   }
@@ -128,7 +130,7 @@ const SettingsScene = ({ formikRef }) => {
         settings: newValues.settings,
       }))
       .then(() => setSubmitting(false))
-      .then(window.config.update)
+      .then(window.app.config.refresh)
       .then(() => window.close())
   }
 
@@ -261,20 +263,22 @@ const SettingsWindow = () => {
   const formikRef = useRef<FormikProps<any>>(null)
 
   useEffect(() => {
+    const updateIsDarkEventName = IpcEventNames.App.Theming.UpdateIsDark
     const updateIsDarkHandler = (isDark) => {
       setIsDark(isDark)
     }
-    window.electron.subscribeToUpdateIsDark(updateIsDarkHandler)
+    window.electron.events.subscribe(updateIsDarkEventName, updateIsDarkHandler)
 
-    window.localization.startupLanguage
+    window.app.localization.startupLanguage
       .then((lang) => i18n.changeLanguage(lang))
       .then(() => setIsLanguageLoading(false))
 
-    window.lock.subscribeToLock(handleClose)
+    const lockEventName = IpcEventNames.App.Lock
+    window.electron.events.subscribe(lockEventName, handleClose)
 
     return () => {
-      window.electron.unsubscribeToUpdateIsDark()
-      window.lock.unsubscribeToLock()
+      window.electron.events.unsubscribe(updateIsDarkEventName)
+      window.electron.events.unsubscribe(lockEventName)
     }
   }, [])
 
