@@ -19,7 +19,7 @@ import {
 } from './utils/rendererWindowManager'
 import { NamedIdentifiableType, RecordType } from '../common/types'
 import IpcEventNames from '../../main/ipc/ipcEventNames'
-import { EventIdentifiers } from '../../main/consts'
+import EventIdentifiers from '../../../consts/eventIdentifiers'
 
 const App = () => {
   const [ initialI18nStore, setInitialI18nStore ] = useState(null)

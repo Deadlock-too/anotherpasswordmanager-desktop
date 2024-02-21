@@ -1,4 +1,5 @@
 import { Theme } from '../../../../types'
+import { LOCALHOST_SECONDARY_WINDOW_ENTRY } from '../../../../consts'
 
 let secondaryWindow: Window | null = null
 
@@ -18,7 +19,7 @@ export enum WindowVariant {
 
 export const openSecondaryWindow = async (variant: WindowVariant, beforeOpen: () => void, onClose: () => void, secondaryWindowEntry?: string) => {
   beforeOpen()
-  secondaryWindow = window.open(secondaryWindowEntry ?? 'http://localhost:3000/secondary_window', variant, `{"width":${window.outerWidth},"height":${window.outerHeight},"x":${window.screenX},"y":${window.screenY}}`)
+  secondaryWindow = window.open(secondaryWindowEntry ?? LOCALHOST_SECONDARY_WINDOW_ENTRY, variant, `{"width":${window.outerWidth},"height":${window.outerHeight},"x":${window.screenX},"y":${window.screenY}}`)
   if (secondaryWindow) {
     secondaryWindow.name = variant
 

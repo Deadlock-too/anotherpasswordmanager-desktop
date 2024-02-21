@@ -4,7 +4,7 @@ import { RefObject, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FormikTextInput } from '../../../common/components'
 import IpcEventNames from '../../../../main/ipc/ipcEventNames'
-import { EventIdentifiers } from '../../../../main/consts'
+import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 
 interface IPasswordSceneProps extends IPasswordWindowProps {
   formikRef: RefObject<FormikProps<any>>

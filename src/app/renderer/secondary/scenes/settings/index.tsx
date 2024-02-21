@@ -11,7 +11,7 @@ import i18n from '../../../../../i18n'
 import { Loading, ScrollableDiv } from '../../../common/components'
 import TitleBar from '../../../main/components/titlebar'
 import IpcEventNames from '../../../../main/ipc/ipcEventNames'
-import { ConfigIdentifiers } from '../../../../main/consts'
+import ConfigIdentifiers from '../../../../../consts/configIdentifiers'
 
 enum SettingSections {
   General = 'General',

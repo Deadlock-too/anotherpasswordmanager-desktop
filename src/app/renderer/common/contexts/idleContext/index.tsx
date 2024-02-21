@@ -1,17 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { useConfigContext, useFileContentContext, useModalContext } from '../index'
 import { throttle } from 'lodash'
-
-const UserActivityEvents = [
-  'load',
-  'mousemove',
-  'mousedown',
-  'touchstart',
-  'touchmove',
-  'click',
-  'keydown',
-  'wheel'
-]
+import { USER_ACTIVITY_EVENTS } from '../../../../../consts'
 
 interface IdleContextState {
   isIdle: boolean;
@@ -71,13 +61,13 @@ export function IdleContextProvider(props : IIdleContextProviderProps) {
 
     clearEvents()
 
-    UserActivityEvents.forEach((event) => {
+    USER_ACTIVITY_EVENTS.forEach((event) => {
       window.addEventListener(event, resetTimer)
     })
   }
 
   const clearEvents = () => {
-    UserActivityEvents.forEach((event) => {
+    USER_ACTIVITY_EVENTS.forEach((event) => {
       window.removeEventListener(event, resetTimer)
     })
   }

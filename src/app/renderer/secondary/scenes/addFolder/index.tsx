@@ -5,7 +5,7 @@ import TitleBar from '../../../main/components/titlebar'
 import { useEffect, useRef } from 'react'
 import { FormikTextInput } from '../../../common/components'
 import IpcEventNames from '../../../../main/ipc/ipcEventNames'
-import { EventIdentifiers } from '../../../../main/consts'
+import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 
 const AddFolderScene = ({ formikRef }) => {
   const { t } = useTranslation()

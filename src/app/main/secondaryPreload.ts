@@ -2,8 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import IpcEventNames from './ipc/ipcEventNames'
 import { Config, Theme } from '../../types'
 import i18n from '../../i18n'
-
-const RESULT_EVENT_SUFFIX = 'Result' //ID-20
+import { RESULT_EVENT_SUFFIX } from '../../consts'
 
 /**
  * App

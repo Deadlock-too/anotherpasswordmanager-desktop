@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import TitleBar from '../../../main/components/titlebar'
 import { useEffect } from 'react'
 import IpcEventNames from '../../../../main/ipc/ipcEventNames'
-import { EventIdentifiers } from '../../../../main/consts'
+import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 
 const UnsavedChangesScene = () => {
   const { t } = useTranslation()

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useFileContentContext, useModalContext } from '../../../common/contexts'
 import { openSecondaryWindow, WindowVariant } from '../../utils/rendererWindowManager'
 import { useEffect } from 'react'
-import { EventIdentifiers } from '../../../../main/consts'
+import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 
 const Locked = () => {
   const { t } = useTranslation()

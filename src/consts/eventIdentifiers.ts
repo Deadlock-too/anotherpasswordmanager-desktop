@@ -1,12 +1,3 @@
-const ConfigIdentifiers = {
-  OpenAtStartup: 'openAtStartup',
-  MinimizeToTray: 'minimizeToTray',
-  CloseToTray: 'closeToTray',
-  AutoLockOnMinimize: 'autoLockOnMinimize',
-  AutoLockOnSleep: 'autoLockOnSleep',
-  AutoLockOnLock: 'autoLockOnLock',
-}
-
 const EventIdentifiers = {
   AddFolder: 'addFolder',
   GetDeletingRecordInfo: 'getDeletingRecordInfo',
@@ -21,12 +12,4 @@ const EventIdentifiers = {
   SaveChanges: 'saveChanges',
 }
 
-const DEFAULTS = {
-
-}
-
-export {
-  ConfigIdentifiers,
-  EventIdentifiers,
-  DEFAULTS
-}
+export default EventIdentifiers

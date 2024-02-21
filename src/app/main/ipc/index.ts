@@ -16,7 +16,7 @@ import {
 } from '../utils/configManager'
 import { Config, Language, Theme } from '../../../types'
 import Main from '../main'
-import { ConfigIdentifiers } from '../consts'
+import ConfigIdentifiers from '../../../consts/configIdentifiers'
 
 let currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
 

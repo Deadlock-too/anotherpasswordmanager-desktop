@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Loading } from '../../../common/components'
 import { NamedIdentifiableType, RecordType } from '../../../common/types'
 import IpcEventNames from '../../../../main/ipc/ipcEventNames'
-import { EventIdentifiers } from '../../../../main/consts'
+import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 
 const DeletionScene = (props: { recordType: RecordType }) => {
   const [ recordInfo, setRecordInfo ] = useState<NamedIdentifiableType>()
