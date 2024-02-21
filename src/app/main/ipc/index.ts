@@ -1,5 +1,5 @@
 import { BrowserWindow, clipboard, ipcMain, nativeTheme } from 'electron'
-import { openFileDialog, openFileFromPath, saveFileDialog } from '../utils/windowManager'
+import { openFileDialog, openFileFromPath, propagateToAllWindows, saveFileDialog } from '../utils/windowManager'
 import { daisyui } from '../../../../tailwind.config'
 import * as fs from 'fs'
 import IpcEventNames from './ipcEventNames'
@@ -19,14 +19,6 @@ import Main from '../main'
 import ConfigIdentifiers from '../../../consts/configIdentifiers'
 
 let currentShouldUseDarkColors = nativeTheme.shouldUseDarkColors
-
-//TODO ID-25
-const propagateToAllWindows = (eventName: string, ...args: any[]) => {
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(eventName, ...args)
-  })
-}
-
 
 /**
  * Ipc events

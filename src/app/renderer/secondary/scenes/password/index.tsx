@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { FormikTextInput } from '../../../common/components'
 import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 import EventIdentifiers from '../../../../../consts/eventIdentifiers'
+import { capitalizeFirstLetter } from '../../../../../utils'
 
 interface IPasswordSceneProps extends IPasswordWindowProps {
   formikRef: RefObject<FormikProps<any>>
@@ -142,10 +143,6 @@ const PasswordScene = (props: IPasswordSceneProps) => {
 
   const unlock = async (password: string) => {
     await window.electron.events.propagate(EventIdentifiers.Unlock, password)
-  }
-
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1) //TODO ID-25
   }
 
   const FormVariant = (formik: FormikProps<any>) => {

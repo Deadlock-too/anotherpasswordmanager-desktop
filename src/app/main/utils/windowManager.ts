@@ -225,3 +225,9 @@ export async function saveFileDialog() {
   )
   return path
 }
+
+export function propagateToAllWindows(eventName: string, ...args: any[]): void {
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send(eventName, ...args)
+  })
+}

@@ -1,9 +1,6 @@
 import { Config } from '../../types'
 import defaultConfig from '../../defaultConfig.json'
-
-function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1)
-}
+import { capitalizeFirstLetter } from '../'
 
 function configToInitialValues(config: Config) {
   const initialValues = {}
