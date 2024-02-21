@@ -1,11 +1,11 @@
-import { IdentifiableType, UUID } from '../../../common/types'
+import { NamedIdentifiableType, UUID } from '../../../common/types'
 import { Component, ReactNode, useEffect, useRef, useState } from 'react'
 import { CheckIcon, CrossIcon, PencilIcon, PlusIcon, TrashIcon } from '../../../../../assets/icons'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { useLocalContext } from '../../../common/contexts'
 
-export interface BaseColumnProps<T extends IdentifiableType> {
+export interface BaseColumnProps<T extends NamedIdentifiableType> {
   style: {
     label: string | undefined
     width: 'w-3/12' | 'w-6/12'
@@ -19,7 +19,7 @@ export interface BaseColumnProps<T extends IdentifiableType> {
   children?: ReactNode
 }
 
-export class ColumnBase<T extends IdentifiableType> extends Component {
+export class ColumnBase<T extends NamedIdentifiableType> extends Component {
   children?: ReactNode
 
   style: {
@@ -107,7 +107,7 @@ export class ColumnBase<T extends IdentifiableType> extends Component {
   }
 }
 
-export interface ColumnContentProps<T extends IdentifiableType> {
+export interface ColumnContentProps<T extends NamedIdentifiableType> {
   elements: T[]
   actions: {
     setHoveringId: (id: UUID | null) => void
@@ -131,7 +131,7 @@ export interface ColumnContentProps<T extends IdentifiableType> {
   }
 }
 
-export class ColumnContentBase<T extends IdentifiableType> extends Component {
+export class ColumnContentBase<T extends NamedIdentifiableType> extends Component {
   elements: T[] = []
   actions: {
     setHoveringId: (id: UUID | null) => void
@@ -234,7 +234,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
 
               return (
                 <li
-                  key={ child.Id }
+                  key={ child.Id + child.Name }
                   className={ isSelected ? 'selected' : '' }
                   onMouseEnter={ () => {
                     this.actions.setHoveringId(child.Id)
@@ -262,6 +262,9 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                         this.actions.handleUpdate(child)
                         setSubmitting(false)
                       }, 400)
+                    } }
+                    onReset={ () => {
+                      this.actions.setEditingId(null)
                     } }
                   >
                     { ({
@@ -297,7 +300,6 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                                 onKeyUp={ (e) => {
                                   if (e.key === 'Escape') {
                                     handleReset()
-                                    this.actions.setEditingId(null)
                                   }
                                 } }
                                 spellCheck={ false }
@@ -311,7 +313,7 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                             (
                               <div className="flex gap-1 -mr-2.5 -mt-1 -mb-1">
                                 <button
-                                  type='submit'
+                                  type="submit"
                                   className="btn btn-xs btn-square btn-neutral justify-center items-center"
                                   onClick={ () => {
                                     handleSubmit()
@@ -323,10 +325,9 @@ export class ColumnContentBase<T extends IdentifiableType> extends Component {
                                   <CheckIcon/>
                                 </button>
                                 <button
-                                  type='reset'
+                                  type="reset"
                                   className="btn btn-xs btn-square btn-neutral justify-center items-center"
                                   onClick={ () => {
-                                    this.actions.setEditingId(null)
                                     handleReset()
                                   } }
                                   onMouseEnter={ () => setDisableElementSelection(true) }
