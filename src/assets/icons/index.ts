@@ -19,6 +19,7 @@ import { ReactComponent as PlusIcon } from './svg/radix/plus.svg'
 import { ReactComponent as CloseIcon } from './svg/radix/cross-1.svg'
 import { ReactComponent as SettingsIcon } from './svg/radix/gear.svg'
 import { ReactComponent as TemporaryAppIcon } from './svg/radix/tokens.svg'
+import { ReactComponent as DragHandleVerticalIcon } from './svg/radix/drag-handle-vertical.svg'
 
 /* Generated with https://v0.dev/ */
 import { ReactComponent as DoorOpenIcon } from './svg/v0.dev/door-open.svg'
@@ -42,6 +43,7 @@ export {
   CheckIcon,
   SettingsIcon,
   TemporaryAppIcon,
+  DragHandleVerticalIcon,
   DoorOpenIcon,
   KeyIcon,
   ShieldCheckIcon

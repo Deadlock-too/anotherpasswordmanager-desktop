@@ -4,7 +4,7 @@ import { useFileContentContext, useModalContext } from '../../../../common/conte
 import { useTranslation } from 'react-i18next'
 import { openSecondaryWindow, WindowVariant } from '../../../utils/rendererWindowManager'
 
-const EntriesColumn = ({elements}) => {
+const EntriesColumn = ({ elements }) => {
   const {
     selectedEntryId,
     hoveringEntryId,
@@ -21,11 +21,12 @@ const EntriesColumn = ({elements}) => {
   const column = new ColumnBase<Entry>({
     style: {
       label: t('Main.Entries'),
-      width: 'w-3/12',
       margin: 'mr-1 ml-1',
       unselectableContent: true,
       addButton: {
-        onClick: () => { handleSelectEntry(null, true) },
+        onClick: () => {
+          handleSelectEntry(null, true)
+        },
         disabled: false
       }
     },
@@ -49,7 +50,11 @@ const EntriesColumn = ({elements}) => {
         editingId: editingEntryId,
         getElementName: (entry: Entry) => entry.Name,
         getUniqueElementName: (element, elements) => {
-          if (elements.filter(e => e.Id !== element.Id && e.Name === element.Name).length > 0) {
+          if (element.Username !== '' && elements.filter(e =>
+            e.Id !== element.Id &&
+            e.Name === element.Name &&
+            e.Username !== element.Username
+          ).length > 0) {
             return element.Name + ' (' + element.Username + ')'
           }
           return element.Name

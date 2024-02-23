@@ -6,8 +6,9 @@ import { useConfigContext, useFileContentContext, useModalContext } from '../../
 import { useTranslation } from 'react-i18next'
 import { FormikPasswordInput, FormikTextInput } from '../../../common/components'
 import { openSecondaryWindow, WindowVariant } from '../../utils/rendererWindowManager'
+import { CheckIcon, CrossIcon, PencilIcon, TrashIcon } from '../../../../../assets/icons'
 
-const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void }) => {
+const EntryDetail = (props: { columnSize: number, entry?: Entry, onSubmit: (entry: Entry) => void }) => {
   const { handleSelectEntry, setDeletingEntry, toggleRefreshDetail } = useFileContentContext()
   const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   const [ readonly, setReadonly ] = useState(props.entry !== undefined)
@@ -108,7 +109,7 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                 preventDefaultOnClick={ readonly }
                 customReadonlyComponent={
                   (formik.values.otpURI) ?
-                    <OTP otpURI={ formik.values.otpURI }/>
+                    <OTP otpURI={ formik.values.otpURI } columnSize={ props.columnSize }/>
                     :
                     <div className="h-full justify-center">
                       <h1 className="text-center font-thin unselectable">
@@ -132,7 +133,11 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   } }
                   disabled={ formik.isSubmitting }
                 >
-                  { t('Entry Detail.Edit Button') }
+                  <PencilIcon/>
+                  {
+                    props.columnSize > 450 ?
+                      t('Entry Detail.Edit Button') : null
+                  }
                 </button>
                 :
                 <button
@@ -140,7 +145,11 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                   disabled={ formik.isSubmitting }
                   className="btn btn-primary btn-outline w-1/3"
                 >
-                  { t('Entry Detail.Save Button') }
+                  <CheckIcon/>
+                  {
+                    props.columnSize > 450 ?
+                      t('Entry Detail.Save Button') : null
+                  }
                 </button>
             }
             {
@@ -157,7 +166,11 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                     }
                   } }
                 >
-                  { t('Entry Detail.Delete Button') }
+                  <TrashIcon/>
+                  {
+                    props.columnSize > 450 ?
+                      t('Entry Detail.Delete Button') : null
+                  }
                 </button>
                 :
                 <button
@@ -174,7 +187,11 @@ const EntryDetail = (props: { entry?: Entry, onSubmit: (entry: Entry) => void })
                     }
                   } }
                 >
-                  { t('Entry Detail.Cancel Button') }
+                  <CrossIcon/>
+                  {
+                    props.columnSize > 450 ?
+                      t('Entry Detail.Cancel Button') : null
+                  }
                 </button>
             }
           </div>

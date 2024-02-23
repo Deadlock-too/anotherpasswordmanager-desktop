@@ -3,16 +3,15 @@ import DetailView from '../../detailView'
 import { useTranslation } from 'react-i18next'
 import { LocalContextProvider } from '../../../../common/contexts'
 
-const InternalDetailsColumn = () => {
+const InternalDetailsColumn = ({ columnSize }) => {
   const { t } = useTranslation()
   const column = new ColumnBase({
     style: {
       label: t('Main.Detail'),
-      width: 'w-6/12',
       margin: 'ml-1',
       unselectableContent: false
     },
-    children: <DetailView/>
+    children: <DetailView columnSize={ columnSize }/>
   })
 
   return (
@@ -20,10 +19,10 @@ const InternalDetailsColumn = () => {
   )
 }
 
-const DetailsColumn = () => {
+const DetailsColumn = ({ columnSize }) => {
   return (
     <LocalContextProvider>
-      <InternalDetailsColumn/>
+      <InternalDetailsColumn columnSize={ columnSize }/>
     </LocalContextProvider>
   )
 }

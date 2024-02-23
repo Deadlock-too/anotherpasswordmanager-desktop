@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { FormikErrors, FormikProps, FormikTouched } from 'formik'
-import { usePasswordToggle } from '../../../../main/hooks/passwordVisibility'
+import { usePasswordToggle } from '../../../hooks/passwordVisibility'
 import { Tooltip, TooltipContent, TooltipTrigger, useTimedTooltip } from '../../tooltip'
 import { EyeIcon, EyeSlashIcon } from '../../../../../../assets/icons'
 import { debounce } from 'lodash'

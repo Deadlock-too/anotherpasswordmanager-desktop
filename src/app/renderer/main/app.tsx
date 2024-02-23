@@ -81,7 +81,7 @@ const App = () => {
       i18n.changeLanguage(language)
     })
 
-    const subscribedEvents : string[] = []
+    const subscribedEvents: string[] = []
 
     const subscribeToEvent = (eventName: string, handler: (...args) => void) => {
       window.electron.events.subscribe(eventName, handler)
@@ -216,7 +216,7 @@ const App = () => {
     return () => {
       window.electron.events.unsubscribe(IpcEventNames.App.Lock)
     }
-  }, [isInitialized])
+  }, [ isInitialized ])
 
   if (!initialI18nStore)
     return null
@@ -227,9 +227,11 @@ const App = () => {
       <div className="overflow-hidden">
         {
           (!isInitialized) ?
-            <Intro onNewButtonClick={ async () => {
-              await openSecondaryWindow(WindowVariant.PasswordCreate, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
-            } }/> :
+            <Intro
+              onNewButtonClick={ async () => {
+                await openSecondaryWindow(WindowVariant.PasswordCreate, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+              } }
+            /> :
             <Main/>
         }
       </div>

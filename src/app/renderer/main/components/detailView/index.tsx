@@ -4,7 +4,7 @@ import { Entry } from '../../../common/types'
 import { useFileContentContext } from '../../../common/contexts'
 import { useTranslation } from 'react-i18next'
 
-const DetailView = () => {
+const DetailView = ({ columnSize }) => {
   const {
     selectedEntryId,
     selectedFolderId,
@@ -29,6 +29,7 @@ const DetailView = () => {
       <EntryDetail
         key={ JSON.stringify(selectedEntry) }
         entry={ selectedEntry }
+        columnSize={ columnSize }
         onSubmit={ (entry) => {
           if (selectedEntry === undefined) {
             handleAddEntry(entry, selectedFolderId)

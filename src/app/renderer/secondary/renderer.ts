@@ -34,7 +34,7 @@ declare global {
       }
     }
     electron: {
-      log: (...args) => Promise<void>
+      log: (...args) => void
       events: {
         subscribe: (event: string, callback: unknown) => void
         unsubscribe: (event: string) => void

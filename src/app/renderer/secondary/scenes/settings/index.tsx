@@ -12,6 +12,9 @@ import { Loading, ScrollableDiv } from '../../../common/components'
 import TitleBar from '../../../main/components/titlebar'
 import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 import ConfigIdentifiers from '../../../../../consts/configIdentifiers'
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import { DragHandleVerticalIcon } from '../../../../../assets/icons'
+import { useHandleVisibilityManager, useMinSizeResizingHelper } from '../../../common/hooks/resizablePanels'
 
 enum SettingSections {
   General = 'General',
@@ -23,6 +26,17 @@ const SettingsScene = ({ formikRef }) => {
   const [ selectedSetting, setSelectedSetting ] = useState<SettingSections>(SettingSections.General)
   const { t } = useTranslation()
   const settings = Object.values(SettingSections)
+
+  const minWidths = [ 125, 300 ]
+
+  const [ minSize, setMinSize ] = useState(minWidths.map(w => w / window.innerWidth * 100))
+
+  const groupId = 'settings-panel-group'
+  const menuId = 'settings-menu'
+  const contentId = 'settings-content'
+
+  useMinSizeResizingHelper(minWidths, setMinSize)
+  useHandleVisibilityManager(groupId)
 
   const textRefs = useRef<(HTMLDivElement | null)[]>([])
   const liRefs = useRef<(HTMLLIElement | null)[]>([])
@@ -166,53 +180,62 @@ const SettingsScene = ({ formikRef }) => {
           <form onSubmit={ formik.handleSubmit } onReset={ formik.handleReset }
                 className="flex flex-col h-full w-full gap-2">
             <div className="flex flex-row h-full w-full gap-2 overflow-hidden">
-              <div className="w-3/12 h-full flex flex-col unselectable">
-                <ScrollableDiv height="max-h-full">
-                  <ul className="menu menu-md bg-base-300 w-full rounded-md gap-1">
-                    {
-                      settings.map((setting, i) => {
-                        const isSelected = selectedSetting === setting
-                        return (
-                          <li key={ setting } className={ isSelected ? 'selected' : '' }
-                              ref={ el => liRefs.current[i] = el }
-                          >
-                            <a key={ setting } onClick={ () => setSelectedSetting(setting) }
-                               className="justify-between items-center">
-                              <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
-                                { t(`SettingsDialog.${ setting }.Title`) }
-                              </div>
-                            </a>
-                          </li>
-                        )
-                      })
-                    }
-                  </ul>
-                </ScrollableDiv>
-              </div>
-              <div className="w-9/12 h-full flex flex-col unselectable">
-                <ScrollableDiv height="max-h-full">
-                  {
-                    ((selectedSetting) => {
-                      let component: Element | ReactNode
-                      switch (selectedSetting) {
-                        case SettingSections.General:
-                          component = <GeneralSettings formik={ formik }/>
-                          break
-                        case SettingSections.Appearance:
-                          component = <AppearanceSettings formik={ formik }/>
-                          break
-                        case SettingSections.Security:
-                          component = <SecuritySettings formik={ formik }/>
-                          break
-                        default:
-                          component = <div>Unknown setting</div>
-                          break
+              <PanelGroup autoSaveId={ groupId } direction="horizontal" id={ groupId }>
+                <Panel id={ menuId } minSize={ minSize[0] } defaultSize={ 25 }>
+                  <div className="h-full flex flex-col mr-1 unselectable">
+                    <ScrollableDiv height="max-h-full">
+                      <ul className="menu menu-md bg-base-300 w-full rounded-md gap-1">
+                        {
+                          settings.map((setting, i) => {
+                            const isSelected = selectedSetting === setting
+                            return (
+                              <li key={ setting } className={ isSelected ? 'selected' : '' }
+                                  ref={ el => liRefs.current[i] = el }
+                              >
+                                <a key={ setting } onClick={ () => setSelectedSetting(setting) }
+                                   className="justify-between items-center">
+                                  <div className="flex-grow truncate" ref={ el => textRefs.current[i] = el }>
+                                    { t(`SettingsDialog.${ setting }.Title`) }
+                                  </div>
+                                </a>
+                              </li>
+                            )
+                          })
+                        }
+                      </ul>
+                    </ScrollableDiv>
+                  </div>
+                </Panel>
+                <PanelResizeHandle className="w-1 divider divider-horizontal ml-0 mr-0 h-full cursor-ew-resize">
+                  <DragHandleVerticalIcon className="-mt-2 -mb-2"/>
+                </PanelResizeHandle>
+                <Panel id={ contentId } minSize={ minSize[1] } defaultSize={ 75 }>
+                  <div className="h-full flex flex-col ml-1 unselectable">
+                    <ScrollableDiv height="max-h-full">
+                      {
+                        ((selectedSetting) => {
+                          let component: Element | ReactNode
+                          switch (selectedSetting) {
+                            case SettingSections.General:
+                              component = <GeneralSettings formik={ formik }/>
+                              break
+                            case SettingSections.Appearance:
+                              component = <AppearanceSettings formik={ formik }/>
+                              break
+                            case SettingSections.Security:
+                              component = <SecuritySettings formik={ formik }/>
+                              break
+                            default:
+                              component = <div>Unknown setting</div>
+                              break
+                          }
+                          return component
+                        })(selectedSetting)
                       }
-                      return component
-                    })(selectedSetting)
-                  }
-                </ScrollableDiv>
-              </div>
+                    </ScrollableDiv>
+                  </div>
+                </Panel>
+              </PanelGroup>
             </div>
             <div className="divider -mt-2 -mb-2"/>
             <div className="flex flex-row justify-end items-center gap-2">

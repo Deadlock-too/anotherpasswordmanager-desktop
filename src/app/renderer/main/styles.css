@@ -119,15 +119,3 @@
     }
   }
 }
-
-@media (max-width: 835px) {
-  .hide-on-small-window {
-    display: none;
-  }
-}
-
-@media (min-width: 836px) {
-  .hide-on-large-window {
-    display: none;
-  }
-}

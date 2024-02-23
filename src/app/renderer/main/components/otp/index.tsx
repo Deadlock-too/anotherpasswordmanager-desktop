@@ -8,7 +8,7 @@ const RADIUS = 30
 const CIRCUMFERENCE: number = RADIUS * 2 * Math.PI
 export const RegExpPattern = 'otpauth:\\/\\/(?<protocol>totp|hotp)\\/(?:(?<issuerInLabel>[a-zA-Z]+):)?(?<label>[a-zA-Z+.@]+)(?:\\?|(?:%3F))(?:secret)(?:(?:%3D)|=)(?<secret>[^&%\\r\\n]+)(?:(?:(?:%26)|&)issuer(?:(?:%3D)|=)(?<issuer>[^&\\r\\n]+))?(?:(?:(?:%26)|&)algorithm(?:(?:%3D)|=)(?<algorithm>[^&\\r\\n]+))?(?:(?:(?:%26)|&)digits(?:(?:%3D)|=)(?<digits>[0-9]+))?(?:(?:(?:%26)|&)period(?:(?:%3D)|=)(?<period>[0-9]+))?(?:(?:(?:%26)|&)counter(?:(?:%3D)|=)(?<counter>[0-9]+))?'
 
-const copyOTP = ({props, key, altKey, metaKey, shiftKey, ctrlKey }) => {
+const copyOTP = ({ props, key, altKey, metaKey, shiftKey, ctrlKey }) => {
   if (key === 'Enter') {
     props.handleSetClipboard(props.otp)
   }
@@ -28,7 +28,7 @@ const SmallOTPComponent = (props: {
   handleSetClipboard: (value: string) => void
 }) => {
   return (
-    <div className="flex flex-col items-center cursor-pointer justify-center hide-on-large-window"
+    <div className="flex flex-col items-center cursor-pointer justify-center"
          onClick={ (event) => {
            event.preventDefault()
            if (props.copyOnClick) {
@@ -52,7 +52,7 @@ const SmallOTPComponent = (props: {
 
 const SmallOTPComponentError = () => {
   return (
-    <div className="flex flex-col items-center cursor-pointer justify-center hide-on-large-window">
+    <div className="flex flex-col items-center cursor-pointer justify-center">
       <div className="text-center text-xl px-5">
         Invalid URI
         <progress
@@ -79,7 +79,7 @@ const LargeOTPComponent = (props: {
   }
 
   return (
-    <div className="flex flex-row items-center cursor-pointer justify-center hide-on-small-window"
+    <div className="flex flex-row items-center cursor-pointer justify-center"
          onClick={ () => {
            if (props.copyOnClick) {
              props.handleSetClipboard(props.otp)
@@ -126,7 +126,7 @@ const LargeOTPComponent = (props: {
 
 const LargeOTPComponentError = () => {
   return (
-    <div className="flex flex-row items-center cursor-pointer justify-center hide-on-small-window">
+    <div className="flex flex-row items-center cursor-pointer justify-center">
       <div className="flex items-center justify-center overflow-hidden rounded-full relative"
            style={ { width: '5rem', height: '5rem' } }
       >
@@ -218,16 +218,20 @@ const ParseURI = (props: { uri: string }): TOTP => {
 }
 
 
-const OTPError = () => {
+const OTPError = ({ columnSize }) => {
   return (
-    <>
-      <SmallOTPComponentError/>
+    columnSize < 350 ?
+      <SmallOTPComponentError/> :
       <LargeOTPComponentError/>
-    </>
   )
 }
 
-const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, percentage: number } }) => {
+const OTPInterface = (props: {
+  columnSize: number,
+  totp: TOTP,
+  otp: string,
+  timer: { time: number, percentage: number }
+}) => {
   const { isOpen, handleTooltipOpen, handleTooltipClose } = useTimedTooltip(800)
   const { handleSetClipboard } = useClipboardContext()
   const { config } = useConfigContext()
@@ -243,11 +247,14 @@ const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, p
           handleTooltipOpen()
         }
       } }>
-        <SmallOTPComponent copyOnClick={ copyOnClick } handleSetClipboard={ handleSetClipboard } otp={ props.otp }
-                           timer={ props.timer }
-                           period={ props.totp.period }/>
-        <LargeOTPComponent copyOnClick={ copyOnClick } handleSetClipboard={ handleSetClipboard } otp={ props.otp }
-                           timer={ props.timer }/>
+        {
+          props.columnSize < 380 ?
+            <SmallOTPComponent copyOnClick={ copyOnClick } handleSetClipboard={ handleSetClipboard } otp={ props.otp }
+                               timer={ props.timer }
+                               period={ props.totp.period }/> :
+            <LargeOTPComponent copyOnClick={ copyOnClick } handleSetClipboard={ handleSetClipboard } otp={ props.otp }
+                               timer={ props.timer }/>
+        }
       </TooltipTrigger>
       <TooltipContent>
         <div
@@ -259,7 +266,7 @@ const OTPInterface = (props: { totp: TOTP, otp: string, timer: { time: number, p
   )
 }
 
-const OTP = (props: { otpURI: string }) => {
+const OTP = (props: { otpURI: string, columnSize: number }) => {
   const [ otp, setOTP ] = useState('000000')
 
   let totp: TOTP
@@ -267,7 +274,7 @@ const OTP = (props: { otpURI: string }) => {
     totp = ParseURI({ uri: props.otpURI })
   } catch (error) {
     return (
-      <OTPError/>
+      <OTPError columnSize={ props.columnSize }/>
     )
   }
 
@@ -346,7 +353,7 @@ const OTP = (props: { otpURI: string }) => {
   }, [])
 
   return (
-    <OTPInterface otp={ otp } timer={ timer } totp={ totp }/>
+    <OTPInterface columnSize={ props.columnSize } otp={ otp } timer={ timer } totp={ totp }/>
   )
 }
 

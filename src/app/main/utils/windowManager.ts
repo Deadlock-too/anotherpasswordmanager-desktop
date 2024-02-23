@@ -31,7 +31,7 @@ async function createMainWindow(windowMinimized: boolean) {
     height: 600,
     width: 800,
     minHeight: 300,
-    minWidth: 550,
+    minWidth: 600,
     titleBarStyle: 'hidden',
     // icon: './assets/icon.png', //TODO ID-1
     titleBarOverlay: {

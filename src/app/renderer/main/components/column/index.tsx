@@ -8,7 +8,6 @@ import { useLocalContext } from '../../../common/contexts'
 export interface BaseColumnProps<T extends NamedIdentifiableType> {
   style: {
     label: string | undefined
-    width: 'w-3/12' | 'w-6/12'
     margin: 'mr-1' | 'mr-1 ml-1' | 'ml-1'
     unselectableContent: boolean
     addButton?: {
@@ -24,7 +23,6 @@ export class ColumnBase<T extends NamedIdentifiableType> extends Component {
 
   style: {
     label: string | undefined
-    width: 'w-3/12' | 'w-6/12'
     margin: 'mr-1' | 'mr-1 ml-1' | 'ml-1'
     unselectableContent: boolean
     addButton?: {
@@ -80,7 +78,7 @@ export class ColumnBase<T extends NamedIdentifiableType> extends Component {
 
     return (
       <div
-        className={ `${ this.style.width } ${ this.style.margin } h-full flex flex-col ${ this.style.unselectableContent ? 'unselectable' : '' }` }>
+        className={ `${ this.style.margin } h-full flex flex-col ${ this.style.unselectableContent ? 'unselectable' : '' }` }>
         <div className="flex flex-row justify-between items-center">
           <label className={ `pl-1.5 font-bold ${ this.style.unselectableContent ? '' : 'unselectable' }` }>
             { this.style.label }
