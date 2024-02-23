@@ -11,14 +11,11 @@ import {
   PanelGroup,
   PanelResizeHandle
 } from 'react-resizable-panels'
-import { useHandleVisibilityManager, useMinSizeResizingHelper } from '../../../common/hooks/resizablePanels'
+import { useHandleVisibilityManager, useMinPanelSizeHelper } from '../../../common/hooks/resizablePanels'
 
 const Main = () => {
   const { folders, entries, isLocked } = useFileContentContext()
 
-  const minWidths = [ 150, 150, 260 ]
-
-  const [ minSize, setMinSize ] = useState(minWidths.map(w => w / window.innerWidth * 100))
   const [ detailSize, setDetailSize ] = useState<number>()
 
   const groupId = 'main-content'
@@ -26,7 +23,7 @@ const Main = () => {
   const entryId = 'entries'
   const detailId = 'detail'
 
-  useMinSizeResizingHelper(minWidths, setMinSize)
+  const { minSize } = useMinPanelSizeHelper([ 150, 150, 260 ])
   useHandleVisibilityManager(groupId)
 
   const updateDetailSize = () => {

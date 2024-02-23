@@ -14,7 +14,7 @@ import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 import ConfigIdentifiers from '../../../../../consts/configIdentifiers'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { DragHandleVerticalIcon } from '../../../../../assets/icons'
-import { useHandleVisibilityManager, useMinSizeResizingHelper } from '../../../common/hooks/resizablePanels'
+import { useHandleVisibilityManager, useMinPanelSizeHelper } from '../../../common/hooks/resizablePanels'
 
 enum SettingSections {
   General = 'General',
@@ -27,15 +27,11 @@ const SettingsScene = ({ formikRef }) => {
   const { t } = useTranslation()
   const settings = Object.values(SettingSections)
 
-  const minWidths = [ 125, 300 ]
-
-  const [ minSize, setMinSize ] = useState(minWidths.map(w => w / window.innerWidth * 100))
-
   const groupId = 'settings-panel-group'
   const menuId = 'settings-menu'
   const contentId = 'settings-content'
 
-  useMinSizeResizingHelper(minWidths, setMinSize)
+  const { minSize } = useMinPanelSizeHelper([ 125, 300 ])
   useHandleVisibilityManager(groupId)
 
   const textRefs = useRef<(HTMLDivElement | null)[]>([])

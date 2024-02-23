@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getResizeHandleElementsForGroup } from 'react-resizable-panels'
 
-export const useMinSizeResizingHelper = (minWidths: number[], minSizeSetter: (minSize: number[]) => void) => {
+export const useMinPanelSizeHelper = (minPixelWidths: number[]) => {
+  const [ minSize, setMinSize ] = useState(minPixelWidths.map(w => w / window.innerWidth * 100))
   useEffect(() => {
     const handleResize = () => {
-      minSizeSetter(minWidths.map(w => w / window.innerWidth * 100))
+      setMinSize(minPixelWidths.map(w => w / window.innerWidth * 100))
     }
 
     window.addEventListener('resize', handleResize)
@@ -12,6 +13,10 @@ export const useMinSizeResizingHelper = (minWidths: number[], minSizeSetter: (mi
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+
+  return {
+    minSize
+  }
 }
 
 export const useHandleVisibilityManager = (groupId: string) => {

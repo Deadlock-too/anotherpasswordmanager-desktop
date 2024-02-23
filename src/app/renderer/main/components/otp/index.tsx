@@ -248,7 +248,7 @@ const OTPInterface = (props: {
         }
       } }>
         {
-          props.columnSize < 380 ?
+          props.columnSize < 400 ?
             <SmallOTPComponent copyOnClick={ copyOnClick } handleSetClipboard={ handleSetClipboard } otp={ props.otp }
                                timer={ props.timer }
                                period={ props.totp.period }/> :
