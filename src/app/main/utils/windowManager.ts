@@ -162,6 +162,16 @@ export async function onWindowAllClosed(app: Electron.App) {
   }
 }
 
+const tryParseContent = (content: string) => {
+  try {
+    const rs = JSON.parse(content)
+    return rs && typeof rs === 'object'
+  } catch (e) {
+    /* File is not JSON, so it's encrypted */
+    return false
+  }
+}
+
 export async function openFileDialog() {
   if (mainWindow) {
     await dialog.showOpenDialog(mainWindow, {
@@ -174,7 +184,12 @@ export async function openFileDialog() {
       (result) => {
         if (!result.canceled && result.filePaths.length > 0 && mainWindow) {
           const path = result.filePaths[0]
-          mainWindow.webContents.send(IpcEventNames.App.File.OpenFromPath, path)
+          const content = fs.readFileSync(result.filePaths[0]).toString()
+          if (tryParseContent(content)) {
+            mainWindow.webContents.send(IpcEventNames.App.File.OpenSuccess, path, content)
+          } else {
+            mainWindow.webContents.send(IpcEventNames.App.File.OpenFromPath, path)
+          }
         }
       }).catch((err) => {
       console.error(`Error: ${ err }`)
@@ -185,15 +200,6 @@ export async function openFileDialog() {
 export async function openFileFromPath(path: string, password: string): Promise<void> {
   const content = fs.readFileSync(path).toString()
   let result: string
-  const tryParseContent = (content: string) => {
-    try {
-      const rs = JSON.parse(content)
-      return rs && typeof rs === 'object'
-    } catch (e) {
-      /* File is not JSON, so it's encrypted */
-      return false
-    }
-  }
   if (tryParseContent(content)) {
     result = content
   } else {
