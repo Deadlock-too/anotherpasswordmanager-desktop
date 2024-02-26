@@ -1,6 +1,4 @@
 import { createRoot } from 'react-dom/client'
-import { I18nextProvider } from 'react-i18next'
-import i18n from '../../../i18n'
 import SettingsWindow from './scenes/settings'
 import AddFolderWindow from './scenes/addFolder'
 import { WindowVariant } from '../main/utils/rendererWindowManager'
@@ -58,7 +56,7 @@ switch (variant) {
     component = <PasswordWindow variant={ 'unlock' }/>
     break
   case WindowVariant.UnsavedChanges:
-    component = <UnsavedChangesWindow />
+    component = <UnsavedChangesWindow/>
     break
   default:
     component = <div>Unknown variant</div>
@@ -66,9 +64,7 @@ switch (variant) {
 
 const root = createRoot(rootDiv)
 root.render(
-  <I18nextProvider i18n={ i18n.default }>
-    <ContextProvider variant='secondary'>
-      { component }
-    </ContextProvider>
-  </I18nextProvider>
+  <ContextProvider variant="secondary">
+    { component }
+  </ContextProvider>
 )

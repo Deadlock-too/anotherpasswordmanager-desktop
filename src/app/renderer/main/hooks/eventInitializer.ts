@@ -5,7 +5,7 @@ import {
   useThemeContext,
   useWindowContext
 } from '../../common/contexts'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import i18n from '../../../../i18n'
 import IpcEventNames from '../../../main/ipc/ipcEventNames'
 import {
@@ -18,7 +18,6 @@ import EventIdentifiers from '../../../../consts/eventIdentifiers'
 import { NamedIdentifiableType, RecordType } from '../../common/types'
 
 export const useEventInitializer = () => {
-  const [ initialI18nStore, setInitialI18nStore ] = useState(null)
   const {
     isInitialized,
     initialize,
@@ -70,14 +69,8 @@ export const useEventInitializer = () => {
   }
 
   useEffect(() => {
-    window.app.localization.getInitialI18nStore().then(setInitialI18nStore)
-
     window.addEventListener('resize', onResize)
     window.addEventListener('scroll', onScroll)
-
-    window.app.localization.startupLanguage.then(language => {
-      i18n.changeLanguage(language)
-    })
 
     const subscribedEvents: string[] = []
 
@@ -227,7 +220,6 @@ export const useEventInitializer = () => {
   }
 
   return {
-    initialI18nStore,
     isInitialized,
     onNew,
   }
