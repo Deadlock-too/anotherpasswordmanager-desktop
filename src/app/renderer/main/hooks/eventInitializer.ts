@@ -82,17 +82,6 @@ export const useEventInitializer = () => {
     const fileOpenedHandler = (path, content) => initialize(path, content)
     subscribeToEvent(IpcEventNames.App.File.OpenSuccess, fileOpenedHandler)
 
-    const fileOpenFailedHandler = async () => {
-      await openSecondaryWindow(WindowVariant.FailedOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
-    }
-    subscribeToEvent(IpcEventNames.App.File.OpenFailed, fileOpenFailedHandler)
-
-    const openFileFromPathHandler = async (path) => {
-      handleFilePath(path)
-      await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
-    }
-    subscribeToEvent(IpcEventNames.App.File.OpenFromPath, openFileFromPathHandler)
-
     const secondaryWindowEntryHandler = (entry) => {
       setSecondaryWindowEntry(entry)
     }
@@ -201,6 +190,25 @@ export const useEventInitializer = () => {
       window.electron.events.unsubscribe(EventIdentifiers.GetFileName)
     }
   }, [ filePath ])
+
+  useEffect(() => {
+    const fileOpenFailedHandler = async () => {
+      await openSecondaryWindow(WindowVariant.FailedOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+    }
+    window.electron.events.subscribe(IpcEventNames.App.File.OpenFailed, fileOpenFailedHandler)
+
+    const openFileFromPathHandler = async (path) => {
+      handleFilePath(path)
+      await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+    }
+    window.electron.events.subscribe(IpcEventNames.App.File.OpenFromPath, openFileFromPathHandler)
+
+    return () => {
+      window.electron.events.unsubscribe(IpcEventNames.App.File.OpenFailed)
+      window.electron.events.unsubscribe(IpcEventNames.App.File.OpenFromPath)
+    }
+  }, [ secondaryWindowEntry ])
+
 
   useEffect(() => {
     if (isInitialized) {

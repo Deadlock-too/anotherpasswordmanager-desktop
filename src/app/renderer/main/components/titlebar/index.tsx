@@ -103,7 +103,7 @@ interface TitleBarProps {
 }
 
 const TitleBar = (props: TitleBarProps) => {
-  const { isInitialized, fileName, unsavedChanges, isLocked } = useFileContentContext()
+  const { isInitialized, fileName, unsavedChanges, isLocked, password } = useFileContentContext()
   let title = props.title
   if (isInitialized && title && props.variant === 'main') {
     document.title = `${ fileName } - ${ title }`
@@ -124,7 +124,7 @@ const TitleBar = (props: TitleBarProps) => {
               <SaveButton/>
               <ChangeMasterKeyButton/>
               {
-                props.variant === 'main' && !isLocked ?
+                props.variant === 'main' && !isLocked && password && password !== '' ?
                   <LockButton/>
                   : null
               }
