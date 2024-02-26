@@ -8,20 +8,16 @@
   - [ ] Implement security settings (finish managing when expiry is implemented)
     - [ ] **[ID-0.13]** Implement defaultNewEntryExpire
     - [ ] **[ID-0.14]** Implement defaultNewEntryExpireTime
-- [ ] `HIGH PRIORITY` Redefine IpcEvents hierarchy and event subscription management
 - [ ] **[ID-1]** Define app icon
 - [ ] **[ID-2]** Define default file name for the password file
 - [ ] **[ID-4]** Manage protocol links in dedicated class
 - [ ] **[ID-5]** Add confirm dialog for app closure if there are unsaved changes
 - [ ] **[ID-6]** Code cleanup in main.ts moving code to dedicated classes
-- [ ] **[ID-7]** Code cleanup in main/app.tsx moving all event subscriptions to dedicated class
 - [ ] **[ID-8]** General code cleanup
 - [ ] **[ID-10]** Fix missing improvements
 - [ ] **[ID-13]** Check for useless re-renders
-- [ ] **[ID-14]** If the form is submitted, then reset, then re-opened, the form has the previous values
 - [ ] **[ID-15]** Merge similar components
 - [ ] **[ID-16]** Make intro centered. If the text in the second button is too long the divider is not centered
-- [ ] **[ID-25]** Create utils file for easier access to app-wide utility functions
 - [ ] Implement unit testing for existing components
 - [ ] Good written documentation
 
@@ -35,7 +31,6 @@
 - [ ] **[ID-17]** If file is already open, before opening a new one ask
 - [ ] **[ID-18]** Check for file changes and eventually update the state from the file content after asking the user
 - [ ] **[ID-19]** In settings update theme immediately without needing to apply or submit for better user experience
-- [ ] **[ID-20]** Make consts file for easier access to app-wide constants
 - [ ] **[ID-21]** Add a button to the settings to reset the app to the default settings
 - [ ] **[ID-22]** On settings apply, update not only theme and language but also other settings
 - [ ] **[ID-23]** On settings reset, reset all applied settings
@@ -66,7 +61,6 @@
 - [ ] Dashboard (default)
 - [ ] Think about a smart way to import otp qr codes
 - [ ] If file has no password, don't ask for it
-- [ ] Make column width resizable
 - [ ] Add opening file name to the title of the open dialog
 - [ ] Improve tray menu
   - [ ] Add bookmarks to enable tray menu access to certain entries
@@ -92,6 +86,7 @@
 - [x] Basic entry management (creation, deletion, editing)
 - [x] File Encryption
 - [x] OTP Management
+- [x] Resizable columns
 - [x] Basic Settings
   - [x] Localization
     - [x] Italian
