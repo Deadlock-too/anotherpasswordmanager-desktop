@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useConfigContext, useThemeContext } from '../../../common/contexts'
-import { Formik, FormikProps } from 'formik'
+import { Formik } from 'formik'
 import AppearanceSettings from './appearance'
 import GeneralSettings from './general'
 import SecuritySettings from './security'
@@ -15,6 +15,7 @@ import ConfigIdentifiers from '../../../../../consts/configIdentifiers'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { DragHandleVerticalIcon } from '../../../../../assets/icons'
 import { useHandleVisibilityManager, useMinPanelSizeHelper } from '../../../common/hooks/resizablePanels'
+import { useFormikLockHandler } from '../../hooks/lockHandler'
 
 enum SettingSections {
   General = 'General',
@@ -279,7 +280,7 @@ const SettingsWindow = () => {
   const { setIsDark } = useThemeContext()
   const { t } = useTranslation()
   const [ isLanguageLoading, setIsLanguageLoading ] = useState<boolean>(true)
-  const formikRef = useRef<FormikProps<any>>(null)
+  const { formikRef, handleClose } = useFormikLockHandler()
 
   useEffect(() => {
     const updateIsDarkEventName = IpcEventNames.App.Theming.UpdateIsDark
@@ -292,18 +293,10 @@ const SettingsWindow = () => {
       .then((lang) => i18n.changeLanguage(lang))
       .then(() => setIsLanguageLoading(false))
 
-    const lockEventName = IpcEventNames.App.Lock
-    window.electron.events.subscribe(lockEventName, handleClose)
-
     return () => {
       window.electron.events.unsubscribe(updateIsDarkEventName)
-      window.electron.events.unsubscribe(lockEventName)
     }
   }, [])
-
-  const handleClose = () => {
-    formikRef.current?.resetForm()
-  }
 
   if (isConfigLoading || isLanguageLoading)
     return <Loading/>

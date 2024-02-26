@@ -15,7 +15,7 @@ interface FileContentContextState {
   setIsInitialized: (isInitialized: boolean) => void
   initialize: (path: string, fileContent: string) => void
   filePath: string
-  setFilePath: (path: string) => void
+  handleFilePath: (path: string) => void
   fileName: string
   unsavedChanges: boolean
   fileContent: File | null
@@ -84,6 +84,11 @@ export function FileContentContextProvider({ children }) {
     handleUpdateFileContent()
   }
 
+  const handleFilePath = (path: string) => {
+    setFilePath(path)
+    setFileName(path.split('\\').pop()?.split('/').pop() ?? '')
+  }
+
   const initialize = useCallback((path: string, fileContent: string) => {
     const fc: File = JSON.parse(fileContent)
     setFolders(fc.Folders)
@@ -91,8 +96,7 @@ export function FileContentContextProvider({ children }) {
     setContentVersion(fc.AppVersion) //TODO ID-11
 
     setIsInitialized(true)
-    setFilePath(path)
-    setFileName(path.split('\\').pop()?.split('/').pop() ?? '')
+    handleFilePath(path)
   }, [])
 
   const handleUpdateFileContent = () => {
@@ -243,7 +247,7 @@ export function FileContentContextProvider({ children }) {
     setIsInitialized,
     initialize,
     filePath,
-    setFilePath,
+    handleFilePath,
     fileName,
     unsavedChanges,
     fileContent,

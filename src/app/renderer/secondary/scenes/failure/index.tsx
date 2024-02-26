@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import TitleBar from '../../../main/components/titlebar'
 import { upperFirst } from 'lodash'
-import { useEffect } from 'react'
-import IpcEventNames from '../../../../main/ipc/ipcEventNames'
+import { useLockHandler } from '../../hooks/lockHandler'
+import { useFileNameHelper } from '../../hooks/fileNameHelper'
+import { capitalizeFirstLetter } from '../../../../../utils'
 
 const FailureScene = (props: IFailureWindowProps) => {
   const { t } = useTranslation()
-
   const title = t(`FailureDialog.${ upperFirst(props.variant) }.Title`)
   const message = t(`FailureDialog.${ upperFirst(props.variant) }.Message`)
 
@@ -25,21 +25,14 @@ interface IFailureWindowProps {
 }
 
 const FailureWindow = (props: IFailureWindowProps) => {
-  const handleClose = () => {
-    window.close()
-  }
-
-  useEffect(() => {
-    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
-
-    return () => {
-      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
-    }
-  }, [])
+  const { t } = useTranslation()
+  const { fileName } = useFileNameHelper()
+  const { handleClose } = useLockHandler(window.close)
+  const title = t(`FailureDialog.${ capitalizeFirstLetter(props.variant) }.Dialog Title`) + ` - ${ fileName }`
 
   return (
     <>
-      <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
+      <TitleBar title={ title } variant={ 'secondary' } onClose={ handleClose }/>
       <div className="main-content pt-2 px-6 pb-6">
         <FailureScene { ...props } />
       </div>

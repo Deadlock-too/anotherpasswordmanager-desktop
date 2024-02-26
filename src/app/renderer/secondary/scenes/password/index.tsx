@@ -1,11 +1,12 @@
 import TitleBar from '../../../main/components/titlebar'
 import { Formik, FormikProps } from 'formik'
-import { RefObject, useEffect, useRef } from 'react'
+import { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FormikTextInput } from '../../../common/components'
-import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 import { capitalizeFirstLetter } from '../../../../../utils'
+import { useFileNameHelper } from '../../hooks/fileNameHelper'
+import { useFormikLockHandler } from '../../hooks/lockHandler'
 
 interface IPasswordSceneProps extends IPasswordWindowProps {
   formikRef: RefObject<FormikProps<any>>
@@ -215,22 +216,15 @@ interface IPasswordWindowProps {
 }
 
 const PasswordWindow = (props: IPasswordWindowProps) => {
-  const formikRef = useRef<FormikProps<any>>(null)
-  const handleClose = () => {
-    formikRef.current?.resetForm()
-  }
-
-  useEffect(() => {
-    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
-
-    return () => {
-      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
-    }
-  }, [])
+  const { t } = useTranslation()
+  const { fileName } = useFileNameHelper()
+  const { formikRef, handleClose } = useFormikLockHandler()
+  const useFileName = props.variant === 'open' || props.variant === 'unlock'
+  const title = t(`PasswordDialog.${ capitalizeFirstLetter(props.variant) }.Dialog Title`) + (useFileName ? ` - ${ fileName }` : '')
 
   return (
     <>
-      <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
+      <TitleBar title={ title } variant={ 'secondary' } onClose={ handleClose }/>
       <div className="main-content pt-2 px-6 pb-6">
         <PasswordScene variant={ props.variant } formikRef={ formikRef }/>
       </div>

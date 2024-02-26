@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import TitleBar from '../../../main/components/titlebar'
-import { useEffect } from 'react'
-import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 import EventIdentifiers from '../../../../../consts/eventIdentifiers'
+import { useFileNameHelper } from '../../hooks/fileNameHelper'
+import { useLockHandler } from '../../hooks/lockHandler'
 
 const UnsavedChangesScene = () => {
   const { t } = useTranslation()
@@ -47,21 +47,15 @@ const UnsavedChangesScene = () => {
 }
 
 const UnsavedChangesWindow = () => {
-  const handleClose = () => {
-    window.close()
-  }
+  const { t } = useTranslation()
+  const { fileName } = useFileNameHelper()
+  const { handleClose } = useLockHandler(window.close)
 
-  useEffect(() => {
-    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
-
-    return () => {
-      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
-    }
-  }, [])
+  const title = t(`UnsavedChangesDialog.Dialog Title`) + ' - ' + fileName
 
   return (
     <>
-      <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
+      <TitleBar title={ title } variant={ 'secondary' } onClose={ handleClose }/>
       <div className="main-content pt-2 px-6 pb-6">
         <UnsavedChangesScene/>
       </div>

@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { Folder, uuid } from '../../../common/types'
-import { Formik, FormikProps } from 'formik'
+import { Formik } from 'formik'
 import TitleBar from '../../../main/components/titlebar'
-import { useEffect, useRef } from 'react'
 import { FormikTextInput } from '../../../common/components'
-import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 import EventIdentifiers from '../../../../../consts/eventIdentifiers'
+import { useFormikLockHandler } from '../../hooks/lockHandler'
 
 const AddFolderScene = ({ formikRef }) => {
   const { t } = useTranslation()
@@ -70,23 +69,13 @@ const AddFolderScene = ({ formikRef }) => {
 }
 
 const AddFolderWindow = () => {
-  const formikRef = useRef<FormikProps<any>>(null)
-  const handleClose = () => {
-    formikRef.current?.resetForm()
-  }
-
-  //TODO ID-26
-  useEffect(() => {
-    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
-
-    return () => {
-      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
-    }
-  }, [])
+  const { formikRef, handleClose } = useFormikLockHandler()
+  const { t } = useTranslation()
+  const title = t('AddFolderDialog.Dialog Title')
 
   return (
     <>
-      <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
+      <TitleBar title={ title } variant={ 'secondary' } onClose={ handleClose }/>
       <div className="main-content pt-2 px-6">
         <AddFolderScene formikRef={ formikRef }/>
       </div>

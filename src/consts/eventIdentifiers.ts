@@ -10,6 +10,7 @@ const EventIdentifiers = {
   SetInitialized: 'setInitialized',
   Unlock: 'unlockApp',
   SaveChanges: 'saveChanges',
+  GetFileName: 'getFileName',
 }
 
 export default EventIdentifiers

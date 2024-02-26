@@ -114,12 +114,15 @@
     "URI not provided": "URI not provided"
   },
   "OpenDialog": {
+    "Dialog Title": "Open file",
     "Title": "Open file"
   },
   "SaveDialog": {
+    "Dialog Title": "Save file",
     "Title": "Save file"
   },
   "AddFolderDialog": {
+    "Dialog Title": "Add folder",
     "Title": "Add folder",
     "Field Label": "Enter folder name",
     "Field Placeholder": "Folder name",
@@ -127,6 +130,7 @@
   },
   "PasswordDialog": {
     "Open": {
+      "Dialog Title": "Open file",
       "Title": "Enter the master key password",
       "Message": "Enter the master key password to open the file",
       "Password Label": "Master key password",
@@ -134,6 +138,7 @@
       "Submit Button": "Open"
     },
     "Create": {
+      "Dialog Title": "Create file",
       "Title": "Create the master key password",
       "Message": "The master key password is used to access the file. Enter a strong password.",
       "Password Label": "Master key password",
@@ -143,6 +148,7 @@
       "Submit Button": "Create"
     },
     "Update": {
+      "Dialog Title": "Change the master key password",
       "Title": "Change the master key password",
       "Message": "Enter the new master key password",
       "Password Label": "New master key password",
@@ -152,6 +158,7 @@
       "Submit Button": "Update"
     },
     "Unlock": {
+      "Dialog Title": "Unlock file",
       "Title": "Unlock",
       "Message": "Enter the master key password to unlock the file",
       "Password Label": "Master key password",
@@ -161,15 +168,18 @@
   },
   "FailureDialog": {
     "Open": {
+      "Dialog Title": "Open failed",
       "Title": "Failed to open file",
       "Message": "Failed to open file. Please check the password and try again."
     },
     "Unlock": {
+      "Dialog Title": "Unlock failed",
       "Title": "Failed to unlock file",
       "Message": "Failed to unlock file. Please check the password and try again."
     }
   },
   "UnsavedChangesDialog": {
+    "Dialog Title": "Unsaved changes",
     "Title": "Unsaved changes",
     "Message": "You have unsaved changes. Do you want to save them?",
     "Save Button": "Save",
@@ -177,6 +187,7 @@
   },
   "DeletionDialog": {
     "Folder": {
+      "Dialog Title": "Delete folder confirmation",
       "Title": "Delete folder",
       "Message": {
         "Pt1": "Are you sure you want to delete the folder \"",
@@ -184,6 +195,7 @@
       }
     },
     "Entry": {
+      "Dialog Title": "Delete entry confirmation",
       "Title": "Delete entry",
       "Message": {
         "Pt1": "Are you sure you want to delete the entry \"",
@@ -263,13 +275,13 @@
     "Cancel Button": "Cancel",
     "Apply Button": "Apply"
   },
-  "Tray": {
-    "Show": "Show",
-    "Exit": "Exit"
-  },
   "Locked": {
     "Message": "Locked. Your passwords are safe and protected.",
     "Unlock": "Unlock",
+    "Exit": "Exit"
+  },
+  "Tray": {
+    "Show": "Show",
     "Exit": "Exit"
   },
   "Common": {

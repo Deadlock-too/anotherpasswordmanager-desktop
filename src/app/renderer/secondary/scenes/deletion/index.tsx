@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import { Loading } from '../../../common/components'
 import { NamedIdentifiableType, RecordType } from '../../../common/types'
-import IpcEventNames from '../../../../main/ipc/ipcEventNames'
 import EventIdentifiers from '../../../../../consts/eventIdentifiers'
+import { useLockHandler } from '../../hooks/lockHandler'
+import { capitalizeFirstLetter } from '../../../../../utils'
 
 const DeletionScene = (props: { recordType: RecordType }) => {
   const [ recordInfo, setRecordInfo ] = useState<NamedIdentifiableType>()
@@ -105,7 +106,9 @@ const DeletionScene = (props: { recordType: RecordType }) => {
 }
 
 const DeletionWindow = (props: { recordType: RecordType }) => {
-  const handleClose = () => {
+  const { t } = useTranslation()
+  const title = t(`DeletionDialog.${ capitalizeFirstLetter(props.recordType) }.Dialog Title`)
+  const { handleClose } = useLockHandler(() => {
     (async () => {
       switch (props.recordType) {
         case RecordType.Folder:
@@ -117,19 +120,11 @@ const DeletionWindow = (props: { recordType: RecordType }) => {
       }
     })()
       .then(window.close)
-  }
-
-  useEffect(() => {
-    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
-
-    return () => {
-      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
-    }
-  }, [])
+  })
 
   return (
     <>
-      <TitleBar variant={ 'secondary' } onClose={ handleClose }/>
+      <TitleBar title={ title } variant={ 'secondary' } onClose={ handleClose }/>
       <div className="main-content pt-2 px-6 pb-6">
         <DeletionScene recordType={ props.recordType }/>
       </div>

@@ -36,6 +36,7 @@
 - [ ] **[ID-23]** On settings reset, reset all applied settings
 - [ ] **[ID-24]** Use library like os-locale to get the user's locale and set initial language
 - [ ] **[ID-26]** Centralize all lock management in secondary windows instead of having it duplicated in every component
+- [ ] Add chance to lock column resizing
 - [ ] Add notification about successful file saves and eventual errors
 - [ ] Fix tabbing problems for better accessibility
 - [ ] On shutdown ask for saving unsaved changes (use powerMonitor to do so, already used for suspend, pay attention that the `shutdown` event is not available on Windows at the moment, might need to find a workaround)

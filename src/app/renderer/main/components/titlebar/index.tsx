@@ -16,7 +16,7 @@ const TitleBarButton = ({ icon, onClick }: { icon: ReactNode, onClick: () => voi
 }
 
 const SaveButton = () => {
-  const { filePath, setFilePath, fileContent, password, forceUpdateFileContent } = useFileContentContext()
+  const { filePath, handleFilePath, fileContent, password, forceUpdateFileContent } = useFileContentContext()
   const saveFile = () => {
     const saveFile = (path: string, content: string) => {
       window.app.file.save(path, content)
@@ -36,7 +36,7 @@ const SaveButton = () => {
           if (!path) {
             return
           }
-          setFilePath(path)
+          handleFilePath(path)
         })
         .then(() => {
           if (filePath)

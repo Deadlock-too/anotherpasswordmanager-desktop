@@ -114,12 +114,15 @@
     "URI not provided": "URI non fornito"
   },
   "OpenDialog": {
+    "Dialog Title": "Apri file",
     "Title": "Apri file"
   },
   "SaveDialog": {
+    "Dialog Title": "Salva file",
     "Title": "Salva file"
   },
   "AddFolderDialog": {
+    "Dialog Title": "Aggiungi cartella",
     "Title": "Aggiungi cartella",
     "Field Label": "Inserisci il nome della cartella",
     "Field Placeholder": "Nome cartella",
@@ -127,6 +130,7 @@
   },
   "PasswordDialog": {
     "Open": {
+      "Dialog Title": "Apri file",
       "Title": "Inserisci la password principale",
       "Message": "Inserisci la password principale per sbloccare il file.",
       "Password Label": "Password principale",
@@ -134,6 +138,7 @@
       "Submit Button": "Sblocca"
     },
     "Create": {
+      "Dialog Title": "Crea file",
       "Title": "Crea la password principale",
       "Message": "La password principale è necessaria per accedere al file. Inserisci una password sicura.",
       "Password Label": "Password principale",
@@ -143,6 +148,7 @@
       "Submit Button": "Crea"
     },
     "Update": {
+      "Dialog Title": "Cambia la password principale",
       "Title": "Cambia la password principale",
       "Message": "Inserisci la nuova password principale.",
       "Password Label": "Password principale",
@@ -152,6 +158,7 @@
       "Submit Button": "Aggiorna"
     },
     "Unlock": {
+      "Dialog Title": "Sblocca file",
       "Title": "Sblocca",
       "Message": "Inserisci la password principale per sbloccare il file.",
       "Password Label": "Password principale",
@@ -161,15 +168,18 @@
   },
   "FailureDialog": {
     "Open": {
+      "Dialog Title": "Apertura fallita",
       "Title": "Errore apertura file",
       "Message": "Impossibile aprire il file. Controlla la password principale e riprova."
     },
     "Unlock": {
+      "Dialog Title": "Sblocco fallito",
       "Title": "Errore sblocco file",
       "Message": "Impossibile sbloccare il file. Controlla la password principale e riprova."
     }
   },
   "UnsavedChangesDialog": {
+    "Dialog Title": "Modifiche non salvate",
     "Title": "Modifiche non salvate",
     "Message": "Ci sono modifiche non salvate. Vuoi salvare prima di uscire?",
     "Save Button": "Salva",
@@ -177,6 +187,7 @@
   },
   "DeletionDialog": {
     "Folder": {
+      "Dialog Title": "Conferma eliminazione cartella",
       "Title": "Elimina cartella",
       "Message": {
         "Pt1": "Sei sicuro di voler eliminare la cartella \"",
@@ -184,6 +195,7 @@
       }
     },
     "Entry": {
+      "Dialog Title": "Conferma eliminazione voce",
       "Title": "Elimina voce",
       "Message": {
         "Pt1": "Sei sicuro di voler eliminare la voce \"",

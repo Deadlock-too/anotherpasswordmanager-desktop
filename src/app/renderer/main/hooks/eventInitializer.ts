@@ -22,7 +22,7 @@ export const useEventInitializer = () => {
   const {
     isInitialized,
     initialize,
-    setFilePath,
+    handleFilePath,
     handleAddFolder,
     handleSelectFolder,
     selectedEntryId,
@@ -34,6 +34,7 @@ export const useEventInitializer = () => {
     deletingFolder,
     deletingEntry,
     filePath,
+    fileName,
     setIsInitialized,
     setPassword,
     setIsLocked
@@ -94,7 +95,7 @@ export const useEventInitializer = () => {
     subscribeToEvent(IpcEventNames.App.File.OpenFailed, fileOpenFailedHandler)
 
     const openFileFromPathHandler = async (path) => {
-      setFilePath(path)
+      handleFilePath(path)
       await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     }
     subscribeToEvent(IpcEventNames.App.File.OpenFromPath, openFileFromPathHandler)
@@ -197,8 +198,14 @@ export const useEventInitializer = () => {
     }
     window.electron.events.subscribe(EventIdentifiers.SetFileContent, setFileContentHandler)
 
+    const getFileNameHandler = () => {
+      window.electron.events.propagateResult(EventIdentifiers.GetFileName, fileName)
+    }
+    window.electron.events.subscribe(EventIdentifiers.GetFileName, getFileNameHandler)
+
     return () => {
       window.electron.events.unsubscribe(EventIdentifiers.SetFileContent)
+      window.electron.events.unsubscribe(EventIdentifiers.GetFileName)
     }
   }, [ filePath ])
 
