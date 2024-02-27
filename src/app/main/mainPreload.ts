@@ -8,7 +8,14 @@ import { RESULT_EVENT_SUFFIX } from '../../consts'
  * App
  */
 contextBridge.exposeInMainWorld('app', {
-  lock: () => ipcRenderer.invoke(IpcEventNames.App.Lock),
+  state: {
+    get: () => ipcRenderer.invoke(IpcEventNames.App.State.Get),
+    initialize: () => ipcRenderer.invoke(IpcEventNames.App.State.Initialize),
+    lock: () => ipcRenderer.invoke(IpcEventNames.App.State.Lock),
+    close: (allow: boolean) => ipcRenderer.invoke(IpcEventNames.App.State.Close, allow),
+    reset: () => ipcRenderer.invoke(IpcEventNames.App.State.Reset),
+    unsavedChanges: (unsavedChanges: boolean) => ipcRenderer.invoke(IpcEventNames.App.State.UnsavedChanges, unsavedChanges),
+  },
   file: {
     openDialog: () => ipcRenderer.invoke(IpcEventNames.App.File.OpenDialog),
     saveDialog: () => ipcRenderer.invoke(IpcEventNames.App.File.SaveDialog),

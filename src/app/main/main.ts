@@ -6,14 +6,58 @@ import IpcEventNames from './ipc/ipcEventNames'
 import { setShortcuts } from './utils/shortcutManager'
 import { applyConfig, getOpenMinimizedFromConfig } from './utils/configManager'
 import * as process from 'process'
+import { AppStateValues } from '../../types'
+import { AppState } from '../../utils/appStateUtils'
+import { createTray } from './utils/trayManager'
 
 export default class Main {
   static mainWindow: Electron.BrowserWindow
   static application: Electron.App
-  static BrowserWindow: typeof BrowserWindow
-  static PowerMonitor: typeof Electron.powerMonitor
-  static StartupUrl: string | null
-  static Tray: Electron.Tray | undefined
+  static browserWindow: typeof BrowserWindow
+  static powerMonitor: typeof Electron.powerMonitor
+  static startupUrl: string | null
+  static tray: Electron.Tray | undefined
+  static appState: AppState<AppStateValues> = new AppState(AppStateValues.None)
+
+  public static getAppState() {
+    return Main.appState
+  }
+
+  public static initialize() {
+    Main.appState.add(AppStateValues.Initialized)
+  }
+
+  public static lock() {
+    Main.appState.add(AppStateValues.Locked)
+  }
+
+  public static closing() {
+    Main.appState.add(AppStateValues.Closing)
+  }
+
+  public static removeClosingFlag() {
+    Main.appState.remove(AppStateValues.Closing)
+  }
+
+  public static reset() {
+    Main.appState.remove(AppStateValues.Initialized)
+    Main.appState.remove(AppStateValues.Locked)
+  }
+
+  public static async putOnTray() {
+    Main.appState.add(AppStateValues.OnTray)
+    await createTray()
+  }
+
+  public static removeFromTray() {
+    Main.appState.remove(AppStateValues.OnTray)
+  }
+
+  public static unsavedChanges(unsavedChanges: boolean) {
+    unsavedChanges ?
+      Main.appState.add(AppStateValues.UnsavedChanges) :
+      Main.appState.remove(AppStateValues.UnsavedChanges)
+  }
 
   private static onWindowAllClosed() {
     if (process.platform !== 'darwin') {
@@ -47,9 +91,9 @@ export default class Main {
       Main.application.on('second-instance', async (event, argv) => {
         const window = await openMainWindow()
         Main.setStartupUrl(argv)
-        if (Main.StartupUrl) {
-          window.webContents.send(IpcEventNames.App.File.OpenFromPath, Main.StartupUrl)
-          Main.StartupUrl = null
+        if (Main.startupUrl) {
+          window.webContents.send(IpcEventNames.App.File.OpenFromPath, Main.startupUrl)
+          Main.startupUrl = null
         }
       })
     }
@@ -58,7 +102,7 @@ export default class Main {
   private static setStartupUrl(argv: string[]) {
     for (const arg of argv) {
       if (arg.startsWith('anotherpasswordmanager://') || arg.endsWith('.apm')) {
-        this.StartupUrl = arg
+        this.startupUrl = arg
       }
     }
   }
@@ -79,7 +123,25 @@ export default class Main {
 
     this.application.on('open-file', (event, path) => {
       event.preventDefault()
-      Main.StartupUrl = path
+      Main.startupUrl = path
+    })
+  }
+
+  private static manageOnClose() {
+    Main.mainWindow.on('close', (e) => {
+      if (!Main.appState.has(AppStateValues.UnsavedChanges)) {
+        return
+      }
+
+      if (Main.appState.get() === AppStateValues.Closing) {
+        e.preventDefault()
+        return
+      } else {
+        e.preventDefault()
+        Main.closing()
+        Main.mainWindow.webContents.send(IpcEventNames.App.State.Close)
+        return
+      }
     })
   }
 
@@ -91,10 +153,10 @@ export default class Main {
   }
 
   static main(app: Electron.App, browserWindow: typeof BrowserWindow, powerMonitor: typeof Electron.powerMonitor) {
-    Main.BrowserWindow = browserWindow
+    Main.browserWindow = browserWindow
     Main.application = app
-    Main.PowerMonitor = powerMonitor
-    this.StartupUrl = null
+    Main.powerMonitor = powerMonitor
+    this.startupUrl = null
     Main.manageLock()
     Main.manageOpenFile()
     Main.application.whenReady()
@@ -103,12 +165,13 @@ export default class Main {
       .then(async () => {
         const openMinimized = await getOpenMinimizedFromConfig()
         Main.mainWindow = await Main.onReady(openMinimized)
-        if (Main.StartupUrl) {
-          Main.mainWindow.webContents.send(IpcEventNames.App.File.OpenFromPath, Main.StartupUrl)
-          Main.StartupUrl = null
+        if (Main.startupUrl) {
+          Main.mainWindow.webContents.send(IpcEventNames.App.File.OpenFromPath, Main.startupUrl)
+          Main.startupUrl = null
         }
 
         await applyConfig()
+        Main.manageOnClose()
 
         //TODO ID-5
 

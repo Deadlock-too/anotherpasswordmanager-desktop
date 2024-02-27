@@ -3,6 +3,8 @@ import TitleBar from '../../../main/components/titlebar'
 import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 import { useFileNameHelper } from '../../hooks/fileNameHelper'
 import { useLockHandler } from '../../hooks/lockHandler'
+import { AppStateValues } from '../../../../../types'
+import { AppState } from '../../../../../utils/appStateUtils'
 
 const UnsavedChangesScene = () => {
   const { t } = useTranslation()
@@ -11,12 +13,24 @@ const UnsavedChangesScene = () => {
   const message = t(`UnsavedChangesDialog.Message`)
 
   const onSave = async () => {
-    await window.electron.events.propagate(EventIdentifiers.SaveChanges,true)
+    await window.electron.events.propagate(EventIdentifiers.SaveChanges, true)
+      .then(window.app.state.get)
+      .then(state => {
+        if (new AppState(state).has(AppStateValues.Closing)) {
+          window.app.state.close(true)
+        }
+      })
       .then(window.close)
   }
 
   const onDiscard = async () => {
     await window.electron.events.propagate(EventIdentifiers.SaveChanges, false)
+      .then(window.app.state.get)
+      .then(state => {
+        if (new AppState(state).has(AppStateValues.Closing)) {
+          window.app.state.close(true)
+        }
+      })
       .then(window.close)
   }
 
@@ -49,7 +63,10 @@ const UnsavedChangesScene = () => {
 const UnsavedChangesWindow = () => {
   const { t } = useTranslation()
   const { fileName } = useFileNameHelper()
-  const { handleClose } = useLockHandler(window.close)
+  const { handleClose } = useLockHandler(async () =>
+    await window.app.state.close(false)
+      .then(window.close)
+  )
 
   const title = t(`UnsavedChangesDialog.Dialog Title`) + ' - ' + fileName
 

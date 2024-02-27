@@ -84,7 +84,7 @@ export function IdleContextProvider(props : IIdleContextProviderProps) {
 
   useEffect(() => {
     if (config.settings.security.autoLock && isIdle) {
-      window.app.lock()
+      window.app.state.lock()
     }
   }, [config.settings.security.autoLock, isIdle])
 

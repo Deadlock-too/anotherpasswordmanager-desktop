@@ -1,11 +1,18 @@
 import './index'
 import './styles.css'
-import { Config, Language, Theme } from '../../../types'
+import { AppStateValues, Config, Language, Theme } from '../../../types'
 
 declare global {
   interface Window {
     app: {
-      lock: () => void
+      state: {
+        get: () => Promise<AppStateValues>
+        initialize: () => Promise<void>
+        lock: () => Promise<void>
+        close: (allow: boolean) => Promise<void>
+        reset: () => Promise<void>
+        unsavedChanges: (unsavedChanges: boolean) => Promise<void>
+      }
       file: {
         openDialog: () => Promise<void>
         saveDialog: () => Promise<string | undefined>

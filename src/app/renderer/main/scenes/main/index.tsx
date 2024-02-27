@@ -12,9 +12,10 @@ import {
   PanelResizeHandle
 } from 'react-resizable-panels'
 import { useHandleVisibilityManager, useMinPanelSizeHelper } from '../../../common/hooks/resizablePanels'
+import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 
 const Main = () => {
-  const { folders, entries, isLocked } = useFileContentContext()
+  const { folders, entries, isLocked, unsavedChanges, forceUpdateFileContent, reset } = useFileContentContext()
 
   const [ detailSize, setDetailSize ] = useState<number>()
 
@@ -43,6 +44,20 @@ const Main = () => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+
+  useEffect(() => {
+    const saveChangesHandler = (response: boolean) => {
+      if (unsavedChanges && response) {
+        forceUpdateFileContent()
+      }
+      reset()
+    }
+    window.electron.events.subscribe(EventIdentifiers.SaveChanges, saveChangesHandler)
+
+    return () => {
+      window.electron.events.unsubscribe(EventIdentifiers.SaveChanges)
+    }
+  }, [ unsavedChanges ])
 
   return (
     isLocked ?

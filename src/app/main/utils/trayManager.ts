@@ -8,31 +8,29 @@ import { getAutoLockOnTrayFromConfig } from './configManager'
 
 
 export const createTray = async () => {
-  if (Main.Tray)
+  if (Main.tray)
     return
 
   await getAutoLockOnTrayFromConfig().then(autoLockOnTray => {
     if (autoLockOnTray) {
       BrowserWindow.getAllWindows().forEach(window => {
-        window.webContents.send(IpcEventNames.App.Lock)
+        window.webContents.send(IpcEventNames.App.State.Lock)
       })
     }
   })
 
-  Main.Tray = new Tray(path.join(__dirname, 'assets', 'icons', 'icon.png'))
+  Main.tray = new Tray(path.join(__dirname, 'assets', 'icons', 'icon.png'))
 
-  Main.Tray.setToolTip(Pkg.description)
-  Main.Tray.setTitle(Pkg.description)
+  Main.tray.setToolTip(Pkg.description)
+  Main.tray.setTitle(Pkg.description)
 
-  Main.Tray.on('double-click', () => {
-    Main.mainWindow.show()
+  Main.tray.on('double-click', () => {
     destroyTray()
   })
 
-  Main.Tray.setContextMenu(Menu.buildFromTemplate([
+  Main.tray.setContextMenu(Menu.buildFromTemplate([
     {
       label: i18n.default.t('Show App'), click: () => {
-        Main.mainWindow.show()
         destroyTray()
       }
     },
@@ -46,10 +44,12 @@ export const createTray = async () => {
     }
   ]))
 
-  return Main.Tray
+  return Main.tray
 }
 
 export const destroyTray = () => {
-  Main.Tray?.destroy()
-  Main.Tray = undefined
+  Main.mainWindow.show()
+  Main.removeFromTray()
+  Main.tray?.destroy()
+  Main.tray = undefined
 }

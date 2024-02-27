@@ -90,13 +90,15 @@ export function FileContentContextProvider({ children }) {
   }
 
   const initialize = useCallback((path: string, fileContent: string) => {
-    const fc: File = JSON.parse(fileContent)
-    setFolders(fc.Folders)
+    window.app.state.initialize().then(() => {
+      const fc: File = JSON.parse(fileContent)
+      setFolders(fc.Folders)
 
-    setContentVersion(fc.AppVersion) //TODO ID-11
+      setContentVersion(fc.AppVersion) //TODO ID-11
 
-    setIsInitialized(true)
-    handleFilePath(path)
+      setIsInitialized(true)
+      handleFilePath(path)
+    })
   }, [])
 
   const handleUpdateFileContent = () => {
@@ -133,6 +135,7 @@ export function FileContentContextProvider({ children }) {
     handleSelectEntryInternal(null)
     handleSelectFolderInternal(null)
     setIsInitialized(false)
+    window.app.state.reset()
   }, [])
 
   const handleUpdateEntry = useCallback((entry: Entry) => {

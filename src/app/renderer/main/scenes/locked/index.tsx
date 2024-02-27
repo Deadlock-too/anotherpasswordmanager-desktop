@@ -8,7 +8,7 @@ import EventIdentifiers from '../../../../../consts/eventIdentifiers'
 const Locked = () => {
   const { t } = useTranslation()
   const { secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
-  const { unsavedChanges, password, setIsLocked, reset, forceUpdateFileContent } = useFileContentContext()
+  const { unsavedChanges, password, setIsLocked, reset } = useFileContentContext()
 
   const onExit = async () => {
     if (unsavedChanges) {
@@ -36,20 +36,6 @@ const Locked = () => {
       window.electron.events.unsubscribe(EventIdentifiers.Unlock)
     }
   }, [ password ])
-
-  useEffect(() => {
-    const saveChangesHandler = (response: boolean) => {
-      if (unsavedChanges && response) {
-        forceUpdateFileContent()
-      }
-      reset()
-    }
-    window.electron.events.subscribe(EventIdentifiers.SaveChanges, saveChangesHandler)
-
-    return () => {
-      window.electron.events.unsubscribe(EventIdentifiers.SaveChanges)
-    }
-  }, [ unsavedChanges ])
 
   return (
     <div className="main-content flex items-center justify-center p-4">

@@ -5,7 +5,6 @@ import { Config, Theme, Language } from '../../../types'
 import { daisyui } from '../../../../tailwind.config'
 import defaultConfig from '../../../defaultConfig.json'
 import Main from '../main'
-import { createTray } from './trayManager'
 import IpcEventNames from '../ipc/ipcEventNames'
 
 const configFileName = 'config.json'
@@ -142,8 +141,7 @@ export async function writeConfig(config: Config): Promise<Config | null> {
 export const handleMinimizeToTray = async (e) => {
   e.preventDefault()
   Main.mainWindow.hide()
-
-  await createTray()
+  await Main.putOnTray()
 }
 
 export async function applyMinimizeToTray(minimizeToTray: boolean) {
@@ -155,11 +153,10 @@ export async function applyMinimizeToTray(minimizeToTray: boolean) {
 }
 
 export const handleCloseToTray = async (e) => {
-  if (!Main.Tray) {
+  if (!Main.tray) {
     e.preventDefault()
     Main.mainWindow.hide()
-
-    await createTray()
+    await Main.putOnTray()
   }
 }
 
@@ -173,7 +170,7 @@ export async function applyCloseToTray(closeToTray: boolean) {
 
 export const handleLock = async () => {
   BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(IpcEventNames.App.Lock)
+    window.webContents.send(IpcEventNames.App.State.Lock)
   })
 }
 
@@ -186,17 +183,17 @@ export async function applyAutoLockOnMinimize(autoLockOnMinimize: boolean) {
 }
 
 export async function applyAutoLockOnSleep(autoLockOnSleep: boolean) {
-  Main.PowerMonitor.removeListener('suspend', handleLock)
+  Main.powerMonitor.removeListener('suspend', handleLock)
 
   if (autoLockOnSleep) {
-    Main.PowerMonitor.on('suspend', handleLock)
+    Main.powerMonitor.on('suspend', handleLock)
   }
 }
 
 export async function applyAutoLockOnLock(autoLockOnLock: boolean) {
-  Main.PowerMonitor.removeListener('lock-screen', handleLock)
+  Main.powerMonitor.removeListener('lock-screen', handleLock)
 
   if (autoLockOnLock) {
-    Main.PowerMonitor.on('lock-screen', handleLock)
+    Main.powerMonitor.on('lock-screen', handleLock)
   }
 }

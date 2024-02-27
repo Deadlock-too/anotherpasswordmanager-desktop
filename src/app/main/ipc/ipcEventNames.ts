@@ -1,7 +1,14 @@
 const IpcEventNames = {
   App: {
     SetSecondaryWindowEntry: 'app:setSecondaryWindowEntry',
-    Lock: 'app:lock',
+    State: {
+      Get: 'app:state:get',
+      Initialize: 'app:state:initialize',
+      Lock: 'app:state:lock',
+      Close: 'app:state:close',
+      Reset: 'app:state:reset',
+      UnsavedChanges: 'app:state:unsavedChanges',
+    },
     File: {
       OpenDialog: 'app:file:openDialog',
       SaveDialog: 'app:file:saveDialog',

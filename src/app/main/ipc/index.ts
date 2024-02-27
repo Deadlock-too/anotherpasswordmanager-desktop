@@ -14,7 +14,7 @@ import {
   readConfig,
   writeConfig
 } from '../utils/configManager'
-import { Config, Language, Theme } from '../../../types'
+import { AppStateValues, Config, Language, Theme } from '../../../types'
 import Main from '../main'
 import ConfigIdentifiers from '../../../consts/configIdentifiers'
 
@@ -156,10 +156,6 @@ ipcMain.handle(IpcEventNames.App.Config.Apply, async (_, configIdentifier: strin
   }
 })
 
-ipcMain.handle(IpcEventNames.App.Lock, async (): Promise<void> => {
-  propagateToAllWindows(IpcEventNames.App.Lock)
-})
-
 ipcMain.handle(IpcEventNames.App.Localization.ChangeLanguage, async (_, lang: string): Promise<void> => {
   propagateToAllWindows(IpcEventNames.App.Localization.ChangeLanguage, lang)
 })
@@ -177,6 +173,41 @@ ipcMain.handle(IpcEventNames.Electron.Events.PropagateResult, async (_, eventNam
  */
 ipcMain.handle(IpcEventNames.Electron.Log, (_, ...args): void => {
   console.log(`${ getCurrentTimestamp() }:`, ...args)
+})
+
+/**
+ * State events handlers
+ */
+ipcMain.handle(IpcEventNames.App.State.Get, async (): Promise<AppStateValues> => {
+  return Main.getAppState().get()
+})
+
+ipcMain.handle(IpcEventNames.App.State.Close, async (_, allow: boolean): Promise<void> => {
+  if (Main.appState.has(AppStateValues.Closing)) {
+    if (allow) {
+      Main.removeClosingFlag()
+      Main.application.quit()
+    } else {
+      Main.removeClosingFlag()
+    }
+  }
+})
+
+ipcMain.handle(IpcEventNames.App.State.Initialize, async (): Promise<void> => {
+  Main.initialize()
+})
+
+ipcMain.handle(IpcEventNames.App.State.Reset, async (): Promise<void> => {
+  Main.reset()
+})
+
+ipcMain.handle(IpcEventNames.App.State.Lock, async (): Promise<void> => {
+  propagateToAllWindows(IpcEventNames.App.State.Lock)
+  Main.lock()
+})
+
+ipcMain.handle(IpcEventNames.App.State.UnsavedChanges, async (_, unsavedChanges): Promise<void> => {
+  Main.unsavedChanges(unsavedChanges)
 })
 
 /**

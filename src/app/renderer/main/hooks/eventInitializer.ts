@@ -36,7 +36,8 @@ export const useEventInitializer = () => {
     fileName,
     setIsInitialized,
     setPassword,
-    setIsLocked
+    setIsLocked,
+    unsavedChanges
   } = useFileContentContext()
   const { setSecondaryWindowEntry, secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   const { setIsDark } = useThemeContext()
@@ -215,13 +216,28 @@ export const useEventInitializer = () => {
       const lockHandler = () => {
         setIsLocked(true)
       }
-      window.electron.events.subscribe(IpcEventNames.App.Lock, lockHandler)
+      window.electron.events.subscribe(IpcEventNames.App.State.Lock, lockHandler)
     }
 
     return () => {
-      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
+      window.electron.events.unsubscribe(IpcEventNames.App.State.Lock)
     }
   }, [ isInitialized ])
+
+  useEffect(() => {
+    window.app.state.unsavedChanges(unsavedChanges).then(() => {
+      if (unsavedChanges) {
+        const unsavedChangesHandler = async () => {
+          await openSecondaryWindow(WindowVariant.UnsavedChanges, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+        }
+        window.electron.events.subscribe(IpcEventNames.App.State.Close, unsavedChangesHandler)
+
+        return () => {
+          window.electron.events.unsubscribe(IpcEventNames.App.State.Close)
+        }
+      }
+    })
+  }, [ unsavedChanges ])
 
   const onNew = async () => {
     await openSecondaryWindow(WindowVariant.PasswordCreate, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)

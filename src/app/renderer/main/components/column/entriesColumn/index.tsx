@@ -6,6 +6,7 @@ import { openSecondaryWindow, WindowVariant } from '../../../utils/rendererWindo
 
 const EntriesColumn = ({ elements }) => {
   const {
+    selectedFolderId,
     selectedEntryId,
     hoveringEntryId,
     setHoveringEntryId,
@@ -27,7 +28,7 @@ const EntriesColumn = ({ elements }) => {
         onClick: () => {
           handleSelectEntry(null, true)
         },
-        disabled: false
+        disabled: !selectedFolderId
       }
     },
     children: new ColumnContentBase<Entry>({

@@ -71,3 +71,12 @@ export enum Theme {
   nord = 'nord',
   sunset = 'sunset'
 }
+
+export enum AppStateValues {
+  None = 0,
+  Initialized = 1,
+  OnTray = 2,
+  Locked = 4,
+  Closing = 8,
+  UnsavedChanges = 16,
+}

@@ -15,7 +15,7 @@ declare const SECONDARY_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 let mainWindow: BrowserWindow | null
 
 async function createMainWindow(windowMinimized: boolean) {
-  function onClose() {
+  function onClosed() {
     // Dereference the window object.
     mainWindow = null
   }
@@ -46,7 +46,7 @@ async function createMainWindow(windowMinimized: boolean) {
     mainWindow.minimize()
 
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  mainWindow.on('closed', onClose)
+  mainWindow.on('closed', onClosed)
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     const mainWindowState = JSON.parse(details.features)

@@ -4,10 +4,10 @@ import { FormikProps } from 'formik'
 
 export const useLockHandler = (handleClose: () => void) => {
   useEffect(() => {
-    window.electron.events.subscribe(IpcEventNames.App.Lock, handleClose)
+    window.electron.events.subscribe(IpcEventNames.App.State.Lock, handleClose)
 
     return () => {
-      window.electron.events.unsubscribe(IpcEventNames.App.Lock)
+      window.electron.events.unsubscribe(IpcEventNames.App.State.Lock)
     }
   }, [])
 
