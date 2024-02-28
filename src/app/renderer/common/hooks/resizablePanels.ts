@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getResizeHandleElementsForGroup } from 'react-resizable-panels'
+import { useFileContentContext } from '../contexts'
 
 export const useMinPanelSizeHelper = (minPixelWidths: number[]) => {
   const [ minSize, setMinSize ] = useState(minPixelWidths.map(w => w / window.innerWidth * 100))
@@ -20,6 +21,7 @@ export const useMinPanelSizeHelper = (minPixelWidths: number[]) => {
 }
 
 export const useHandleVisibilityManager = (groupId: string) => {
+  const { isLocked } = useFileContentContext()
   useEffect(() => {
     const handles = getResizeHandleElementsForGroup(groupId)
     handles.forEach(handle => {
@@ -57,5 +59,5 @@ export const useHandleVisibilityManager = (groupId: string) => {
       window.removeEventListener('mousemove', handleVisibility)
       window.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [])
+  }, [ isLocked ])
 }
