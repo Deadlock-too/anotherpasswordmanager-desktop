@@ -14,7 +14,8 @@ export enum WindowVariant {
   AddFolder = 'addFolder',
   FolderDeletion = 'folderDeletion',
   EntryDeletion = 'entryDeletion',
-  UnsavedChanges = 'unsavedChanges'
+  UnsavedChangesOpen = 'unsavedChangesOpen',
+  UnsavedChangesClose = 'unsavedChangesClose',
 }
 
 export const openSecondaryWindow = async (variant: WindowVariant, beforeOpen: () => void, onClose: () => void, secondaryWindowEntry?: string) => {

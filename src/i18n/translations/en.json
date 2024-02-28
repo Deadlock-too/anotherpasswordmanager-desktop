@@ -179,9 +179,14 @@
     }
   },
   "UnsavedChangesDialog": {
+    "Open": {
+      "Message": "You have unsaved changes. Do you want to save them before opening another file?"
+    },
+    "Close": {
+      "Message": "You have unsaved changes. Do you want to save them before closing?"
+    },
     "Dialog Title": "Unsaved changes",
     "Title": "Unsaved changes",
-    "Message": "You have unsaved changes. Do you want to save them?",
     "Save Button": "Save",
     "Discard Button": "Discard"
   },

@@ -26,9 +26,9 @@ interface IFailureWindowProps {
 
 const FailureWindow = (props: IFailureWindowProps) => {
   const { t } = useTranslation()
-  const { fileName } = useFileNameHelper()
+  const { fileName, openingFileName } = useFileNameHelper()
   const { handleClose } = useLockHandler(window.close)
-  const title = t(`FailureDialog.${ capitalizeFirstLetter(props.variant) }.Dialog Title`) + ` - ${ fileName }`
+  const title = t(`FailureDialog.${ capitalizeFirstLetter(props.variant) }.Dialog Title`) + ` - ${ props.variant === 'open' ? openingFileName : fileName }`
 
   return (
     <>

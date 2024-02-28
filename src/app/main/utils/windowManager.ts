@@ -86,7 +86,8 @@ async function createMainWindow(windowMinimized: boolean) {
         minWidth = 1
         break
       }
-      case WindowVariant.UnsavedChanges:
+      case WindowVariant.UnsavedChangesOpen:
+      case WindowVariant.UnsavedChangesClose:
       case WindowVariant.PasswordOpen:
       case WindowVariant.PasswordUnlock: {
         height = 250

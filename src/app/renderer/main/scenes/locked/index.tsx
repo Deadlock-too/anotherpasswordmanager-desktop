@@ -12,7 +12,7 @@ const Locked = () => {
 
   const onExit = async () => {
     if (unsavedChanges) {
-      await openSecondaryWindow(WindowVariant.UnsavedChanges, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+      await openSecondaryWindow(WindowVariant.UnsavedChangesClose, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     } else {
       reset()
     }

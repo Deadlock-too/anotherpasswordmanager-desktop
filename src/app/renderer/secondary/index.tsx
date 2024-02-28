@@ -55,8 +55,11 @@ switch (variant) {
   case WindowVariant.PasswordUnlock:
     component = <PasswordWindow variant={ 'unlock' }/>
     break
-  case WindowVariant.UnsavedChanges:
-    component = <UnsavedChangesWindow/>
+  case WindowVariant.UnsavedChangesClose:
+    component = <UnsavedChangesWindow variant={ 'close' } />
+    break
+  case WindowVariant.UnsavedChangesOpen:
+    component = <UnsavedChangesWindow variant={ 'open' } />
     break
   default:
     component = <div>Unknown variant</div>

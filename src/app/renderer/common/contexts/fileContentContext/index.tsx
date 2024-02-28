@@ -3,6 +3,7 @@ import { Entry, File, Folder, uuid, UUID } from '../../../common/types'
 import { encrypt } from '../../../../main/utils/crypt'
 import pkg from '../../../../../../package.json'
 import { useConfigContext } from '../index'
+import { getFileNameFromPath } from '../../../../../utils/stringUtils'
 
 const CURRENT_APP_VERSION = pkg.version
 
@@ -17,6 +18,8 @@ interface FileContentContextState {
   filePath: string
   handleFilePath: (path: string) => void
   fileName: string
+  openingFilePath: string | undefined
+  setOpeningFilePath: (path: string | undefined) => void
   unsavedChanges: boolean
   fileContent: File | null
   reset: () => void
@@ -67,6 +70,7 @@ export function FileContentContextProvider({ children }) {
   const [ entries, setEntries ] = useState<Entry[]>([])
   const [ filePath, setFilePath ] = useState<string>('')
   const [ fileName, setFileName ] = useState<string>('')
+  const [ openingFilePath, setOpeningFilePath ] = useState<string>()
   const [ fileContent, setFileContent ] = useState<File | null>(null)
   const [ internalUpdateFileContentToggle, setInternalUpdateFileContentToggle ] = useState(false)
   const [ unsavedChanges, setUnsavedChanges ] = useState<boolean>(false)
@@ -86,7 +90,8 @@ export function FileContentContextProvider({ children }) {
 
   const handleFilePath = (path: string) => {
     setFilePath(path)
-    setFileName(path.split('\\').pop()?.split('/').pop() ?? '')
+    setFileName(getFileNameFromPath(path))
+    setOpeningFilePath(undefined)
   }
 
   const initialize = useCallback((path: string, fileContent: string) => {
@@ -252,6 +257,8 @@ export function FileContentContextProvider({ children }) {
     filePath,
     handleFilePath,
     fileName,
+    openingFilePath,
+    setOpeningFilePath,
     unsavedChanges,
     fileContent,
     reset,

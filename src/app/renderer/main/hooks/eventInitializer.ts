@@ -16,12 +16,12 @@ import {
 } from '../utils/rendererWindowManager'
 import EventIdentifiers from '../../../../consts/eventIdentifiers'
 import { NamedIdentifiableType, RecordType } from '../../common/types'
+import { getFileNameFromPath } from '../../../../utils/stringUtils'
 
 export const useEventInitializer = () => {
   const {
     isInitialized,
     initialize,
-    handleFilePath,
     handleAddFolder,
     handleSelectFolder,
     selectedEntryId,
@@ -33,11 +33,13 @@ export const useEventInitializer = () => {
     deletingFolder,
     deletingEntry,
     filePath,
-    fileName,
     setIsInitialized,
     setPassword,
     setIsLocked,
-    unsavedChanges
+    unsavedChanges,
+    setOpeningFilePath,
+    openingFilePath,
+    reset
   } = useFileContentContext()
   const { setSecondaryWindowEntry, secondaryWindowEntry, setIsSecondaryWindowOpen } = useModalContext()
   const { setIsDark } = useThemeContext()
@@ -176,31 +178,50 @@ export const useEventInitializer = () => {
   }, [ deletingEntry, deletingFolder ])
 
   useEffect(() => {
-    const setFileContentHandler = (password) => {
-      window.app.file.open(filePath, password)
-    }
-    window.electron.events.subscribe(EventIdentifiers.SetFileContent, setFileContentHandler)
+    if (openingFilePath) {
+      const setFileContentHandler = (password) => {
+        window.app.file.open(openingFilePath, password)
+      }
+      window.electron.events.subscribe(EventIdentifiers.SetFileContent, setFileContentHandler)
 
+      const getOpeningFileNameHandler = () => {
+        window.electron.events.propagateResult(EventIdentifiers.GetOpeningFileName, getFileNameFromPath(openingFilePath))
+      }
+      window.electron.events.subscribe(EventIdentifiers.GetOpeningFileName, getOpeningFileNameHandler)
+
+      return () => {
+        window.electron.events.unsubscribe(EventIdentifiers.SetFileContent)
+        window.electron.events.unsubscribe(EventIdentifiers.GetOpeningFileName)
+      }
+    }
+  }, [ openingFilePath ])
+
+  useEffect(() => {
     const getFileNameHandler = () => {
-      window.electron.events.propagateResult(EventIdentifiers.GetFileName, fileName)
+      window.electron.events.propagateResult(EventIdentifiers.GetFileName, getFileNameFromPath(filePath))
     }
     window.electron.events.subscribe(EventIdentifiers.GetFileName, getFileNameHandler)
 
     return () => {
-      window.electron.events.unsubscribe(EventIdentifiers.SetFileContent)
       window.electron.events.unsubscribe(EventIdentifiers.GetFileName)
     }
   }, [ filePath ])
 
   useEffect(() => {
-    const fileOpenFailedHandler = async () => {
+    const failedOpenHandler = async () => {
       await openSecondaryWindow(WindowVariant.FailedOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
     }
-    window.electron.events.subscribe(IpcEventNames.App.File.OpenFailed, fileOpenFailedHandler)
+    window.electron.events.subscribe(IpcEventNames.App.File.OpenFailed, failedOpenHandler)
 
     const openFileFromPathHandler = async (path) => {
-      handleFilePath(path)
-      await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+      if (path === filePath) return // File is already open
+      setOpeningFilePath(path)
+      if (unsavedChanges) {
+        await openSecondaryWindow(WindowVariant.UnsavedChangesOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+      } else {
+        reset()
+        await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+      }
     }
     window.electron.events.subscribe(IpcEventNames.App.File.OpenFromPath, openFileFromPathHandler)
 
@@ -208,7 +229,7 @@ export const useEventInitializer = () => {
       window.electron.events.unsubscribe(IpcEventNames.App.File.OpenFailed)
       window.electron.events.unsubscribe(IpcEventNames.App.File.OpenFromPath)
     }
-  }, [ secondaryWindowEntry ])
+  }, [ secondaryWindowEntry, unsavedChanges, filePath ])
 
 
   useEffect(() => {
@@ -228,7 +249,7 @@ export const useEventInitializer = () => {
     window.app.state.unsavedChanges(unsavedChanges).then(() => {
       if (unsavedChanges) {
         const unsavedChangesHandler = async () => {
-          await openSecondaryWindow(WindowVariant.UnsavedChanges, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+          await openSecondaryWindow(WindowVariant.UnsavedChangesClose, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
         }
         window.electron.events.subscribe(IpcEventNames.App.State.Close, unsavedChangesHandler)
 

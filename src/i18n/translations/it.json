@@ -179,9 +179,14 @@
     }
   },
   "UnsavedChangesDialog": {
+    "Open": {
+      "Message": "Ci sono modifiche non salvate. Vuoi salvarle prima di aprire un altro file?"
+    },
+    "Close": {
+      "Message": "Ci sono modifiche non salvate. Vuoi salvarle prima di uscire?"
+    },
     "Dialog Title": "Modifiche non salvate",
     "Title": "Modifiche non salvate",
-    "Message": "Ci sono modifiche non salvate. Vuoi salvare prima di uscire?",
     "Save Button": "Salva",
     "Discard Button": "Scarta"
   },

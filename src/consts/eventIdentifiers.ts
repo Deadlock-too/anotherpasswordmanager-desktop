@@ -11,6 +11,7 @@ const EventIdentifiers = {
   Unlock: 'unlockApp',
   SaveChanges: 'saveChanges',
   GetFileName: 'getFileName',
+  GetOpeningFileName: 'getOpeningFileName',
 }
 
 export default EventIdentifiers

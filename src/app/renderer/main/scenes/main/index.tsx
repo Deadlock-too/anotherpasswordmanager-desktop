@@ -1,4 +1,4 @@
-import { useFileContentContext } from '../../../common/contexts'
+import { useFileContentContext, useModalContext } from '../../../common/contexts'
 import FoldersColumn from '../../components/column/foldersColumn'
 import EntriesColumn from '../../components/column/entriesColumn'
 import DetailsColumn from '../../components/column/detailsColumn'
@@ -13,9 +13,19 @@ import {
 } from 'react-resizable-panels'
 import { useHandleVisibilityManager, useMinPanelSizeHelper } from '../../../common/hooks/resizablePanels'
 import EventIdentifiers from '../../../../../consts/eventIdentifiers'
+import { openSecondaryWindow, WindowVariant } from '../../utils/rendererWindowManager'
 
 const Main = () => {
-  const { folders, entries, isLocked, unsavedChanges, forceUpdateFileContent, reset } = useFileContentContext()
+  const {
+    folders,
+    entries,
+    isLocked,
+    unsavedChanges,
+    forceUpdateFileContent,
+    reset,
+    openingFilePath
+  } = useFileContentContext()
+  const { setIsSecondaryWindowOpen, secondaryWindowEntry } = useModalContext()
 
   const [ detailSize, setDetailSize ] = useState<number>()
 
@@ -46,18 +56,21 @@ const Main = () => {
   }, [])
 
   useEffect(() => {
-    const saveChangesHandler = (response: boolean) => {
+    const saveChangesHandler = async (response: boolean) => {
       if (unsavedChanges && response) {
         forceUpdateFileContent()
       }
       reset()
+      if (openingFilePath) {
+        await openSecondaryWindow(WindowVariant.PasswordOpen, () => setIsSecondaryWindowOpen(true), () => setIsSecondaryWindowOpen(false), secondaryWindowEntry)
+      }
     }
     window.electron.events.subscribe(EventIdentifiers.SaveChanges, saveChangesHandler)
 
     return () => {
       window.electron.events.unsubscribe(EventIdentifiers.SaveChanges)
     }
-  }, [ unsavedChanges ])
+  }, [ unsavedChanges, openingFilePath ])
 
   return (
     isLocked ?

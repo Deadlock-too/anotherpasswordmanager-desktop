@@ -217,10 +217,10 @@ interface IPasswordWindowProps {
 
 const PasswordWindow = (props: IPasswordWindowProps) => {
   const { t } = useTranslation()
-  const { fileName } = useFileNameHelper()
+  const { fileName, openingFileName } = useFileNameHelper()
   const { formikRef, handleClose } = useFormikLockHandler()
   const useFileName = props.variant === 'open' || props.variant === 'unlock'
-  const title = t(`PasswordDialog.${ capitalizeFirstLetter(props.variant) }.Dialog Title`) + (useFileName ? ` - ${ fileName }` : '')
+  const title = t(`PasswordDialog.${ capitalizeFirstLetter(props.variant) }.Dialog Title`) + (useFileName ? ` - ${ props.variant === 'open' ? openingFileName : fileName }` : '')
 
   return (
     <>
