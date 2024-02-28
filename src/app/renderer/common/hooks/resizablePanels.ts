@@ -22,6 +22,9 @@ export const useMinPanelSizeHelper = (minPixelWidths: number[]) => {
 export const useHandleVisibilityManager = (groupId: string) => {
   useEffect(() => {
     const handles = getResizeHandleElementsForGroup(groupId)
+    handles.forEach(handle => {
+      handle.style.opacity = '0'
+    })
     const handleVisibility = (e) => {
       handles.forEach(handle => {
         if (handle.getAttribute('data-resize-handle-state') === 'drag') return
@@ -54,5 +57,5 @@ export const useHandleVisibilityManager = (groupId: string) => {
       window.removeEventListener('mousemove', handleVisibility)
       window.removeEventListener('mouseup', handleMouseUp)
     }
-  })
+  }, [])
 }
