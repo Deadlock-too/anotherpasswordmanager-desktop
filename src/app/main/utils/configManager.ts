@@ -6,6 +6,7 @@ import { daisyui } from '../../../../tailwind.config'
 import defaultConfig from '../../../defaultConfig.json'
 import Main from '../main'
 import IpcEventNames from '../ipc/ipcEventNames'
+import { putOnTray } from './trayManager'
 
 const configFileName = 'config.json'
 let configFilePath: string
@@ -141,7 +142,7 @@ export async function writeConfig(config: Config): Promise<Config | null> {
 export const handleMinimizeToTray = async (e) => {
   e.preventDefault()
   Main.mainWindow.hide()
-  await Main.putOnTray()
+  await putOnTray()
 }
 
 export async function applyMinimizeToTray(minimizeToTray: boolean) {
@@ -156,7 +157,7 @@ export const handleCloseToTray = async (e) => {
   if (!Main.tray) {
     e.preventDefault()
     Main.mainWindow.hide()
-    await Main.putOnTray()
+    await putOnTray()
   }
 }
 

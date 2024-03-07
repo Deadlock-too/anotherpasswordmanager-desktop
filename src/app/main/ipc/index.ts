@@ -179,7 +179,7 @@ ipcMain.handle(IpcEventNames.Electron.Log, (_, ...args): void => {
  * State events handlers
  */
 ipcMain.handle(IpcEventNames.App.State.Get, async (): Promise<AppStateValues> => {
-  return Main.getAppState().get()
+  return Main.appState.get()
 })
 
 ipcMain.handle(IpcEventNames.App.State.Close, async (_, allow: boolean): Promise<void> => {

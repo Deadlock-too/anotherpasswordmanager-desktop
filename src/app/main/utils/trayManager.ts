@@ -5,7 +5,18 @@ import * as path from 'path'
 import i18n from '../../../i18n'
 import IpcEventNames from '../ipc/ipcEventNames'
 import { getAutoLockOnTrayFromConfig } from './configManager'
+import { AppStateValues } from '../../../types'
 
+export const putOnTray = async () => {
+  Main.appState.add(AppStateValues.OnTray)
+  await createTray()
+}
+
+export const removeFromTray = () => {
+  Main.appState.remove(AppStateValues.OnTray)
+  Main.tray?.destroy()
+  Main.tray = undefined
+}
 
 export const createTray = async () => {
   if (Main.tray)
@@ -49,7 +60,5 @@ export const createTray = async () => {
 
 export const destroyTray = () => {
   Main.mainWindow.show()
-  Main.removeFromTray()
-  Main.tray?.destroy()
-  Main.tray = undefined
+  removeFromTray()
 }

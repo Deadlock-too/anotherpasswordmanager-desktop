@@ -15,13 +15,9 @@ export default class Main {
   static application: Electron.App
   static browserWindow: typeof BrowserWindow
   static powerMonitor: typeof Electron.powerMonitor
-  static startupUrl: string | null
+  static startupUrl: string | null = null
   static tray: Electron.Tray | undefined
   static appState: AppState<AppStateValues> = new AppState(AppStateValues.None)
-
-  public static getAppState() {
-    return Main.appState
-  }
 
   public static initialize() {
     Main.appState.add(AppStateValues.Initialized)
@@ -42,15 +38,6 @@ export default class Main {
   public static reset() {
     Main.appState.remove(AppStateValues.Initialized)
     Main.appState.remove(AppStateValues.Locked)
-  }
-
-  public static async putOnTray() {
-    Main.appState.add(AppStateValues.OnTray)
-    await createTray()
-  }
-
-  public static removeFromTray() {
-    Main.appState.remove(AppStateValues.OnTray)
   }
 
   public static unsavedChanges(unsavedChanges: boolean) {
@@ -156,7 +143,6 @@ export default class Main {
     Main.browserWindow = browserWindow
     Main.application = app
     Main.powerMonitor = powerMonitor
-    this.startupUrl = null
     Main.manageLock()
     Main.manageOpenFile()
     Main.application.whenReady()
