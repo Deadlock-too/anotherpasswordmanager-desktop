@@ -60,84 +60,81 @@ const TextInput = ({
     setIsTyping(false)
   }, 500)).current
 
-  let inputComponent = (
-    (
-      <input
-        type={ type }
-        name={ field }
-        onChange={ (event) => {
-          handleChange(event)
-          debouncedInput(event.target.value)
-          setIsTyping(true)
-        } }
-        onBlur={ handleBlur }
-        value={ value }
-        placeholder={ placeholder }
-        className="input input-sm input-bordered w-full"
-        disabled={ disabled }
-        readOnly={ readonly }
-      />
-    )
-  )
+  let inputComponent = <input
+    type={ type }
+    name={ field }
+    onChange={ (event) => {
+      handleChange(event)
+      debouncedInput(event.target.value)
+      setIsTyping(true)
+    } }
+    onBlur={ handleBlur }
+    value={ value }
+    placeholder={ placeholder }
+    className="input input-sm input-bordered w-full"
+    disabled={ disabled }
+    readOnly={ readonly }
+  />
 
   //Add error tooltip wrapper
-  inputComponent = (
-    <Tooltip
-      placement="top"
-      open={ !readonly && !isTyping && touched && typeof errors === 'string' && errors.length > 0 }
-      onOpenChange={ () => {} } //Prevent to show the tooltip on hover
+  inputComponent = <Tooltip
+    placement="top"
+    open={ !readonly && !isTyping && touched && typeof errors === 'string' && errors.length > 0 }
+    onOpenChange={ () => {
+    } } //Prevent to show the tooltip on hover
+  >
+    <TooltipTrigger>
+      { inputComponent }
+    </TooltipTrigger>
+    <TooltipContent>
+      <div
+        className="tooltip tooltip-error tooltip-open"
+        data-tip={ errors }
+      />
+    </TooltipContent>
+  </Tooltip>
+
+  //Add copy tooltip wrapper
+  if (!customReadonlyComponent && copiableContent && readonly) {
+    inputComponent = <Tooltip
+      open={ isOpen }
+      onOpenChange={ handleTooltipClose }
     >
-      <TooltipTrigger>
+      <TooltipTrigger className="w-full" onClick={ (e) => {
+        e.preventDefault()
+        handleTooltipOpen()
+      } }>
         { inputComponent }
       </TooltipTrigger>
       <TooltipContent>
         <div
-          className="tooltip tooltip-error tooltip-open"
-          data-tip={ errors }
+          className="tooltip tooltip-base-100 tooltip-open"
+          data-tip={ copyTooltipLabel }
         />
       </TooltipContent>
     </Tooltip>
-  )
-
-  //Add copy tooltip wrapper
-  if (!customReadonlyComponent && copiableContent && readonly) {
-    inputComponent = (
-      <Tooltip open={ isOpen } onOpenChange={ handleTooltipClose }>
-        <TooltipTrigger className="w-full" onClick={ (e) => {
-          e.preventDefault()
-          handleTooltipOpen()
-        } }>
-          { inputComponent }
-        </TooltipTrigger>
-        <TooltipContent>
-          <div
-            className="tooltip tooltip-base-100 tooltip-open"
-            data-tip={ copyTooltipLabel }
-          />
-        </TooltipContent>
-      </Tooltip>
-    )
   }
 
-  return (
-    <label className="form-control w-full" onMouseUp={ (event) => {
+  return <label
+    className="form-control w-full"
+    onMouseUp={ (event) => {
       if (preventDefaultOnClick)
         event.preventDefault()
       if (copiableContent && readonly && value !== undefined)
         handleSetClipboard(value)
-    } }>
-      <div className="label">
-        <span className="label-text font-bold">
-          { label }
-        </span>
-      </div>
-      {
-        readonly && customReadonlyComponent ?
-          customReadonlyComponent :
-          inputComponent
-      }
-    </label>
-  )
+    } }
+  >
+    <div className="label">
+      <span className="label-text font-bold">
+        { label }
+      </span>
+    </div>
+    {
+      readonly && customReadonlyComponent ?
+        customReadonlyComponent :
+        inputComponent
+    }
+  </label>
 }
 
 const FormikTextInput = ({

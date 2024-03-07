@@ -28,11 +28,15 @@ const GeneralSettings = ({ formik }) => {
             field="generalOpenAtStartup"
             label={ t('SettingsDialog.General.Open.Open at startup') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikCheckbox
             field="generalOpenMinimized"
             label={ t('SettingsDialog.General.Open.Open minimized') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
         </SettingRow>
       </Setting>
@@ -42,11 +46,15 @@ const GeneralSettings = ({ formik }) => {
             field="generalMinimizeToTray"
             label={ t('SettingsDialog.General.Tray.Minimize to tray') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikCheckbox
             field="generalCloseToTray"
             label={ t('SettingsDialog.General.Tray.Close to tray') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
         </SettingRow>
       </Setting>
@@ -56,6 +64,8 @@ const GeneralSettings = ({ formik }) => {
             field="generalAutoSave"
             label={ t('SettingsDialog.General.Auto-save.Auto-save edits') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
         </SettingRow>
       </Setting>

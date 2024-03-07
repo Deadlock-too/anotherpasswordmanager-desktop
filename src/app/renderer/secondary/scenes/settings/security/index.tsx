@@ -13,6 +13,8 @@ const SecuritySettings = ({ formik }) => {
             field="securityAutoLock"
             label={ t('SettingsDialog.Security.Auto lock.Auto lock') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikNumberInput
             preLabel={ t('SettingsDialog.Security.Auto lock.Auto lock after') }
@@ -29,11 +31,15 @@ const SecuritySettings = ({ formik }) => {
             field="securityAutoLockOnMinimize"
             label={ t('SettingsDialog.Security.Auto lock.On minimize') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikCheckbox
             field="securityAutoLockOnTray"
             label={ t('SettingsDialog.Security.Auto lock.On tray') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
         </SettingRow>
         <SettingRow>
@@ -41,11 +47,15 @@ const SecuritySettings = ({ formik }) => {
             field="securityAutoLockOnSleep"
             label={ t('SettingsDialog.Security.Auto lock.On sleep') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikCheckbox
             field="securityAutoLockOnLock"
             label={ t('SettingsDialog.Security.Auto lock.On lock') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
         </SettingRow>
       </Setting>
@@ -55,6 +65,8 @@ const SecuritySettings = ({ formik }) => {
             field="securityAutoClearClipboard"
             label={ t('SettingsDialog.Security.Clipboard.Auto clear clipboard') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikNumberInput
             preLabel={ t('SettingsDialog.Security.Clipboard.Clear after') }
@@ -71,11 +83,15 @@ const SecuritySettings = ({ formik }) => {
             field="securityAutoClearClipboardOnLock"
             label={ t('SettingsDialog.Security.Clipboard.Clear on lock') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikCheckbox
             field="securityCopyFieldValuesToClipboardOnClick"
             label={ t('SettingsDialog.Security.Clipboard.Copy field values to clipboard on click') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
         </SettingRow>
       </Setting>
@@ -85,6 +101,8 @@ const SecuritySettings = ({ formik }) => {
             field="securityDefaultNewEntryExpire"
             label={ t('SettingsDialog.Security.Entry expire.Default new entry expire') }
             formik={ formik }
+            readonly={ false }
+            disabled={ formik.isSubmitting }
           />
           <FormikNumberInput
             preLabel={ t('SettingsDialog.Security.Entry expire.New entries will expire after') }
