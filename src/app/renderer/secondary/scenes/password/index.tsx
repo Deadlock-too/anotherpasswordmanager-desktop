@@ -199,10 +199,7 @@ const PasswordScene = (props: IPasswordSceneProps) => {
       } }
       onSubmit={ (values, { setSubmitting }) => {
         setTimeout(() => {
-          // Declare the function that will be subsequently assigned
-          let executingFunc = async (password: string) => {
-            /* empty func */
-          }
+          let executingFunc: (password: string) => Promise<void>
 
           if (props.variant === 'unlock') {
             executingFunc = unlock
