@@ -145,6 +145,7 @@
       "Password Placeholder": "Master key password",
       "Confirm Label": "Confirm master key password",
       "Confirm Placeholder": "Confirm master key password",
+      "Empty Password Override": "Force creation without password",
       "Submit Button": "Create"
     },
     "Update": {
@@ -155,6 +156,7 @@
       "Password Placeholder": "New master key password",
       "Confirm Label": "Confirm new master key password",
       "Confirm Placeholder": "Confirm new master key password",
+      "Empty Password Override": "Force password removal",
       "Submit Button": "Update"
     },
     "Unlock": {
@@ -293,7 +295,8 @@
     "Validations": {
       "Required field": "Required field",
       "Invalid URI": "Invalid URI",
-      "ValuesMustMatch": "The values must match"
+      "ValuesMustMatch": "The values must match",
+      "Fields cannot be empty": "Fields cannot be empty"
     }
   }
 }

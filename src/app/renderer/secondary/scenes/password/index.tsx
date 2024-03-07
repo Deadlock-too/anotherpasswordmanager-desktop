@@ -25,13 +25,15 @@ const UnlockPasswordVariant = (props: { formik: FormikProps<any> }) => {
         readonly={ false }
         disabled={ props.formik.isSubmitting }
       />
-      <button
-        className="btn ml-auto mt-8"
-        type="submit"
-        disabled={ props.formik.isSubmitting }
-      >
-        { t('PasswordDialog.Unlock.Submit Button') }
-      </button>
+      <div className="mt-8">
+        <button
+          className="btn ml-auto"
+          type="submit"
+          disabled={ props.formik.isSubmitting }
+        >
+          { t('PasswordDialog.Unlock.Submit Button') }
+        </button>
+      </div>
     </>
   )
 }
@@ -49,13 +51,15 @@ const OpenPasswordVariant = (props: { formik: FormikProps<any> }) => {
         readonly={ false }
         disabled={ props.formik.isSubmitting }
       />
-      <button
-        className="btn ml-auto mt-8"
-        type="submit"
-        disabled={ props.formik.isSubmitting }
-      >
-        { t('PasswordDialog.Open.Submit Button') }
-      </button>
+      <div className="mt-8">
+        <button
+          className="btn ml-auto"
+          type="submit"
+          disabled={ props.formik.isSubmitting }
+        >
+          { t('PasswordDialog.Open.Submit Button') }
+        </button>
+      </div>
     </>
   )
 }
@@ -82,13 +86,22 @@ const CreatePasswordVariant = (props: { formik: FormikProps<any> }) => {
         readonly={ false }
         disabled={ props.formik.isSubmitting }
       />
-      <button
-        className="btn ml-auto mt-8"
-        type="submit"
-        disabled={ props.formik.isSubmitting }
-      >
-        { t('PasswordDialog.Create.Submit Button') }
-      </button>
+      <div className="flex flex-row justify-between gap-2 items-center mt-8">
+        <button
+          className="btn"
+          type="submit"
+          disabled={ props.formik.isSubmitting }
+        >
+          { t('PasswordDialog.Create.Submit Button') }
+        </button>
+        {
+          props.formik.errors['form'] && typeof props.formik.errors['form'] === 'string' ?
+            <div className="label">
+              <span className="text-error text-xs">{ props.formik.errors['form'] }</span>
+            </div>
+            : null
+        }
+      </div>
     </>
   )
 }
@@ -115,13 +128,22 @@ const UpdatePasswordVariant = (props: { formik: FormikProps<any> }) => {
         readonly={ false }
         disabled={ props.formik.isSubmitting }
       />
-      <button
-        className="btn ml-auto mt-8"
-        type="submit"
-        disabled={ props.formik.isSubmitting }
-      >
-        { t('PasswordDialog.Update.Submit Button') }
-      </button>
+      <div className="flex flex-row justify-between gap-2 items-center mt-8">
+        <button
+          className="btn"
+          type="submit"
+          disabled={ props.formik.isSubmitting }
+        >
+          { t('PasswordDialog.Update.Submit Button') }
+        </button>
+        {
+          props.formik.errors['form'] && typeof props.formik.errors['form'] === 'string' ?
+            <div className="label">
+              <span className="text-error text-xs">{ props.formik.errors['form'] }</span>
+            </div>
+            : null
+        }
+      </div>
     </>
   )
 }
@@ -167,6 +189,10 @@ const PasswordScene = (props: IPasswordSceneProps) => {
         if (props.variant === 'create' || props.variant === 'update') {
           if (values.password !== values.confirmPassword) {
             errors['confirmPassword'] = t('Common.Validations.ValuesMustMatch')
+          }
+
+          if (values.password.length === 0 && values.confirmPassword.length === 0) {
+            errors['form'] = t('Common.Validations.Fields cannot be empty')
           }
         }
         return errors

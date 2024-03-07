@@ -145,6 +145,7 @@
       "Password Placeholder": "Password principale",
       "Confirm Label": "Conferma password",
       "Confirm Placeholder": "Conferma password",
+      "Empty Password Override": "Forza creazione senza password",
       "Submit Button": "Crea"
     },
     "Update": {
@@ -155,6 +156,7 @@
       "Password Placeholder": "Password principale",
       "Confirm Label": "Conferma password",
       "Confirm Placeholder": "Conferma password",
+      "Empty Password Override": "Forza rimozione password",
       "Submit Button": "Aggiorna"
     },
     "Unlock": {
@@ -293,7 +295,8 @@
     "Validations": {
       "Required field": "Campo obbligatorio",
       "Invalid URI": "URI non valido",
-      "ValuesMustMatch": "I valori devono corrispondere"
+      "ValuesMustMatch": "I valori devono corrispondere",
+      "Fields cannot be empty": "I campi non possono essere vuoti"
     }
   }
 }
