@@ -58,7 +58,7 @@ const PasswordInput = ({
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { handleSetClipboard } = useClipboardContext()
   const [ isTyping, setIsTyping ] = useState(false)
-  const debouncedInput = useRef(debounce((value) => {
+  const debouncedInput = useRef(debounce((_) => {
     setIsTyping(false)
   }, 500)).current
 

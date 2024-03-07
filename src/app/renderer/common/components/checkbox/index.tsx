@@ -32,7 +32,6 @@ const Checkbox = ({
   field,
   readonly,
   disabled,
-  touched,
   errors
 }: ICheckboxProps) => {
   let inputComponent =

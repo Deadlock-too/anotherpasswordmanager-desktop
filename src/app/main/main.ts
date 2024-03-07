@@ -77,9 +77,9 @@ export default class Main {
   //   }
   // }
 
-  private static onActivate() {
+  private static async onActivate() {
     if (BrowserWindow.getAllWindows().length === 0) {
-      Main.onReady(false)
+      await Main.onReady(false)
     }
   }
 

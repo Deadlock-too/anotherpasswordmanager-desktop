@@ -108,8 +108,8 @@ export const useEventInitializer = () => {
     }
     subscribeToEvent(IpcEventNames.App.Config.Refresh, refreshConfigHandler)
 
-    const setLanguageHandler = (language) => {
-      i18n.changeLanguage(language)
+    const setLanguageHandler = async (language) => {
+      await i18n.changeLanguage(language)
     }
     subscribeToEvent(IpcEventNames.App.Localization.ChangeLanguage, setLanguageHandler)
 
