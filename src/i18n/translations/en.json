@@ -269,12 +269,12 @@
         "Clear after": "Clear after",
         "seconds": "seconds",
         "Clear on lock": "Clear on lock",
-        "Copy field values to clipboard on click": "Copy field values to clipboard on click"
+        "Copy field values to clipboard on click": "Copy value on click"
       },
       "Entry expire": {
         "Title": "Entry expire",
-        "Default new entry expire": "Default new entry expire",
-        "New entries will expire after": "New entries will expire after",
+        "Default new entry expire": "Default new entry expiry",
+        "New entries will expire after": "after",
         "days": "days"
       }
     },

@@ -20,9 +20,10 @@ const SecuritySettings = ({ formik }) => {
             preLabel={ t('SettingsDialog.Security.Auto lock.Auto lock after') }
             afterLabel={ t('SettingsDialog.Security.Auto lock.seconds') }
             field="securityAutoLockTime"
-            disabled={ !formik.values.securityAutoLock }
+            readonly={ !formik.values.securityAutoLock }
+            disabled={ !formik.values.securityAutoLock || formik.isSubmitting }
             formik={ formik }
-            min={ 30 }
+            min={ 5 }
             max={ 60 * 60 * 12 }
           />
         </SettingRow>
@@ -72,7 +73,8 @@ const SecuritySettings = ({ formik }) => {
             preLabel={ t('SettingsDialog.Security.Clipboard.Clear after') }
             afterLabel={ t('SettingsDialog.Security.Clipboard.seconds') }
             field="securityAutoClearClipboardTime"
-            disabled={ !formik.values.securityAutoClearClipboard }
+            readonly={ !formik.values.securityAutoClearClipboard }
+            disabled={ !formik.values.securityAutoClearClipboard || formik.isSubmitting }
             formik={ formik }
             min={ 1 }
             max={ 60 * 60 }
@@ -108,7 +110,8 @@ const SecuritySettings = ({ formik }) => {
             preLabel={ t('SettingsDialog.Security.Entry expire.New entries will expire after') }
             afterLabel={ t('SettingsDialog.Security.Entry expire.days') }
             field="securityDefaultNewEntryExpireTime"
-            disabled={ !formik.values.securityDefaultNewEntryExpire }
+            readonly={ !formik.values.securityDefaultNewEntryExpire }
+            disabled={ !formik.values.securityDefaultNewEntryExpire || formik.isSubmitting }
             formik={ formik }
             min={ 1 }
             max={ 365 * 100 }

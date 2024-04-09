@@ -8,6 +8,7 @@ interface INumberInputProps {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   value: string;
   placeholder?: string;
+  readonly?: boolean;
   disabled?: boolean;
   min?: number;
   max?: number;
@@ -19,6 +20,7 @@ interface IFormikNumberInputProps {
   field: string;
   formik: FormikProps<any>;
   placeholder?: string;
+  readonly?: boolean;
   disabled?: boolean;
   min?: number;
   max?: number;
@@ -31,17 +33,18 @@ const NumberInput = ({
   handleChange,
   value,
   placeholder,
+  readonly,
   disabled,
   min,
   max
 }: INumberInputProps) => {
   return (
-    <div className="form-control w-52">
-      <label className="label">
+    <div className="form-control w-48">
+      <label className="label gap-3">
         <span className="label-text">{ preLabel }:</span>
         <input
           type="number"
-          className="input input-xs w-16"
+          className="input input-xs w-16 disabled:cursor-default"
           name={ field }
           onChange={ (event) => {
             if (min && parseInt(event.target.value) < min) {
@@ -54,6 +57,7 @@ const NumberInput = ({
           } }
           value={ value }
           placeholder={ placeholder }
+          readOnly={ readonly }
           disabled={ disabled }
           min={ min }
           max={ max }
@@ -70,6 +74,7 @@ const FormikNumberInput = ({
   preLabel,
   afterLabel,
   placeholder,
+  readonly,
   disabled,
   min,
   max
@@ -82,6 +87,7 @@ const FormikNumberInput = ({
       handleChange={ formik.handleChange }
       value={ formik.values[field] }
       placeholder={ placeholder }
+      readonly={ readonly }
       disabled={ disabled }
       min={ min }
       max={ max }

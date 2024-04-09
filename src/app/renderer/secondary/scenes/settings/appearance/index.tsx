@@ -30,12 +30,14 @@ const AppearanceSettings = ({ formik }) => {
       <Setting title={ t('SettingsDialog.Appearance.Theme.Title') }>
         <SettingRow>
           <FormikDropdown
-            name="appearanceCustomTheme"
+            field="appearanceCustomTheme"
             label={ t('SettingsDialog.Appearance.Theme.Label') }
             options={ themeOptions }
             formik={ formik }
             disabled={ formik.values.appearanceUseSystemTheme }
           />
+        </SettingRow>
+        <SettingRow>
           <FormikToggle
             name="appearanceUseSystemTheme"
             label={ t('SettingsDialog.Appearance.Theme.Sync with OS') }

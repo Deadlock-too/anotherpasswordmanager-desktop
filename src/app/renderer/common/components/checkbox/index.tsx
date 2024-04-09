@@ -35,7 +35,7 @@ const Checkbox = ({
   errors
 }: ICheckboxProps) => {
   let inputComponent =
-    <label className="label">
+    <label className="label gap-3">
       <span className="label-text">{ label }:</span>
       <input
         type="checkbox"
@@ -69,8 +69,8 @@ const Checkbox = ({
   </Tooltip>
 
   return (
-    <div className="form-control w-52">
-        { inputComponent }
+    <div className="form-control min-w-48">
+      { inputComponent }
     </div>
   )
 }

@@ -14,7 +14,7 @@ const GeneralSettings = ({ formik }) => {
       <Setting title={ t('SettingsDialog.General.Language.Title') }>
         <SettingRow>
           <FormikDropdown
-            name="generalLanguage"
+            field="generalLanguage"
             label={ t('SettingsDialog.General.Language.Label') }
             options={ languages }
             disabled={ false }

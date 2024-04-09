@@ -17,14 +17,16 @@ interface IFormikToggleProps {
 
 const Toggle = ({ handleChange, value, label, checked, field }: IToggleProps) => {
   return (
-    <div className="form-control w-52">
-      <label className="label">
+    <div className="form-control min-w-fit w-48">
+      <label className="label gap-3">
         <span className="label-text">{ label }:</span>
-        <input type="checkbox" className="toggle toggle-sm"
-               name={ field }
-               onChange={ handleChange }
-               checked={ checked }
-               value={ value }
+        <input
+          type="checkbox"
+          className="toggle toggle-sm"
+          name={ field }
+          onChange={ handleChange }
+          checked={ checked }
+          value={ value }
         />
       </label>
     </div>
